@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bibelsøk prototype</title>
+  <style>
+    :root{
+      color-scheme:dark;
+      --bg:#111;
+      --card:#1d1d1d;
+      --field:#252525;
+      --border:#444;
+      --text:#f2f2f2;
+      --muted:#b8b8b8;
+      --link:#82cfff;
+    }
+    body{margin:0;background:var(--bg);color:var(--text);font-family:Arial,sans-serif;padding:18px;}
+    .wrap{max-width:850px;margin:0 auto;}
+    h1{margin:0 0 8px;text-align:center;}
+    .sub{color:var(--muted);text-align:center;margin-bottom:20px;}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:14px;}
+    input{width:100%;background:var(--field);color:var(--text);border:1px solid var(--border);border-radius:8px;padding:12px;font:inherit;box-sizing:border-box;}
+    .result{border-top:1px solid var(--border);padding:12px 0;}
+    .result:first-child{border-top:0;}
+    .ref{font-weight:bold;color:var(--link);}
+    .score{color:var(--muted);font-size:13px;margin-top:3px;}
+    .snippet{margin-top:6px;line-height:1.45;}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Bibelsøk</h1>
+    <div class="sub">Prototype: finn bibelsted fra sitatfragment</div>
+
+    <div class="card">
+      <input id="query" type="text" placeholder="Skriv deler av et bibelsitat..." autocomplete="off">
+    </div>
+
+    <div class="card" id="results">Skriv minst to tegn.</div>
+  </div>
+
+<script type="module">
+import { searchBibleVerses } from "../src/search.js";
+import { normalizeNorwegianBibleText } from "../src/normalize.js";
+
+const sampleVerses = [
+  {
+    reference: "Jesaja 41,10",
+    text: "Frykt ikke, for jeg er med dig; se dig ikke engstelig om, for jeg er din Gud."
+  },
+  {
+    reference: "1 Peter 5,7",
+    text: "Og kast all eders sorg på ham! for han har omsorg for eder."
+  },
+  {
+    reference: "Matteus 11,28",
+    text: "Kom til mig, alle I som strever og har tungt å bære, og jeg vil gi eder hvile!"
+  }
+].map(verse => ({
+  ...verse,
+  normalizedText: normalizeNorwegianBibleText(verse.text)
+}));
+
+const input = document.getElementById("query");
+const resultsBox = document.getElementById("results");
+
+function esc(value){
+  return String(value ?? "")
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
+}
+
+function render(){
+  const query = input.value.trim();
+
+  if(query.length < 2){
+    resultsBox.textContent = "Skriv minst to tegn.";
+    return;
+  }
+
+  const results = searchBibleVerses(query, sampleVerses);
+
+  if(!results.length){
+    resultsBox.textContent = "Ingen treff i eksempeldata.";
+    return;
+  }
+
+  resultsBox.innerHTML = results.map(result => `
+    <div class="result">
+      <div class="ref">${esc(result.reference)}</div>
+      <div class="score">Score: ${esc(result.score)}</div>
+      <div class="snippet">${esc(result.snippet)}</div>
+    </div>
+  `).join("");
+}
+
+input.addEventListener("input", render);
+</script>
+</body>
+</html>
