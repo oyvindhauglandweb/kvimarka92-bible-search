@@ -20,3 +20,42 @@ Example test on Windows PowerShell:
 ```powershell
 npm.cmd test
 ```
+
+
+## Search v4 notes
+
+Search v4 improves result presentation by:
+
+```txt
+- removing redundant overlapping passage windows
+- preferring direct single-verse hits when they contain the same quote
+- keeping multi-verse windows only when they add value
+```
+
+Example test on Windows PowerShell:
+
+```powershell
+npm.cmd test
+```
+
+
+## Search v5 notes
+
+Search v5 adds a small curated boost table for well-known quote fragments.
+
+Examples:
+
+```txt
+frykt ikke ... med          -> Jesaja 41,10
+kast ... sorg               -> 1 Peter 5,7
+kom ... alle ... strever    -> Matteus 11,28
+alt virker sammen til gode  -> Romerne 8,28
+alle ting ... gode          -> Romerne 8,28
+```
+
+The boost does not hide other valid matches; it only ranks likely known references higher.
+
+
+## Search v5.1 note
+
+This version only fixes the test output label from v4 to v5.

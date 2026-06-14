@@ -12,6 +12,8 @@ if (!fs.existsSync(indexPath)) {
 
 const passages = JSON.parse(fs.readFileSync(indexPath, "utf8"));
 
+console.log("Search engine v5 - curated quote boosts");
+
 const queries = [
   "frykt ikke for jeg er med deg",
   "kast all deres sorg",

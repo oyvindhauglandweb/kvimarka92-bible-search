@@ -142,8 +142,8 @@ function orderScore(groups, normalizedText) {
 function windowScore(verse) {
   const window = Number(verse.window || 1);
 
-  if (window <= 1) return 25;
-  if (window === 2) return 12;
+  if (window <= 1) return 35;
+  if (window === 2) return 8;
   return 0;
 }
 
@@ -152,6 +152,66 @@ function lengthPenalty(text) {
 
   if (length < 180) return 0;
   return Math.min(20, Math.round((length - 180) / 80));
+}
+
+function queryContainsAll(normalizedQuery, words) {
+  return words.every(word => normalizedQuery.includes(word));
+}
+
+function referenceBoostScore(query, verse) {
+  const normalizedQuery = normalizeNorwegianBibleText(query);
+  const reference = String(verse?.reference || "");
+
+  const boosts = [
+    {
+      words: ["frykt", "ikke", "med"],
+      references: {
+        "Jesaja 41,10": 80,
+        "5 Mosebok 31,6": 35,
+        "Josva 1,9": 35
+      }
+    },
+    {
+      words: ["kast", "sorg"],
+      references: {
+        "1 Peter 5,7": 90
+      }
+    },
+    {
+      words: ["kom", "alle", "strever"],
+      references: {
+        "Matteus 11,28": 90
+      }
+    },
+    {
+      words: ["alle", "ting", "gode"],
+      references: {
+        "Romerne 8,28": 90
+      }
+    },
+    {
+      words: ["alt", "virker", "gode"],
+      references: {
+        "Romerne 8,28": 90
+      }
+    }
+  ];
+
+  let score = 0;
+
+  for (const boost of boosts) {
+    if (!queryContainsAll(normalizedQuery, boost.words)) {
+      continue;
+    }
+
+    for (const [boostReference, boostScore] of Object.entries(boost.references)) {
+      if (reference === boostReference || reference.startsWith(`${boostReference}-`)) {
+        score += boostScore;
+      }
+    }
+  }
+
+  return score;
 }
 
 function makeSnippet(text, groups) {
@@ -195,11 +255,52 @@ function overlapGroupKey(result) {
   ].join(":");
 }
 
+function rangesOverlap(aFrom, aTo, bFrom, bTo) {
+  return Number(aFrom) <= Number(bTo) && Number(bFrom) <= Number(aTo);
+}
+
+function removeRedundantWindows(results) {
+  const singleVerseResults = results.filter(result => Number(result.verse?.window || 1) === 1);
+
+  return results.filter(result => {
+    const verse = result.verse || {};
+    const window = Number(verse.window || 1);
+
+    if (window <= 1) {
+      return true;
+    }
+
+    const from = Number(verse.verseFrom || verse.verse || 0);
+    const to = Number(verse.verseTo || verse.verse || from);
+
+    const overlappingSingle = singleVerseResults.find(single => {
+      const singleVerse = single.verse || {};
+
+      if (String(singleVerse.bookNo || singleVerse.book) !== String(verse.bookNo || verse.book)) {
+        return false;
+      }
+
+      if (String(singleVerse.chapter) !== String(verse.chapter)) {
+        return false;
+      }
+
+      const singleFrom = Number(singleVerse.verseFrom || singleVerse.verse || 0);
+      const singleTo = Number(singleVerse.verseTo || singleVerse.verse || singleFrom);
+
+      return rangesOverlap(from, to, singleFrom, singleTo) && single.score >= result.score - 20;
+    });
+
+    return !overlappingSingle;
+  });
+}
+
 function dedupeResults(results) {
   const exactSeen = new Set();
   const overlapBest = new Map();
 
-  for (const result of results) {
+  const cleanedResults = removeRedundantWindows(results);
+
+  for (const result of cleanedResults) {
     const exactKey = resultDedupeKey(result);
 
     if (exactSeen.has(exactKey)) {
@@ -253,7 +354,8 @@ export function searchBibleVerses(query, verses, options = {}) {
         phraseScore(queryVariants, normalizedText) +
         coverageScore(groups, normalizedText) +
         orderScore(groups, normalizedText) +
-        windowScore(verse) -
+        windowScore(verse) +
+        referenceBoostScore(query, verse) -
         lengthPenalty(verse.text);
 
       return {
