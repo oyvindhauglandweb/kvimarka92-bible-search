@@ -51,7 +51,7 @@ function makeSnippet(text, tokens) {
     }
   }
 
-  const snippet = source.slice(bestIndex, bestIndex + 180).trim();
+  const snippet = source.slice(bestIndex, bestIndex + 200).trim();
   return bestIndex > 0 ? `…${snippet}` : snippet;
 }
 

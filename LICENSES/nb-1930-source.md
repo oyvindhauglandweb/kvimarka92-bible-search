@@ -1,56 +1,66 @@
 # Norwegian Bible 1930 source and license notes
 
-This file must be completed before committing the actual Bible text.
-
-## Text
-
-Working title:
+## Source used
 
 ```txt
-Det Norsk Bibelselskap 1930 / Bibelen på Norsk 1930
-```
-
-## Source candidate
-
-To be decided.
-
-Possible source candidates discussed:
-
-- CrossWire / SWORD module: `Norsk`
-- BibleGateway DNB1930
-- Other verified public-domain/plain-text source
-
-## License status
-
-Do not assume final license until documented here.
-
-For each imported text source, record:
-
-```txt
-Source name:
-Source URL:
-Access date:
-License statement:
-Imported by:
-Import script:
-Transformations:
-```
-
-## Policy for this project
-
-Until source/license is documented:
-
-```txt
-Do not publish generated full-text files publicly.
-Do not mix this text into kvimarka92-main.
-Keep repository private.
-```
 Source name: CrossWire SWORD module Norsk
 Module name: Norsk
 Book name: Bibelen på Norsk (1930)
 Download URL: https://www.crosswire.org/sword/servlet/SwordMod.Verify?modName=Norsk&pkgType=raw
 Module info: https://www.crosswire.org/sword/modules/ModInfo.jsp?modName=Norsk
-Module version: 2.0 (2020-02-08)
-Language: nb
-License stated by CrossWire: Public Domain
-Imported file: data/source/crosswire-norsk-raw.zip
+Imported file: data/Source/NorskUtgave1930.zip
+```
+
+## Module metadata from `mods.d/norsk.conf`
+
+```txt
+[Norsk]
+ModDrv=zText
+DataPath=./modules/texts/ztext/norsk/
+CompressType=ZIP
+BlockType=BOOK
+Encoding=UTF-8
+SourceType=OSIS
+SwordVersionDate=2020-02-08
+Lang=nb
+LCSH=Bible.Norwegian Bokmal
+Versification=KJV
+Abbreviation=Bibelen på Norsk
+Description=Bibelen på Norsk (1930)
+TextSource=http://unbound.biola.edu/
+DistributionLicense=Public Domain
+Version=2.0
+InstallSize=1822998
+```
+
+## About text from CrossWire module
+
+```txt
+Denne er det Norsk Bibelselskapets 1930 utgave av Bibelen på Norsk (Bokmål)
+
+This is the Norwegian Bible Society’s 1930 edition of the Bible in Bokmål Norwegian
+
+Text scanned and proofed by H. Priebe and co-workers. Based on the version prepared by Tore Vamraak.
+```
+
+## Project policy
+
+This repository should stay private until:
+
+```txt
+- the imported text has been verified
+- source/license notes have been reviewed
+- generated full-text files have been quality checked
+```
+
+## Generated files
+
+The import process generates:
+
+```txt
+data/normalized/nb-1930-books.json
+data/normalized/nb-1930-verses.json
+data/normalized/nb-1930-passages.json
+data/index/nb-1930-search-index.json
+data/source-manifest.json
+```
