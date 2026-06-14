@@ -1,0 +1,596 @@
+[
+  {
+    "bookNo": 1,
+    "book": "1 Mosebok",
+    "bookEnglish": "Genesis",
+    "bookAbbr": "1mos",
+    "chapters": 50,
+    "importedVerses": 1533,
+    "swordKey": "genesis"
+  },
+  {
+    "bookNo": 2,
+    "book": "2 Mosebok",
+    "bookEnglish": "Exodus",
+    "bookAbbr": "2mos",
+    "chapters": 40,
+    "importedVerses": 1213,
+    "swordKey": "exodus"
+  },
+  {
+    "bookNo": 3,
+    "book": "3 Mosebok",
+    "bookEnglish": "Leviticus",
+    "bookAbbr": "3mos",
+    "chapters": 27,
+    "importedVerses": 859,
+    "swordKey": "leviticus"
+  },
+  {
+    "bookNo": 4,
+    "book": "4 Mosebok",
+    "bookEnglish": "Numbers",
+    "bookAbbr": "4mos",
+    "chapters": 36,
+    "importedVerses": 1288,
+    "swordKey": "numbers"
+  },
+  {
+    "bookNo": 5,
+    "book": "5 Mosebok",
+    "bookEnglish": "Deuteronomy",
+    "bookAbbr": "5mos",
+    "chapters": 34,
+    "importedVerses": 959,
+    "swordKey": "deuteronomy"
+  },
+  {
+    "bookNo": 6,
+    "book": "Josva",
+    "bookEnglish": "Joshua",
+    "bookAbbr": "jos",
+    "chapters": 24,
+    "importedVerses": 658,
+    "swordKey": "joshua"
+  },
+  {
+    "bookNo": 7,
+    "book": "Dommerne",
+    "bookEnglish": "Judges",
+    "bookAbbr": "dom",
+    "chapters": 21,
+    "importedVerses": 618,
+    "swordKey": "judges"
+  },
+  {
+    "bookNo": 8,
+    "book": "Rut",
+    "bookEnglish": "Ruth",
+    "bookAbbr": "rut",
+    "chapters": 4,
+    "importedVerses": 85,
+    "swordKey": "ruth"
+  },
+  {
+    "bookNo": 9,
+    "book": "1 Samuel",
+    "bookEnglish": "1 Samuel",
+    "bookAbbr": "1sam",
+    "chapters": 31,
+    "importedVerses": 810,
+    "swordKey": "1sam"
+  },
+  {
+    "bookNo": 10,
+    "book": "2 Samuel",
+    "bookEnglish": "2 Samuel",
+    "bookAbbr": "2sam",
+    "chapters": 24,
+    "importedVerses": 695,
+    "swordKey": "2sam"
+  },
+  {
+    "bookNo": 11,
+    "book": "1 Kongebok",
+    "bookEnglish": "1 Kings",
+    "bookAbbr": "1kong",
+    "chapters": 22,
+    "importedVerses": 816,
+    "swordKey": "1Kgs"
+  },
+  {
+    "bookNo": 12,
+    "book": "2 Kongebok",
+    "bookEnglish": "2 Kings",
+    "bookAbbr": "2kong",
+    "chapters": 25,
+    "importedVerses": 719,
+    "swordKey": "2Kgs"
+  },
+  {
+    "bookNo": 13,
+    "book": "1 Krønikebok",
+    "bookEnglish": "1 Chronicles",
+    "bookAbbr": "1krøn",
+    "chapters": 29,
+    "importedVerses": 942,
+    "swordKey": "1Chr"
+  },
+  {
+    "bookNo": 14,
+    "book": "2 Krønikebok",
+    "bookEnglish": "2 Chronicles",
+    "bookAbbr": "2krøn",
+    "chapters": 36,
+    "importedVerses": 822,
+    "swordKey": "2Chr"
+  },
+  {
+    "bookNo": 15,
+    "book": "Esra",
+    "bookEnglish": "Ezra",
+    "bookAbbr": "esra",
+    "chapters": 10,
+    "importedVerses": 280,
+    "swordKey": "ezra"
+  },
+  {
+    "bookNo": 16,
+    "book": "Nehemja",
+    "bookEnglish": "Nehemiah",
+    "bookAbbr": "neh",
+    "chapters": 13,
+    "importedVerses": 406,
+    "swordKey": "nehemiah"
+  },
+  {
+    "bookNo": 17,
+    "book": "Ester",
+    "bookEnglish": "Esther",
+    "bookAbbr": "est",
+    "chapters": 10,
+    "importedVerses": 167,
+    "swordKey": "esther"
+  },
+  {
+    "bookNo": 18,
+    "book": "Job",
+    "bookEnglish": "Job",
+    "bookAbbr": "job",
+    "chapters": 42,
+    "importedVerses": 1070,
+    "swordKey": "job"
+  },
+  {
+    "bookNo": 19,
+    "book": "Salmene",
+    "bookEnglish": "Psalms",
+    "bookAbbr": "sal",
+    "chapters": 150,
+    "importedVerses": 2461,
+    "swordKey": "psalms"
+  },
+  {
+    "bookNo": 20,
+    "book": "Ordspråkene",
+    "bookEnglish": "Proverbs",
+    "bookAbbr": "ord",
+    "chapters": 31,
+    "importedVerses": 915,
+    "swordKey": "proverbs"
+  },
+  {
+    "bookNo": 21,
+    "book": "Forkynneren",
+    "bookEnglish": "Ecclesiastes",
+    "bookAbbr": "fork",
+    "chapters": 12,
+    "importedVerses": 222,
+    "swordKey": "ecclesiastes"
+  },
+  {
+    "bookNo": 22,
+    "book": "Høysangen",
+    "bookEnglish": "Song of Solomon",
+    "bookAbbr": "høys",
+    "chapters": 8,
+    "importedVerses": 117,
+    "swordKey": "song of solomon"
+  },
+  {
+    "bookNo": 23,
+    "book": "Jesaja",
+    "bookEnglish": "Isaiah",
+    "bookAbbr": "jes",
+    "chapters": 66,
+    "importedVerses": 1292,
+    "swordKey": "isaiah"
+  },
+  {
+    "bookNo": 24,
+    "book": "Jeremia",
+    "bookEnglish": "Jeremiah",
+    "bookAbbr": "jer",
+    "chapters": 52,
+    "importedVerses": 1364,
+    "swordKey": "jeremiah"
+  },
+  {
+    "bookNo": 25,
+    "book": "Klagesangene",
+    "bookEnglish": "Lamentations",
+    "bookAbbr": "klag",
+    "chapters": 5,
+    "importedVerses": 154,
+    "swordKey": "lamentations"
+  },
+  {
+    "bookNo": 26,
+    "book": "Esekiel",
+    "bookEnglish": "Ezekiel",
+    "bookAbbr": "esek",
+    "chapters": 48,
+    "importedVerses": 1273,
+    "swordKey": "ezekiel"
+  },
+  {
+    "bookNo": 27,
+    "book": "Daniel",
+    "bookEnglish": "Daniel",
+    "bookAbbr": "dan",
+    "chapters": 12,
+    "importedVerses": 356,
+    "swordKey": "daniel"
+  },
+  {
+    "bookNo": 28,
+    "book": "Hosea",
+    "bookEnglish": "Hosea",
+    "bookAbbr": "hos",
+    "chapters": 14,
+    "importedVerses": 197,
+    "swordKey": "hosea"
+  },
+  {
+    "bookNo": 29,
+    "book": "Joel",
+    "bookEnglish": "Joel",
+    "bookAbbr": "joel",
+    "chapters": 3,
+    "importedVerses": 73,
+    "swordKey": "joel"
+  },
+  {
+    "bookNo": 30,
+    "book": "Amos",
+    "bookEnglish": "Amos",
+    "bookAbbr": "amos",
+    "chapters": 9,
+    "importedVerses": 146,
+    "swordKey": "amos"
+  },
+  {
+    "bookNo": 31,
+    "book": "Obadja",
+    "bookEnglish": "Obadiah",
+    "bookAbbr": "obad",
+    "chapters": 1,
+    "importedVerses": 21,
+    "swordKey": "obadiah"
+  },
+  {
+    "bookNo": 32,
+    "book": "Jona",
+    "bookEnglish": "Jonah",
+    "bookAbbr": "jona",
+    "chapters": 4,
+    "importedVerses": 48,
+    "swordKey": "jonah"
+  },
+  {
+    "bookNo": 33,
+    "book": "Mika",
+    "bookEnglish": "Micah",
+    "bookAbbr": "mika",
+    "chapters": 7,
+    "importedVerses": 105,
+    "swordKey": "micah"
+  },
+  {
+    "bookNo": 34,
+    "book": "Nahum",
+    "bookEnglish": "Nahum",
+    "bookAbbr": "nah",
+    "chapters": 3,
+    "importedVerses": 47,
+    "swordKey": "nahum"
+  },
+  {
+    "bookNo": 35,
+    "book": "Habakkuk",
+    "bookEnglish": "Habakkuk",
+    "bookAbbr": "hab",
+    "chapters": 3,
+    "importedVerses": 56,
+    "swordKey": "habakkuk"
+  },
+  {
+    "bookNo": 36,
+    "book": "Sefanja",
+    "bookEnglish": "Zephaniah",
+    "bookAbbr": "sef",
+    "chapters": 3,
+    "importedVerses": 53,
+    "swordKey": "zephaniah"
+  },
+  {
+    "bookNo": 37,
+    "book": "Haggai",
+    "bookEnglish": "Haggai",
+    "bookAbbr": "hag",
+    "chapters": 2,
+    "importedVerses": 38,
+    "swordKey": "haggai"
+  },
+  {
+    "bookNo": 38,
+    "book": "Sakarja",
+    "bookEnglish": "Zechariah",
+    "bookAbbr": "sak",
+    "chapters": 14,
+    "importedVerses": 211,
+    "swordKey": "zechariah"
+  },
+  {
+    "bookNo": 39,
+    "book": "Malaki",
+    "bookEnglish": "Malachi",
+    "bookAbbr": "mal",
+    "chapters": 4,
+    "importedVerses": 55,
+    "swordKey": "malachi"
+  },
+  {
+    "bookNo": 40,
+    "book": "Matteus",
+    "bookEnglish": "Matthew",
+    "bookAbbr": "matt",
+    "chapters": 28,
+    "importedVerses": 1071,
+    "swordKey": "matthew"
+  },
+  {
+    "bookNo": 41,
+    "book": "Markus",
+    "bookEnglish": "Mark",
+    "bookAbbr": "mark",
+    "chapters": 16,
+    "importedVerses": 678,
+    "swordKey": "mark"
+  },
+  {
+    "bookNo": 42,
+    "book": "Lukas",
+    "bookEnglish": "Luke",
+    "bookAbbr": "luk",
+    "chapters": 24,
+    "importedVerses": 1151,
+    "swordKey": "luke"
+  },
+  {
+    "bookNo": 43,
+    "book": "Johannes",
+    "bookEnglish": "John",
+    "bookAbbr": "joh",
+    "chapters": 21,
+    "importedVerses": 879,
+    "swordKey": "john"
+  },
+  {
+    "bookNo": 44,
+    "book": "Apostlenes gjerninger",
+    "bookEnglish": "Acts",
+    "bookAbbr": "apg",
+    "chapters": 28,
+    "importedVerses": 1007,
+    "swordKey": "acts"
+  },
+  {
+    "bookNo": 45,
+    "book": "Romerne",
+    "bookEnglish": "Romans",
+    "bookAbbr": "rom",
+    "chapters": 16,
+    "importedVerses": 433,
+    "swordKey": "romans"
+  },
+  {
+    "bookNo": 46,
+    "book": "1 Korinter",
+    "bookEnglish": "1 Corinthians",
+    "bookAbbr": "1kor",
+    "chapters": 16,
+    "importedVerses": 437,
+    "swordKey": "1cor"
+  },
+  {
+    "bookNo": 47,
+    "book": "2 Korinter",
+    "bookEnglish": "2 Corinthians",
+    "bookAbbr": "2kor",
+    "chapters": 13,
+    "importedVerses": 257,
+    "swordKey": "2cor"
+  },
+  {
+    "bookNo": 48,
+    "book": "Galaterne",
+    "bookEnglish": "Galatians",
+    "bookAbbr": "gal",
+    "chapters": 6,
+    "importedVerses": 149,
+    "swordKey": "galatians"
+  },
+  {
+    "bookNo": 49,
+    "book": "Efeserne",
+    "bookEnglish": "Ephesians",
+    "bookAbbr": "ef",
+    "chapters": 6,
+    "importedVerses": 155,
+    "swordKey": "ephesians"
+  },
+  {
+    "bookNo": 50,
+    "book": "Filipperne",
+    "bookEnglish": "Philippians",
+    "bookAbbr": "fil",
+    "chapters": 4,
+    "importedVerses": 104,
+    "swordKey": "philippians"
+  },
+  {
+    "bookNo": 51,
+    "book": "Kolosserne",
+    "bookEnglish": "Colossians",
+    "bookAbbr": "kol",
+    "chapters": 4,
+    "importedVerses": 95,
+    "swordKey": "colossians"
+  },
+  {
+    "bookNo": 52,
+    "book": "1 Tessaloniker",
+    "bookEnglish": "1 Thessalonians",
+    "bookAbbr": "1tess",
+    "chapters": 5,
+    "importedVerses": 89,
+    "swordKey": "1thess"
+  },
+  {
+    "bookNo": 53,
+    "book": "2 Tessaloniker",
+    "bookEnglish": "2 Thessalonians",
+    "bookAbbr": "2tess",
+    "chapters": 3,
+    "importedVerses": 47,
+    "swordKey": "2thess"
+  },
+  {
+    "bookNo": 54,
+    "book": "1 Timoteus",
+    "bookEnglish": "1 Timothy",
+    "bookAbbr": "1tim",
+    "chapters": 6,
+    "importedVerses": 113,
+    "swordKey": "1tim"
+  },
+  {
+    "bookNo": 55,
+    "book": "2 Timoteus",
+    "bookEnglish": "2 Timothy",
+    "bookAbbr": "2tim",
+    "chapters": 4,
+    "importedVerses": 83,
+    "swordKey": "2tim"
+  },
+  {
+    "bookNo": 56,
+    "book": "Titus",
+    "bookEnglish": "Titus",
+    "bookAbbr": "tit",
+    "chapters": 3,
+    "importedVerses": 46,
+    "swordKey": "titus"
+  },
+  {
+    "bookNo": 57,
+    "book": "Filemon",
+    "bookEnglish": "Philemon",
+    "bookAbbr": "filem",
+    "chapters": 1,
+    "importedVerses": 25,
+    "swordKey": "philemon"
+  },
+  {
+    "bookNo": 58,
+    "book": "Hebreerne",
+    "bookEnglish": "Hebrews",
+    "bookAbbr": "heb",
+    "chapters": 13,
+    "importedVerses": 303,
+    "swordKey": "hebrews"
+  },
+  {
+    "bookNo": 59,
+    "book": "Jakob",
+    "bookEnglish": "James",
+    "bookAbbr": "jak",
+    "chapters": 5,
+    "importedVerses": 108,
+    "swordKey": "james"
+  },
+  {
+    "bookNo": 60,
+    "book": "1 Peter",
+    "bookEnglish": "1 Peter",
+    "bookAbbr": "1pet",
+    "chapters": 5,
+    "importedVerses": 105,
+    "swordKey": "1pet"
+  },
+  {
+    "bookNo": 61,
+    "book": "2 Peter",
+    "bookEnglish": "2 Peter",
+    "bookAbbr": "2pet",
+    "chapters": 3,
+    "importedVerses": 61,
+    "swordKey": "2pet"
+  },
+  {
+    "bookNo": 62,
+    "book": "1 Johannes",
+    "bookEnglish": "1 John",
+    "bookAbbr": "1joh",
+    "chapters": 5,
+    "importedVerses": 105,
+    "swordKey": "1john"
+  },
+  {
+    "bookNo": 63,
+    "book": "2 Johannes",
+    "bookEnglish": "2 John",
+    "bookAbbr": "2joh",
+    "chapters": 1,
+    "importedVerses": 13,
+    "swordKey": "2john"
+  },
+  {
+    "bookNo": 64,
+    "book": "3 Johannes",
+    "bookEnglish": "3 John",
+    "bookAbbr": "3joh",
+    "chapters": 1,
+    "importedVerses": 14,
+    "swordKey": "3john"
+  },
+  {
+    "bookNo": 65,
+    "book": "Judas",
+    "bookEnglish": "Jude",
+    "bookAbbr": "jud",
+    "chapters": 1,
+    "importedVerses": 25,
+    "swordKey": "jude"
+  },
+  {
+    "bookNo": 66,
+    "book": "Åpenbaringen",
+    "bookEnglish": "Revelation",
+    "bookAbbr": "åp",
+    "chapters": 22,
+    "importedVerses": 404,
+    "swordKey": "rev"
+  }
+]

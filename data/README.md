@@ -33,3 +33,15 @@ data/normalized/nb-1930-passages.json
 data/index/nb-1930-search-index.json
 data/source-manifest.json
 ```
+
+
+## Import script v2 note
+
+Version v2 fixes SWORD/OSIS keys for:
+
+```txt
+1 Kings      -> 1Kgs
+2 Kings      -> 2Kgs
+1 Chronicles -> 1Chr
+2 Chronicles -> 2Chr
+```

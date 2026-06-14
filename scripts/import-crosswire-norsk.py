@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Import CrossWire SWORD module Norsk / Bibelen på Norsk (1930) to JSON.
+Import CrossWire SWORD module Norsk / Bibelen på Norsk (1930) to JSON.\n\nVersion: v2 - fixed OSIS keys for 1/2 Kings and 1/2 Chronicles.
 
 Expected source file, one of:
   data/Source/NorskUtgave1930.zip
@@ -126,10 +126,10 @@ BOOK_KEY_CANDIDATES = {
     "Ruth": ["ruth", "rut"],
     "1 Samuel": ["1 samuel", "1samuel", "1 sam", "1sam"],
     "2 Samuel": ["2 samuel", "2samuel", "2 sam", "2sam"],
-    "1 Kings": ["1 kings", "1kings", "1 kgs", "1ki", "1kong"],
-    "2 Kings": ["2 kings", "2kings", "2 kgs", "2ki", "2kong"],
-    "1 Chronicles": ["1 chronicles", "1chronicles", "1 chr", "1chron", "1krøn"],
-    "2 Chronicles": ["2 chronicles", "2chronicles", "2 chr", "2chron", "2krøn"],
+    "1 Kings": ["1Kgs", "1 Kings", "1 kings", "1kings", "1 kgs", "1kgs", "1Ki", "1ki", "1kong"],
+    "2 Kings": ["2Kgs", "2 Kings", "2 kings", "2kings", "2 kgs", "2kgs", "2Ki", "2ki", "2kong"],
+    "1 Chronicles": ["1Chr", "1 Chronicles", "1 chronicles", "1chronicles", "1 chr", "1chr", "1chron", "1krøn"],
+    "2 Chronicles": ["2Chr", "2 Chronicles", "2 chronicles", "2chronicles", "2 chr", "2chr", "2chron", "2krøn"],
     "Ezra": ["ezra", "esra"],
     "Nehemiah": ["nehemiah", "neh"],
     "Esther": ["esther", "est"],
@@ -406,8 +406,8 @@ def main():
 
         verses.extend(book_verses)
 
-    if len(verses) < 30000:
-        print(f"WARNING: Only imported {len(verses)} verses. Expected about 31,000.")
+    if len(verses) < 31000:
+        print(f"WARNING: Only imported {len(verses)} verses. Expected about 31,100 for KJV versification.")
 
     passages = build_passages(verses, max_window=3)
     search_index = build_search_index(passages)
