@@ -6,7 +6,7 @@ const indexPath = "data/index/nb-1930-search-index.json";
 if (!fs.existsSync(indexPath)) {
   console.error(`Missing ${indexPath}`);
   console.error("Run first:");
-  console.error("  python scripts/import-crosswire-norsk.py");
+  console.error("  py scripts/import-crosswire-norsk.py");
   process.exit(1);
 }
 
@@ -16,7 +16,9 @@ const queries = [
   "frykt ikke for jeg er med deg",
   "kast all deres sorg",
   "kom til meg alle som strever",
-  "alt virker sammen til gode"
+  "alt virker sammen til gode",
+  "kom til mig alle I som strever",
+  "alle ting tjener dem til gode"
 ];
 
 for (const query of queries) {

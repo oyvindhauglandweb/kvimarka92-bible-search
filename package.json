@@ -1,6 +1,6 @@
 {
   "name": "kvimarka92-bible-search",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
   "type": "module",
   "description": "Norwegian Bible 1930 search index and quote lookup prototype for Kvimarka92.",
