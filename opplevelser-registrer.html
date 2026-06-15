@@ -300,11 +300,66 @@ body.light-mode html:not(.classic-design-root) #status{
   background:rgba(0,0,0,.045) !important;
 }
 
+
+/* Opplevelser v17 login icon */
+.login-corner{
+  position:fixed;
+  top:18px;
+  right:18px;
+  z-index:2147483600;
+}
+.login-corner-button{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-width:44px;
+  height:44px;
+  padding:0 10px;
+  border:0;
+  border-radius:10px;
+  background:rgba(255,255,255,.055);
+  color:var(--opp-text, #eee);
+  text-decoration:none;
+  font-size:18px;
+  font-weight:bold;
+  line-height:1;
+  box-shadow:none;
+  cursor:pointer;
+}
+.login-corner-button:hover{
+  background:rgba(255,255,255,.10);
+}
+.login-corner-initials{
+  font-size:11px;
+  font-weight:800;
+  letter-spacing:.02em;
+}
+body.light-mode .login-corner-button{
+  background:rgba(0,0,0,.06);
+  color:var(--opp-text, #333);
+}
+body.light-mode .login-corner-button:hover{
+  background:rgba(0,0,0,.10);
+}
+@media(max-width:700px){
+  .login-corner{
+    top:8px;
+    right:8px;
+  }
+  .login-corner-button{
+    min-width:40px;
+    height:40px;
+    border-radius:9px;
+  }
+}
+
 </style>
-<!-- version: REGISTER v16 clear-bible-on-new 2026-06-16 -->
+<!-- version: REGISTER v17 login-icon 2026-06-16 -->
 </head>
 <body class="dark-mode">
-<div class="file-version-marker">REGISTER v16 clear-bible-on-new 2026-06-16</div>
+<div class="file-version-marker">REGISTER v17 login-icon 2026-06-16</div>
+
+<div class="login-corner"><a id="loginCornerButton" class="login-corner-button" href="https://api-kvimarka92.carstereogarage.com/login" title="Logg inn / Min bruker" aria-label="Logg inn / Min bruker">👤</a></div>
 
 <main class="wrap">
     <section class="card">
@@ -321,7 +376,7 @@ body.light-mode html:not(.classic-design-root) #status{
           <button type="button" class="top-button" id="opplevelserThemeToggle" onclick="toggleOpplevelserTheme()" title="Bytt lys/mørk visning" aria-label="Bytt lys/mørk visning">☀</button>
           <button type="button" class="top-button design-toggle-button" id="opplevelserDesignToggle" onclick="toggleOpplevelserDesign()" title="Bytt design" aria-label="Bytt design">◫</button></div>
       </div>
-      <p class="sub" id="userLine">Laster ...</p>
+      <p class="sub" id="userLine" style="display:none;"></p>
 
       <form id="experienceForm">
         <div class="grid">
@@ -574,7 +629,8 @@ body.light-mode html:not(.classic-design-root) #status{
         if(!environmentOptions.length){
           setStatus("Miljøvalg mangler: Worker returnerte ingen Baserow-options for Experiences → Environment.", "err");
         }
-        el("userLine").textContent = `Innlogget som ${data.user.name || data.user.email} (${data.user.experienceAccess})`;
+        updateOpplevelserLoginIcon(data.user);
+      el("userLine").textContent = "";
 
         const storedVerse = readSelectedBibleVerseFromStorage();
         if(storedVerse && (storedVerse.reference || storedVerse.text)){
@@ -753,6 +809,54 @@ body.light-mode html:not(.classic-design-root) #status{
   }
 
   clearBibleFieldsOnFreshRegistration();
+})();
+</script>
+
+
+<script>
+(function(){
+  function initialsFromName(nameOrEmail){
+    const text = String(nameOrEmail || "").trim();
+    if(!text){
+      return "👤";
+    }
+
+    const name = text.includes("@") ? text.split("@")[0] : text;
+    const parts = name
+      .replace(/[._-]+/g, " ")
+      .split(/\s+/)
+      .map(part => part.trim())
+      .filter(Boolean);
+
+    if(parts.length >= 2){
+      return (parts[0][0] + parts[1][0]).toUpperCase();
+    }
+
+    if(parts.length === 1){
+      return parts[0].slice(0, 2).toUpperCase();
+    }
+
+    return "👤";
+  }
+
+  window.updateOpplevelserLoginIcon = function(user){
+    const btn = document.getElementById("loginCornerButton");
+    if(!btn){
+      return;
+    }
+
+    const name = String((user && (user.name || user.email)) || "").trim();
+
+    if(name){
+      btn.innerHTML = '<span class="login-corner-initials">' + initialsFromName(name) + '</span>';
+      btn.title = "Innlogget som " + name + " – klikk for innlogging/bruker";
+      btn.setAttribute("aria-label", btn.title);
+    }else{
+      btn.textContent = "👤";
+      btn.title = "Logg inn";
+      btn.setAttribute("aria-label", "Logg inn");
+    }
+  };
 })();
 </script>
 
