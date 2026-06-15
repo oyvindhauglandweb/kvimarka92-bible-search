@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Bibelsøk 1930</title>
-  <!-- version: bible-search-select-v11-restore-selected-2026-06-15 -->
+  <!-- version: BIBLE v13 visible-version 2026-06-15 -->
   <style>
     :root{
       color-scheme:dark;
@@ -57,9 +57,73 @@
       .actions{display:grid;grid-template-columns:1fr;}
       .action-button{width:100%;}
     }
-  </style>
+  
+    .selected-header-row{
+      display:grid;
+      grid-template-columns:minmax(0, 1fr) 150px;
+      gap:16px;
+      align-items:start;
+    }
+
+    .selected-range-controls{
+      justify-self:end;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      width:150px;
+    }
+
+    .selected-range-row{
+      display:grid;
+      grid-template-columns:32px 44px 32px;
+      gap:5px;
+      align-items:center;
+      justify-content:end;
+    }
+
+    .selected-range-row .range-label{
+      grid-column:1 / -1;
+      color:var(--muted);
+      font-size:12px;
+      text-align:center;
+      white-space:nowrap;
+      line-height:1.1;
+    }
+
+    @media(max-width:700px){
+      .selected-header-row{
+        grid-template-columns:1fr;
+      }
+      .selected-range-controls{
+        justify-self:start;
+        width:auto;
+        flex-direction:row;
+        flex-wrap:wrap;
+      }
+    }
+
+  
+/* Temporary visible file version marker */
+.file-version-marker{
+  position:fixed;
+  top:4px;
+  left:4px;
+  z-index:2147483647;
+  padding:4px 7px;
+  border-radius:6px;
+  background:#ffcc00;
+  color:#000;
+  border:1px solid rgba(0,0,0,.45);
+  font:700 11px/1.2 Arial,sans-serif;
+  box-shadow:0 2px 8px rgba(0,0,0,.35);
+  pointer-events:none;
+}
+
+</style>
 </head>
 <body>
+<div class="file-version-marker">BIBLE v13 visible-version 2026-06-15</div>
+
   <div class="wrap">
     <h1>Bibelsøk 1930</h1>
     <div class="sub">Finn bibelsted fra sitatfragment</div>
@@ -67,8 +131,29 @@
       <input id="query" type="text" placeholder="Skriv deler av et bibelsitat..." autocomplete="off">
     </div>
     <div class="card selected-card" id="selectedCard">
-      <div class="selected-label">Valgt bibelsted</div>
-      <div class="selected-reference" id="selectedReference"></div>
+      <div class="selected-header-row">
+        <div>
+          <div class="selected-label">Valgt bibelsted</div>
+          <div class="selected-reference" id="selectedReference"></div>
+        </div>
+
+        <div class="selected-range-controls" id="selectedRangeControls" style="display:none;" aria-label="Utvid valgt bibelsted">
+          <div class="selected-range-row">
+            <div class="range-label">Fra vers</div>
+            <button class="range-button" type="button" onclick="changeSelectedRange(event, 'from', -1)">−</button>
+            <div class="range-value" id="selectedFromVerse">0</div>
+            <button class="range-button" type="button" onclick="changeSelectedRange(event, 'from', 1)">+</button>
+          </div>
+
+          <div class="selected-range-row">
+            <div class="range-label">Til vers</div>
+            <button class="range-button" type="button" onclick="changeSelectedRange(event, 'to', -1)">−</button>
+            <div class="range-value" id="selectedToVerse">0</div>
+            <button class="range-button" type="button" onclick="changeSelectedRange(event, 'to', 1)">+</button>
+          </div>
+        </div>
+      </div>
+
       <div class="selected-text" id="selectedText"></div>
       <div class="actions">
         <button class="action-button" type="button" onclick="copySelectedReference()">Kopier referanse</button>
@@ -97,6 +182,9 @@ const resultsBox = document.getElementById("results");
 const selectedCard = document.getElementById("selectedCard");
 const selectedReference = document.getElementById("selectedReference");
 const selectedText = document.getElementById("selectedText");
+const selectedRangeControls = document.getElementById("selectedRangeControls");
+const selectedFromVerse = document.getElementById("selectedFromVerse");
+const selectedToVerse = document.getElementById("selectedToVerse");
 const copyStatus = document.getElementById("copyStatus");
 
 const SELECTED_VERSE_KEY = "kvimarka92SelectedBibleVerse";
@@ -136,6 +224,8 @@ function setSelectedBibleVersePayload(payload, message){
 
   selectedReference.textContent = selectedBibleVerse.reference;
   selectedText.textContent = selectedBibleVerse.text;
+  selectedRange = rangeFromPayload(selectedBibleVerse);
+  updateSelectedRangeControls();
   selectedCard.classList.add("visible");
   copyStatus.textContent = message || "";
 
@@ -256,6 +346,105 @@ function getPayload(result){
   };
 }
 
+let selectedRange = null;
+
+function rangeFromPayload(payload){
+  const parsed = parseReference(payload?.reference);
+
+  if(!parsed){
+    return null;
+  }
+
+  return {
+    book:parsed.book,
+    chapter:parsed.chapter,
+    from:parsed.from,
+    to:parsed.to
+  };
+}
+
+function getTextForExplicitRange(range, fallbackText){
+  if(!range){
+    return String(fallbackText || "").trim();
+  }
+
+  const rows = getRowsForRange(range);
+
+  if(!rows.length){
+    return String(fallbackText || "").trim();
+  }
+
+  if(rows.length === 1){
+    return rows[0].text;
+  }
+
+  return rows.map(row => `${row.verse} ${row.text}`).join("\n");
+}
+
+function updateSelectedRangeControls(){
+  if(!selectedRange){
+    selectedRangeControls.style.display = "none";
+    return;
+  }
+
+  selectedRangeControls.style.display = "";
+  selectedFromVerse.textContent = String(selectedRange.from);
+  selectedToVerse.textContent = String(selectedRange.to);
+}
+
+function updateSelectedPayloadFromRange(){
+  if(!selectedBibleVerse || !selectedRange){
+    updateSelectedRangeControls();
+    return;
+  }
+
+  selectedBibleVerse.reference = makeReference(
+    selectedRange.book,
+    selectedRange.chapter,
+    selectedRange.from,
+    selectedRange.to
+  );
+
+  selectedBibleVerse.text = getTextForExplicitRange(selectedRange, selectedBibleVerse.text);
+  selectedBibleVerse.selectedAt = new Date().toISOString();
+
+  selectedReference.textContent = selectedBibleVerse.reference;
+  selectedText.textContent = selectedBibleVerse.text;
+  updateSelectedRangeControls();
+
+  localStorage.setItem(SELECTED_VERSE_KEY, JSON.stringify(selectedBibleVerse));
+  sessionStorage.setItem(SELECTED_VERSE_KEY, JSON.stringify(selectedBibleVerse));
+}
+
+window.changeSelectedRange = function(event, side, delta){
+  event.preventDefault();
+  event.stopPropagation();
+
+  if(!selectedRange){
+    selectedRange = rangeFromPayload(selectedBibleVerse);
+  }
+
+  if(!selectedRange){
+    return;
+  }
+
+  const limits = getChapterLimits(selectedRange.book, selectedRange.chapter);
+
+  if(side === "from"){
+    selectedRange.from = Math.max(limits.min, Math.min(limits.max, Number(selectedRange.from) + Number(delta)));
+    if(selectedRange.from > selectedRange.to){
+      selectedRange.to = selectedRange.from;
+    }
+  }else{
+    selectedRange.to = Math.max(limits.min, Math.min(limits.max, Number(selectedRange.to) + Number(delta)));
+    if(selectedRange.to < selectedRange.from){
+      selectedRange.from = selectedRange.to;
+    }
+  }
+
+  updateSelectedPayloadFromRange();
+};
+
 function selectedFullText(){
   if(!selectedBibleVerse) return "";
   return `${selectedBibleVerse.reference}\n${selectedBibleVerse.text}`;
@@ -266,8 +455,10 @@ function updateSelected(index){
   if(!result) return;
   selectedIndex = index;
   selectedBibleVerse = getPayload(result);
+  selectedRange = { ...getRange(result) };
   selectedReference.textContent = selectedBibleVerse.reference;
   selectedText.textContent = selectedBibleVerse.text;
+  updateSelectedRangeControls();
   selectedCard.classList.add("visible");
   copyStatus.textContent = "";
   localStorage.setItem("kvimarka92SelectedBibleVerse", JSON.stringify(selectedBibleVerse));
@@ -331,7 +522,9 @@ window.changeRange = function(event, index, side, delta){
     if(range.to < range.from) range.from = range.to;
   }
   rangeByReference.set(rangeKey(result), range);
-  if(selectedIndex === index) updateSelected(index);
+  if(selectedIndex === index){
+    updateSelected(index);
+  }
   render();
 };
 

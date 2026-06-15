@@ -71,14 +71,147 @@
       color:#ffffff;
     }
 
+
+/* Opplevelser standard header/nav - aligned with Kvimarka92 app pages */
+.header{
+  text-align:center;
+  margin-bottom:20px;
+}
+.site-title{
+  margin:0;
+  font-size:30px;
+  font-weight:800;
+}
+.subtitle{
+  margin-top:8px;
+  color:var(--muted);
+  font-size:16px;
+}
+.top-buttons{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  gap:10px;
+  margin:14px 0 0;
+  flex-wrap:wrap;
+}
+.top-button{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:44px;
+  height:44px;
+  padding:0;
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:8px;
+  color:var(--text);
+  text-decoration:none;
+  font-size:24px;
+  font-weight:bold;
+  line-height:1;
+  cursor:pointer;
+}
+.top-button:hover{
+  background:rgba(127,127,127,.16);
+}
+.top-button.app-switch-button{
+  font-size:19px;
+}
+.font-size-button{
+  font-size:18px;
+}
+.design-toggle-button{
+  font-size:21px;
+}
+
+html.opplevelser-font-small{
+  --opplevelser-font-scale:1;
+}
+html.opplevelser-font-medium{
+  --opplevelser-font-scale:1.12;
+}
+html.opplevelser-font-large{
+  --opplevelser-font-scale:1.25;
+}
+body{
+  font-size:calc(16px * var(--opplevelser-font-scale, 1));
+}
+input, textarea, select, button{
+  font-size:inherit;
+}
+body.light-mode{
+  color-scheme:light;
+  --bg:#f4f5f7;
+  --card:#ffffff;
+  --text:#172033;
+  --muted:#5d6678;
+  --border:#d8dde8;
+  --accent:#2563eb;
+  --danger:#b42318;
+  --ok:#067647;
+  --soft:#eef2ff;
+  --input-bg:#ffffff;
+}
+body.dark-mode{
+  color-scheme:dark;
+}
+
+@media(max-width:700px){
+  .header{
+    margin-bottom:12px;
+  }
+  .site-title{
+    font-size:28px;
+  }
+  .top-buttons{
+    gap:8px;
+  }
+  .top-button{
+    width:40px;
+    height:40px;
+    font-size:22px;
+  }
+}
+
+
+/* Temporary visible file version marker */
+.file-version-marker{
+  position:fixed;
+  top:4px;
+  left:4px;
+  z-index:2147483647;
+  padding:4px 7px;
+  border-radius:6px;
+  background:#ffcc00;
+  color:#000;
+  border:1px solid rgba(0,0,0,.45);
+  font:700 11px/1.2 Arial,sans-serif;
+  box-shadow:0 2px 8px rgba(0,0,0,.35);
+  pointer-events:none;
+}
+
 </style>
-<!-- version: opplevelser-registrer-v11-heading-first-2026-06-15 -->
+<!-- version: REGISTER v13 visible-version 2026-06-15 -->
 </head>
 <body>
+<div class="file-version-marker">REGISTER v13 visible-version 2026-06-15</div>
+
   <main class="wrap">
     <section class="card">
-      <h1>Registrer opplevelse</h1>
-      <p class="sub" id="userLine">Laster bruker og forslag ...</p>
+      <div class="header">
+        <h1 class="site-title">Opplevelser</h1>
+        <div class="subtitle">Registrer ny</div>
+        <div class="top-buttons">
+          <a class="top-button" href="https://kvimarka92.carstereogarage.com/index.html?restoreMenu=1" onclick="goOpplevelserBack(event)" title="Tilbake til forrige side" aria-label="Tilbake til forrige side">←</a>
+          <a class="top-button app-switch-button" href="opplevelser.html" title="Søk i eksisterende" aria-label="Søk i eksisterende">⌕</a>
+          <a class="top-button" href="https://kvimarka92.carstereogarage.com/index.html" title="Hovedmeny" aria-label="Hovedmeny">⌂</a>
+          <a class="top-button" href="https://kvimarka92.carstereogarage.com/help.html?case=Opplevelser" title="Hjelp" aria-label="Hjelp">?</a>
+          <button type="button" class="top-button font-size-button" id="opplevelserFontToggle" onclick="toggleOpplevelserFontSize()" title="Endre tekststørrelse" aria-label="Endre tekststørrelse">A</button>
+          <button type="button" class="top-button design-toggle-button" id="opplevelserThemeToggle" onclick="toggleOpplevelserTheme()" title="Bytt visning" aria-label="Bytt visning">◫</button>
+        </div>
+      </div>
+      <p class="sub" id="userLine">Laster ...</p>
 
       <form id="experienceForm">
         <div class="grid">
@@ -141,7 +274,7 @@
         <div class="buttons">
           <button type="submit" id="saveBtn">Lagre opplevelse</button>
           <button type="button" class="secondary" id="resetBtn">Tøm skjema</button>
-          <button type="button" class="secondary" onclick="window.location.href='opplevelser.html'">Søk i opplevelser</button>
+
         </div>
       </form>
 
