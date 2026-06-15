@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Bibelsøk 1930</title>
-  <!-- version: bible-search-select-v9-expanded-result-text-2026-06-15 -->
+  <!-- version: bible-search-select-v10-full-single-verse-text-2026-06-15 -->
   <style>
     :root{
       color-scheme:dark;
@@ -190,14 +190,10 @@ function getTextForRange(result){
 }
 
 function getResultDisplayText(result){
-  const range = getRange(result);
-  const base = getBaseRange(result);
-  const expanded =
-    Number(range.from) !== Number(base.from) ||
-    Number(range.to) !== Number(base.to);
+  const fullText = getTextForRange(result);
 
-  if(expanded){
-    return getTextForRange(result);
+  if(fullText){
+    return fullText;
   }
 
   return String(result?.snippet || result?.verse?.text || result?.text || "").trim();
