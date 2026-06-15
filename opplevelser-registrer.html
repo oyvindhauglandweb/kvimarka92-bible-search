@@ -40,8 +40,33 @@
     .bible-card{ border:1px dashed var(--border); border-radius:12px; padding:12px; color:var(--muted); }
     .bible-card strong{ color:var(--text); }
     .small{ font-size:.92rem; color:var(--muted); }
-  </style>
-<!-- version: opplevelser-registrer-v5-environment-options-api-2026-06-15 -->
+  
+    .field select{
+      width:100%;
+      min-height:42px;
+      padding:0 12px;
+      border:1px solid var(--border);
+      border-radius:9px;
+      background:var(--input-bg);
+      color:var(--text);
+      font-size:15px;
+      font-family:Arial,sans-serif;
+      box-sizing:border-box;
+      outline:none;
+    }
+
+    .field select:focus{
+      border-color:var(--accent);
+      box-shadow:0 0 0 2px rgba(125,185,255,.20);
+    }
+
+    .field select option{
+      background:#242424;
+      color:#ffffff;
+    }
+
+</style>
+<!-- version: opplevelser-registrer-v6-environment-options-strict-2026-06-15 -->
 </head>
 <body>
   <main class="wrap">
@@ -63,7 +88,7 @@
           <div>
             <label for="environment">Miljø</label>
             <select id="environment" name="environment">
-              <option value="">Velg miljø</option>
+              <option value="">Laster miljøvalg ...</option>
             </select>
           </div>
 
@@ -164,15 +189,10 @@
       });
     }
 
-    function fillSelect(id, items, defaults){
+    function fillSelect(id, items){
       const select = el(id);
       const currentValue = select.value;
       const names = [];
-
-      (defaults || []).forEach(name => {
-        const text = String(name || "").trim();
-        if(text && !names.includes(text)) names.push(text);
-      });
 
       (items || []).forEach(item => {
         const text = String((item && (item.name || item.environmentName || item.value)) || item || "").trim();
@@ -180,9 +200,10 @@
       });
 
       select.innerHTML = "";
+
       const emptyOption = document.createElement("option");
       emptyOption.value = "";
-      emptyOption.textContent = "Velg miljø";
+      emptyOption.textContent = names.length ? "Velg miljø" : "Ingen miljøvalg funnet";
       select.appendChild(emptyOption);
 
       names.forEach(name => {
@@ -191,6 +212,8 @@
         option.textContent = name;
         select.appendChild(option);
       });
+
+      select.disabled = names.length === 0;
 
       if(currentValue && names.includes(currentValue)){
         select.value = currentValue;
@@ -280,7 +303,12 @@
         const data = await apiFetch("/experience-options", { method:"GET" });
         initDate(data.today);
         fillDatalist("placesList", data.places || []);
-        fillSelect("environment", data.environmentOptions || data.environments || [], ["Hjemme", "Bilen", "Naturen", "Møte"]);
+        const environmentOptions = data.environmentOptions || [];
+        fillSelect("environment", environmentOptions);
+
+        if(!environmentOptions.length){
+          setStatus("Miljøvalg mangler: Worker returnerte ingen Baserow-options for Experiences → Environment.", "err");
+        }
         el("userLine").textContent = `Innlogget som ${data.user.name || data.user.email} (${data.user.experienceAccess})`;
 
         const storedVerse = readSelectedBibleVerseFromStorage();
