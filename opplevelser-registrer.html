@@ -353,11 +353,72 @@ body.light-mode .login-corner-button:hover{
   }
 }
 
+
+/* Opplevelser v18 speech-to-text */
+.voice-field-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  margin-bottom:6px;
+}
+.voice-field-header label{
+  margin:0 !important;
+}
+.mic-button{
+  display:none;
+  align-items:center;
+  justify-content:center;
+  width:36px;
+  height:32px;
+  min-height:32px;
+  padding:0;
+  border:0;
+  border-radius:999px;
+  background:rgba(255,255,255,.07);
+  color:var(--opp-text, #eee);
+  font-size:17px;
+  line-height:1;
+  cursor:pointer;
+}
+.mic-button:hover{
+  background:rgba(255,255,255,.13);
+}
+.mic-button.visible{
+  display:inline-flex;
+}
+.mic-button.listening{
+  background:#c2410c !important;
+  color:#fff !important;
+  animation:oppMicPulse 1s infinite;
+}
+@keyframes oppMicPulse{
+  0%{box-shadow:0 0 0 0 rgba(194,65,12,.55);}
+  70%{box-shadow:0 0 0 8px rgba(194,65,12,0);}
+  100%{box-shadow:0 0 0 0 rgba(194,65,12,0);}
+}
+.voice-status{
+  display:none;
+  color:var(--opp-muted, #bbb);
+  font-size:13px;
+  margin:4px 0 8px;
+}
+.voice-status.visible{
+  display:block;
+}
+body.light-mode .mic-button{
+  background:rgba(0,0,0,.07);
+  color:var(--opp-text, #333);
+}
+body.light-mode .mic-button:hover{
+  background:rgba(0,0,0,.13);
+}
+
 </style>
-<!-- version: REGISTER v17 login-icon 2026-06-16 -->
+<!-- version: REGISTER v18 speech-to-text 2026-06-16 -->
 </head>
 <body class="dark-mode">
-<div class="file-version-marker">REGISTER v17 login-icon 2026-06-16</div>
+<div class="file-version-marker">REGISTER v18 speech-to-text 2026-06-16</div>
 
 <div class="login-corner"><a id="loginCornerButton" class="login-corner-button" href="https://api-kvimarka92.carstereogarage.com/login" title="Logg inn / Min bruker" aria-label="Logg inn / Min bruker">👤</a></div>
 
@@ -401,13 +462,19 @@ body.light-mode .login-corner-button:hover{
           </div>
 
           <div class="full">
+            <div class="voice-field-header">
             <label for="occasion">Foranledning</label>
-            <textarea id="occasion" name="occasion"></textarea>
+            <button type="button" class="mic-button" data-dictate-target="occasion" title="Les inn tekst" aria-label="Les inn tekst">🎙</button>
+          </div>
+          <textarea id="occasion" name="occasion"></textarea>
           </div>
 
           <div class="full">
+            <div class="voice-field-header">
             <label for="experience">Opplevelse</label>
-            <textarea id="experience" name="experience"></textarea>
+            <button type="button" class="mic-button" data-dictate-target="experience" title="Les inn tekst" aria-label="Les inn tekst">🎙</button>
+          </div>
+          <textarea id="experience" name="experience"></textarea>
           </div>
 
           <div class="full">
@@ -426,13 +493,19 @@ body.light-mode .login-corner-button:hover{
           </div>
 
           <div class="full">
+            <div class="voice-field-header">
             <label for="consequence">Konsekvens</label>
-            <textarea id="consequence" name="consequence"></textarea>
+            <button type="button" class="mic-button" data-dictate-target="consequence" title="Les inn tekst" aria-label="Les inn tekst">🎙</button>
+          </div>
+          <textarea id="consequence" name="consequence"></textarea>
           </div>
 
           <div class="full">
+            <div class="voice-field-header">
             <label for="note">Notat</label>
-            <textarea id="note" name="note"></textarea>
+            <button type="button" class="mic-button" data-dictate-target="note" title="Les inn tekst" aria-label="Les inn tekst">🎙</button>
+          </div>
+          <textarea id="note" name="note"></textarea>
           </div>
         </div>
 
@@ -857,6 +930,179 @@ body.light-mode .login-corner-button:hover{
       btn.setAttribute("aria-label", "Logg inn");
     }
   };
+})();
+</script>
+
+
+<script>
+(function(){
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  let activeRecognition = null;
+  let activeButton = null;
+  let activeTextarea = null;
+  let baseText = "";
+
+  function setVoiceStatus(text){
+    let status = document.getElementById("voiceStatus");
+
+    if(!status){
+      status = document.createElement("div");
+      status.id = "voiceStatus";
+      status.className = "voice-status";
+      const firstMic = document.querySelector(".mic-button");
+      if(firstMic && firstMic.closest(".voice-field-wrap")){
+        firstMic.closest(".voice-field-wrap").appendChild(status);
+      }else{
+        document.body.appendChild(status);
+      }
+    }
+
+    status.textContent = text || "";
+    status.classList.toggle("visible", !!text);
+  }
+
+  function stopActiveRecognition(){
+    if(activeRecognition){
+      try{ activeRecognition.stop(); }catch(error){}
+    }
+
+    if(activeButton){
+      activeButton.classList.remove("listening");
+      activeButton.title = "Les inn tekst";
+      activeButton.setAttribute("aria-label", "Les inn tekst");
+    }
+
+    activeRecognition = null;
+    activeButton = null;
+    activeTextarea = null;
+    baseText = "";
+    setVoiceStatus("");
+  }
+
+  function appendTranscript(textarea, originalText, transcript){
+    const spoken = String(transcript || "").trim();
+
+    if(!spoken){
+      return;
+    }
+
+    const before = String(originalText || "").trim();
+
+    if(before){
+      textarea.value = before + (/[.!?…]$/.test(before) ? " " : ". ") + spoken;
+    }else{
+      textarea.value = spoken;
+    }
+
+    textarea.dispatchEvent(new Event("input", { bubbles:true }));
+    textarea.dispatchEvent(new Event("change", { bubbles:true }));
+  }
+
+  function startDictation(button, textareaId){
+    const textarea = document.getElementById(textareaId);
+
+    if(!textarea){
+      alert("Fant ikke tekstfeltet.");
+      return;
+    }
+
+    if(!SpeechRecognition){
+      alert("Talegjenkjenning støttes ikke i denne nettleseren.");
+      return;
+    }
+
+    if(activeRecognition && activeButton === button){
+      stopActiveRecognition();
+      return;
+    }
+
+    stopActiveRecognition();
+
+    const recognition = new SpeechRecognition();
+    recognition.lang = "nb-NO";
+    recognition.interimResults = true;
+    recognition.continuous = true;
+
+    activeRecognition = recognition;
+    activeButton = button;
+    activeTextarea = textarea;
+    baseText = textarea.value;
+
+    button.classList.add("listening");
+    button.title = "Stopp innlesing";
+    button.setAttribute("aria-label", "Stopp innlesing");
+    setVoiceStatus("Lytter ... trykk mikrofonen igjen for å stoppe.");
+
+    let finalTranscript = "";
+
+    recognition.onresult = event => {
+      let interim = "";
+
+      for(let index = event.resultIndex; index < event.results.length; index += 1){
+        const result = event.results[index];
+        const transcript = result[0] && result[0].transcript ? result[0].transcript : "";
+
+        if(result.isFinal){
+          finalTranscript += transcript + " ";
+        }else{
+          interim += transcript;
+        }
+      }
+
+      const preview = (finalTranscript + " " + interim).trim();
+
+      if(preview){
+        appendTranscript(textarea, baseText, preview);
+      }
+    };
+
+    recognition.onerror = event => {
+      setVoiceStatus("Mikrofonfeil: " + (event.error || "ukjent feil"));
+      window.setTimeout(stopActiveRecognition, 1200);
+    };
+
+    recognition.onend = () => {
+      if(activeRecognition === recognition){
+        stopActiveRecognition();
+      }
+    };
+
+    try{
+      recognition.start();
+    }catch(error){
+      setVoiceStatus("Kunne ikke starte mikrofon: " + error.message);
+      stopActiveRecognition();
+    }
+  }
+
+  function initMicButtons(){
+    const buttons = document.querySelectorAll("[data-dictate-target]");
+
+    buttons.forEach(button => {
+      if(SpeechRecognition){
+        button.classList.add("visible");
+      }else{
+        button.classList.remove("visible");
+      }
+
+      if(button.dataset.dictateReady === "1"){
+        return;
+      }
+
+      button.dataset.dictateReady = "1";
+      button.addEventListener("click", () => {
+        startDictation(button, button.dataset.dictateTarget);
+      });
+    });
+  }
+
+  window.initOpplevelserMicButtons = initMicButtons;
+
+  if(document.readyState === "loading"){
+    document.addEventListener("DOMContentLoaded", initMicButtons);
+  }else{
+    initMicButtons();
+  }
 })();
 </script>
 
