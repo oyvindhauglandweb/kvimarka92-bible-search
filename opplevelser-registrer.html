@@ -28,7 +28,7 @@
     .grid{ display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px; }
     .full{ grid-column:1 / -1; }
     label{ display:block; font-weight:650; margin:0 0 6px; }
-    input, textarea{ width:100%; border:1px solid var(--border); border-radius:10px; padding:10px 12px; font:inherit; background:transparent; color:var(--text); }
+    input, textarea, select{ width:100%; min-height:44px; border:1px solid var(--border); border-radius:10px; padding:10px 12px; font:inherit; background:transparent; color:var(--text); box-sizing:border-box; }
     textarea{ min-height:110px; resize:vertical; }
     .buttons{ display:flex; flex-wrap:wrap; gap:10px; margin-top:16px; }
     button{ border:0; border-radius:999px; padding:10px 14px; font-weight:700; cursor:pointer; background:var(--accent); color:white; }
@@ -41,40 +41,38 @@
     .bible-card strong{ color:var(--text); }
     .small{ font-size:.92rem; color:var(--muted); }
 
-    .field select{
+    select{
       display:block;
       width:100%;
       min-height:44px;
-      padding:0 36px 0 12px;
+      padding:0 38px 0 12px;
       border:1px solid var(--border);
       border-radius:10px;
-      background-color:var(--input-bg);
+      background:var(--card);
       color:var(--text);
-      font-size:15px;
-      font-family:Arial,sans-serif;
+      font:inherit;
       line-height:44px;
       box-sizing:border-box;
       outline:none;
-      appearance:auto;
     }
 
-    .field select:focus{
+    select:focus{
       border-color:var(--accent);
-      box-shadow:0 0 0 2px rgba(125,185,255,.20);
+      box-shadow:0 0 0 2px rgba(122,162,255,.22);
     }
 
-    .field select:disabled{
+    select:disabled{
       opacity:.65;
       cursor:not-allowed;
     }
 
-    .field select option{
+    select option{
       background:#242424;
       color:#ffffff;
     }
 
 </style>
-<!-- version: opplevelser-registrer-v7-token-dropdown-layout-2026-06-15 -->
+<!-- version: opplevelser-registrer-v8-dropdown-layout-fix-2026-06-15 -->
 </head>
 <body>
   <main class="wrap">
