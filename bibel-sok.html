@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Bibelsøk 1930</title>
+  <title>Bibelsøk 1930 v3</title>
   <!-- version: bible-search-select-v2-2026-06-14 -->
   <style>
     :root{
@@ -231,6 +231,13 @@ window.useSelectedBibleVerse = function(){
   }
 
   copyStatus.textContent = "Valgt bibelsted er lagret for videre bruk.";
+
+  // Når siden er åpnet fra Opplevelser, lukk søkevinduet etter valg.
+  if(window.opener && !window.opener.closed){
+    setTimeout(() => {
+      try{ window.close(); }catch(error){}
+    }, 150);
+  }
 };
 
 window.selectBibleResult = function(index){
