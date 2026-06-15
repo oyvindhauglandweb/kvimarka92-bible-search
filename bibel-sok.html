@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Bibelsøk 1930 v3</title>
-  <!-- version: bible-search-select-v2-2026-06-14 -->
+  <title>Bibelsøk 1930</title>
+  <!-- version: bible-search-select-v5-verse-counters-2026-06-15 -->
   <style>
     :root{
       color-scheme:dark;
@@ -106,8 +106,89 @@
       .actions{display:grid;grid-template-columns:1fr;}
       .action-button{width:100%;}
     }
+  
+    .result-inner{
+      display:grid;
+      grid-template-columns:1fr auto;
+      gap:12px;
+      align-items:start;
+      width:100%;
+    }
+    .result-main{
+      min-width:0;
+    }
+    .verse-counters{
+      display:flex;
+      flex-direction:column;
+      gap:7px;
+      align-items:flex-end;
+      min-width:128px;
+    }
+    .counter-row{
+      display:grid;
+      grid-template-columns:auto 34px auto;
+      gap:5px;
+      align-items:center;
+    }
+    .counter-label{
+      grid-column:1 / -1;
+      color:var(--muted);
+      font-size:12px;
+      text-align:center;
+      line-height:1.1;
+      margin-bottom:1px;
+    }
+    .counter-button{
+      width:30px;
+      height:28px;
+      border:1px solid var(--border);
+      border-radius:7px;
+      background:var(--field);
+      color:var(--text);
+      font-weight:bold;
+      cursor:pointer;
+      line-height:1;
+    }
+    .counter-button:hover{
+      background:#333;
+    }
+    .counter-value{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      min-width:34px;
+      height:28px;
+      border:1px solid var(--border);
+      border-radius:7px;
+      background:rgba(255,255,255,.045);
+      color:var(--text);
+      font-weight:bold;
+      font-size:14px;
+    }
+    .expanded-reference-note{
+      color:var(--muted);
+      font-size:12px;
+      margin-top:4px;
+    }
+    @media(max-width:700px){
+      .result-inner{
+        grid-template-columns:1fr;
+      }
+      .verse-counters{
+        flex-direction:row;
+        align-items:center;
+        justify-content:flex-start;
+        min-width:0;
+      }
+      .counter-row{
+        grid-template-columns:auto 34px auto;
+      }
+      .counter-label{
+        text-align:left;
+      }
+    }
+
   </style>
-<!-- version: bible-search-select-v4-root-close-2026-06-15 -->
 </head>
 <body>
   <div class="wrap">
@@ -141,8 +222,11 @@
 import { searchBibleVerses } from "./src/search.js";
 
 let passages = [];
+let verses = [];
+let verseByKey = new Map();
 let currentResults = [];
 let selectedBibleVerse = null;
+let resultExpansions = new Map();
 
 const input = document.getElementById("query");
 const resultsBox = document.getElementById("results");
@@ -160,14 +244,161 @@ function esc(value){
     .replaceAll("'","&#039;");
 }
 
+function cleanInt(value, fallback = 0){
+  const number = Number(value);
+  return Number.isFinite(number) ? number : fallback;
+}
+
 function getVerseText(result){
   return String(result?.verse?.text || result?.text || "").trim();
 }
 
-function getSelectedPayload(result){
+function verseKey(bookNo, chapter, verse){
+  return `${cleanInt(bookNo)}:${cleanInt(chapter)}:${cleanInt(verse)}`;
+}
+
+function getBookLabelFromReference(reference){
+  const text = String(reference || "").trim();
+  const match = text.match(/^(.+?)\s+\d+\s*,/);
+  return match ? match[1] : "";
+}
+
+function normalizeVerseRow(row){
+  const verseFrom = cleanInt(row.verseFrom || row.verse || row.verseNo);
+  const verseTo = cleanInt(row.verseTo || row.verse || row.verseNo || verseFrom);
   return {
-    reference:String(result?.reference || "").trim(),
-    text:getVerseText(result),
+    ...row,
+    bookNo:cleanInt(row.bookNo || row.book_no || row.bookNumber || row.book),
+    chapter:cleanInt(row.chapter),
+    verse:verseFrom,
+    verseFrom,
+    verseTo,
+    text:String(row.text || "").trim(),
+    reference:String(row.reference || "").trim()
+  };
+}
+
+function buildVerseLookup(){
+  verseByKey = new Map();
+
+  verses.forEach(row => {
+    const verse = normalizeVerseRow(row);
+    if(verse.bookNo && verse.chapter && verse.verse){
+      verseByKey.set(verseKey(verse.bookNo, verse.chapter, verse.verse), verse);
+    }
+  });
+}
+
+function getBaseRange(result){
+  const verse = normalizeVerseRow(result?.verse || {});
+  const from = cleanInt(verse.verseFrom || verse.verse);
+  const to = cleanInt(verse.verseTo || verse.verse || from);
+
+  return {
+    bookNo:verse.bookNo,
+    chapter:verse.chapter,
+    from,
+    to:to || from,
+    bookLabel:getBookLabelFromReference(result?.reference || verse.reference)
+  };
+}
+
+function getExpansion(index){
+  return resultExpansions.get(index) || { before:0, after:0 };
+}
+
+function getExpandedRange(result, index){
+  const base = getBaseRange(result);
+  const expansion = getExpansion(index);
+
+  if(!base.bookNo || !base.chapter || !base.from){
+    return {
+      ...base,
+      expandedFrom:base.from,
+      expandedTo:base.to
+    };
+  }
+
+  let expandedFrom = base.from;
+  let expandedTo = base.to;
+
+  for(let count = 0; count < expansion.before; count += 1){
+    const previous = verseByKey.get(verseKey(base.bookNo, base.chapter, expandedFrom - 1));
+    if(!previous) break;
+    expandedFrom -= 1;
+  }
+
+  for(let count = 0; count < expansion.after; count += 1){
+    const next = verseByKey.get(verseKey(base.bookNo, base.chapter, expandedTo + 1));
+    if(!next) break;
+    expandedTo += 1;
+  }
+
+  return {
+    ...base,
+    expandedFrom,
+    expandedTo
+  };
+}
+
+function makeReferenceFromRange(result, index){
+  const range = getExpandedRange(result, index);
+
+  if(!range.bookLabel || !range.chapter || !range.expandedFrom){
+    return String(result?.reference || "").trim();
+  }
+
+  if(range.expandedFrom === range.expandedTo){
+    return `${range.bookLabel} ${range.chapter},${range.expandedFrom}`;
+  }
+
+  return `${range.bookLabel} ${range.chapter},${range.expandedFrom}–${range.expandedTo}`;
+}
+
+function getVersesInRange(result, index){
+  const range = getExpandedRange(result, index);
+
+  if(!range.bookNo || !range.chapter || !range.expandedFrom){
+    return [{
+      verse:0,
+      text:getVerseText(result)
+    }];
+  }
+
+  const rows = [];
+  for(let verseNo = range.expandedFrom; verseNo <= range.expandedTo; verseNo += 1){
+    const row = verseByKey.get(verseKey(range.bookNo, range.chapter, verseNo));
+    if(row){
+      rows.push(row);
+    }
+  }
+
+  if(!rows.length){
+    return [{
+      verse:0,
+      text:getVerseText(result)
+    }];
+  }
+
+  return rows;
+}
+
+function getExpandedText(result, index){
+  const rows = getVersesInRange(result, index);
+
+  if(rows.length <= 1){
+    return String(rows[0]?.text || "").trim();
+  }
+
+  return rows
+    .map(row => `${row.verse} ${row.text}`)
+    .join("\n");
+}
+
+function getSelectedPayload(result, index){
+  return {
+    reference:makeReferenceFromRange(result, index),
+    text:getExpandedText(result, index),
     score:Number(result?.score || 0),
     source:"Bibelen på Norsk (1930)",
     sourceId:"nb-1930",
@@ -222,8 +453,6 @@ window.useSelectedBibleVerse = function(){
   localStorage.setItem("kvimarka92SelectedBibleVerse", JSON.stringify(selectedBibleVerse));
   sessionStorage.setItem("kvimarka92SelectedBibleVerse", JSON.stringify(selectedBibleVerse));
 
-  // If this page was opened as a popup from a later Opplevelser page,
-  // send the selected verse back to the opener.
   if(window.opener && !window.opener.closed){
     window.opener.postMessage({
       type:"kvimarka92:bible-verse-selected",
@@ -233,7 +462,6 @@ window.useSelectedBibleVerse = function(){
 
   copyStatus.textContent = "Valgt bibelsted er lagret for videre bruk.";
 
-  // Når siden er åpnet fra Opplevelser, lukk søkevinduet etter valg.
   if(window.opener && !window.opener.closed){
     setTimeout(() => {
       try{ window.close(); }catch(error){}
@@ -241,14 +469,14 @@ window.useSelectedBibleVerse = function(){
   }
 };
 
-window.selectBibleResult = function(index){
+function updateSelectedFromIndex(index){
   const result = currentResults[index];
 
   if(!result){
     return;
   }
 
-  selectedBibleVerse = getSelectedPayload(result);
+  selectedBibleVerse = getSelectedPayload(result, index);
 
   selectedReference.textContent = selectedBibleVerse.reference;
   selectedText.textContent = selectedBibleVerse.text;
@@ -257,6 +485,16 @@ window.selectBibleResult = function(index){
 
   localStorage.setItem("kvimarka92SelectedBibleVerse", JSON.stringify(selectedBibleVerse));
   sessionStorage.setItem("kvimarka92SelectedBibleVerse", JSON.stringify(selectedBibleVerse));
+}
+
+window.selectBibleResult = function(index){
+  const result = currentResults[index];
+
+  if(!result){
+    return;
+  }
+
+  updateSelectedFromIndex(index);
 
   document.querySelectorAll(".result-button").forEach(button => button.classList.remove("selected"));
   const selectedButton = document.querySelector(`.result-button[data-result-index="${index}"]`);
@@ -270,6 +508,36 @@ window.selectBibleResult = function(index){
   });
 };
 
+window.changeVerseExpansion = function(event, index, direction, delta){
+  event.preventDefault();
+  event.stopPropagation();
+
+  const current = getExpansion(index);
+  const next = {
+    before:current.before,
+    after:current.after
+  };
+
+  if(direction === "before"){
+    next.before = Math.max(0, Math.min(20, next.before + delta));
+  }else{
+    next.after = Math.max(0, Math.min(20, next.after + delta));
+  }
+
+  resultExpansions.set(index, next);
+
+  const selectedButton = document.querySelector(`.result-button.selected[data-result-index="${index}"]`);
+  render();
+
+  if(selectedButton){
+    const newSelectedButton = document.querySelector(`.result-button[data-result-index="${index}"]`);
+    if(newSelectedButton){
+      newSelectedButton.classList.add("selected");
+    }
+    updateSelectedFromIndex(index);
+  }
+};
+
 function render(){
   const query = input.value.trim();
 
@@ -281,45 +549,91 @@ function render(){
   if(query.length < 2){
     resultsBox.textContent = "Skriv minst to tegn.";
     currentResults = [];
+    resultExpansions = new Map();
     return;
   }
 
   currentResults = searchBibleVerses(query, passages, { limit: 12 });
+  resultExpansions = new Map(
+    currentResults.map((result, index) => [index, resultExpansions.get(index) || { before:0, after:0 }])
+  );
 
   if(!currentResults.length){
     resultsBox.textContent = "Ingen treff.";
     return;
   }
 
-  resultsBox.innerHTML = currentResults.map((result, index) => `
-    <button
-      class="result-button"
-      type="button"
-      data-result-index="${index}"
-      onclick="selectBibleResult(${index})"
-      title="Velg ${esc(result.reference)}"
-    >
-      <div class="ref">${esc(result.reference)}</div>
-      <div class="score">Score: ${esc(result.score)}</div>
-      <div class="snippet">${esc(result.snippet)}</div>
-    </button>
-  `).join("");
+  resultsBox.innerHTML = currentResults.map((result, index) => {
+    const expansion = getExpansion(index);
+    const expandedRef = makeReferenceFromRange(result, index);
+    const referenceNote = expandedRef !== result.reference
+      ? `<div class="expanded-reference-note">Valg: ${esc(expandedRef)}</div>`
+      : "";
+
+    return `
+      <button
+        class="result-button"
+        type="button"
+        data-result-index="${index}"
+        onclick="selectBibleResult(${index})"
+        title="Velg ${esc(result.reference)}"
+      >
+        <div class="result-inner">
+          <div class="result-main">
+            <div class="ref">${esc(result.reference)}</div>
+            ${referenceNote}
+            <div class="score">Score: ${esc(result.score)}</div>
+            <div class="snippet">${esc(result.snippet)}</div>
+          </div>
+
+          <div class="verse-counters" aria-label="Legg til vers før eller etter">
+            <div class="counter-row">
+              <div class="counter-label">Vers før</div>
+              <button class="counter-button" type="button" onclick="changeVerseExpansion(event, ${index}, 'before', -1)" aria-label="Færre vers før">−</button>
+              <div class="counter-value">${esc(expansion.before)}</div>
+              <button class="counter-button" type="button" onclick="changeVerseExpansion(event, ${index}, 'before', 1)" aria-label="Flere vers før">+</button>
+            </div>
+
+            <div class="counter-row">
+              <div class="counter-label">Vers etter</div>
+              <button class="counter-button" type="button" onclick="changeVerseExpansion(event, ${index}, 'after', -1)" aria-label="Færre vers etter">−</button>
+              <div class="counter-value">${esc(expansion.after)}</div>
+              <button class="counter-button" type="button" onclick="changeVerseExpansion(event, ${index}, 'after', 1)" aria-label="Flere vers etter">+</button>
+            </div>
+          </div>
+        </div>
+      </button>
+    `;
+  }).join("");
+}
+
+async function loadJson(path){
+  const response = await fetch(path, { cache:"no-store" });
+
+  if(!response.ok){
+    throw new Error(`${path}: HTTP ${response.status}`);
+  }
+
+  return await response.json();
 }
 
 async function loadIndex(){
   try{
-    const response = await fetch("./data/index/nb-1930-search-index.json", { cache:"no-store" });
+    const [indexData, versesData] = await Promise.all([
+      loadJson("./data/index/nb-1930-search-index.json"),
+      loadJson("./data/normalized/nb-1930-verses.json")
+    ]);
 
-    if(!response.ok){
-      throw new Error(`HTTP ${response.status}`);
-    }
+    passages = indexData;
+    verses = Array.isArray(versesData) ? versesData.map(normalizeVerseRow) : [];
+    buildVerseLookup();
 
-    passages = await response.json();
-    resultsBox.textContent = `Søkeindeks lastet (${passages.length} tekstvinduer). Skriv minst to tegn.`;
+    resultsBox.textContent = `Søkeindeks lastet (${passages.length} tekstvinduer, ${verses.length} vers). Skriv minst to tegn.`;
   }catch(error){
     resultsBox.innerHTML = `
       <div class="loading">
-        Kunne ikke laste data/index/nb-1930-search-index.json.<br><br>
+        Kunne ikke laste bibeldata.<br><br>
+        Detalj: ${esc(error.message)}<br><br>
         Kjør importscriptet først:<br>
         <code>py scripts/import-crosswire-norsk.py</code>
       </div>
