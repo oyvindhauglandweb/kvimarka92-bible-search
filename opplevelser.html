@@ -530,12 +530,77 @@ html.classic-design-root .login-menu{
   }
 }
 
+
+/* Opplevelser v20 voice buttons right side */
+.voice-field-header{
+  display:flex !important;
+  align-items:center !important;
+  justify-content:space-between !important;
+  gap:10px !important;
+  margin-bottom:6px !important;
+}
+.voice-field-header label{
+  margin:0 !important;
+}
+.voice-actions{
+  display:flex !important;
+  align-items:center !important;
+  justify-content:flex-end !important;
+  gap:8px !important;
+  margin-left:auto !important;
+}
+.clear-voice-button,
+.mic-button{
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  width:36px !important;
+  height:32px !important;
+  min-height:32px !important;
+  padding:0 !important;
+  border:0 !important;
+  border-radius:999px !important;
+  background:rgba(255,255,255,.07) !important;
+  color:var(--opp-text, #eee) !important;
+  font-size:16px !important;
+  font-weight:800 !important;
+  line-height:1 !important;
+  cursor:pointer !important;
+  box-shadow:none !important;
+}
+.clear-voice-button:hover,
+.mic-button:hover{
+  background:rgba(255,255,255,.13) !important;
+}
+.clear-voice-button{
+  font-size:19px !important;
+}
+.mic-button{
+  display:none !important;
+}
+.mic-button.visible{
+  display:inline-flex !important;
+}
+.mic-button.listening{
+  background:#c2410c !important;
+  color:#fff !important;
+  animation:oppMicPulse 1s infinite;
+}
+body.light-mode .clear-voice-button,
+body.light-mode .mic-button{
+  background:rgba(0,0,0,.07) !important;
+  color:var(--opp-text, #333) !important;
+}
+body.light-mode .clear-voice-button:hover,
+body.light-mode .mic-button:hover{
+  background:rgba(0,0,0,.13) !important;
+}
+
 </style>
-  <!-- version: LIST v13 index-login-widget 2026-06-16 -->
+  <!-- version: LIST v14 voice-buttons-right 2026-06-16 -->
 </head>
 <body class="dark-mode">
-<div class="file-version-marker">LIST v13 index-login-widget 2026-06-16</div>
-
+<div class="file-version-marker">LIST v14 voice-buttons-right 2026-06-16</div>
 
 <div class="login-widget">
   <a id="loginStatus"
@@ -851,7 +916,10 @@ html.classic-design-root .login-menu{
             <div class="full">
               <div class="voice-field-header">
               <label for="editOccasion">Foranledning</label>
-              <button type="button" class="mic-button" data-dictate-target="editOccasion" title="Les inn tekst" aria-label="Les inn tekst">🎙</button>
+              <div class="voice-actions">
+                <button type="button" class="clear-voice-button" onclick="clearOpplevelserVoiceField('editOccasion')" title="Tøm felt" aria-label="Tøm felt">×</button>
+                <button type="button" class="clear-voice-button" onclick="clearOpplevelserVoiceField(\'editOccasion\')" title="Tøm felt" aria-label="Tøm felt">×</button><button type="button" class="mic-button" data-dictate-target="editOccasion" title="Les inn tekst" aria-label="Les inn tekst">🎙</button>
+              </div>
             </div>
               <textarea id="editOccasion">${esc(item.occasion || "")}</textarea>
             </div>
@@ -859,7 +927,10 @@ html.classic-design-root .login-menu{
             <div class="full">
               <div class="voice-field-header">
               <label for="editExperience">Opplevelse</label>
-              <button type="button" class="mic-button" data-dictate-target="editExperience" title="Les inn tekst" aria-label="Les inn tekst">🎙</button>
+              <div class="voice-actions">
+                <button type="button" class="clear-voice-button" onclick="clearOpplevelserVoiceField('editExperience')" title="Tøm felt" aria-label="Tøm felt">×</button>
+                <button type="button" class="clear-voice-button" onclick="clearOpplevelserVoiceField(\'editExperience\')" title="Tøm felt" aria-label="Tøm felt">×</button><button type="button" class="mic-button" data-dictate-target="editExperience" title="Les inn tekst" aria-label="Les inn tekst">🎙</button>
+              </div>
             </div>
               <textarea id="editExperience">${esc(item.experience || "")}</textarea>
             </div>
@@ -867,7 +938,10 @@ html.classic-design-root .login-menu{
             <div class="full">
               <div class="voice-field-header">
               <label for="editConsequence">Konsekvens</label>
-              <button type="button" class="mic-button" data-dictate-target="editConsequence" title="Les inn tekst" aria-label="Les inn tekst">🎙</button>
+              <div class="voice-actions">
+                <button type="button" class="clear-voice-button" onclick="clearOpplevelserVoiceField('editConsequence')" title="Tøm felt" aria-label="Tøm felt">×</button>
+                <button type="button" class="clear-voice-button" onclick="clearOpplevelserVoiceField(\'editConsequence\')" title="Tøm felt" aria-label="Tøm felt">×</button><button type="button" class="mic-button" data-dictate-target="editConsequence" title="Les inn tekst" aria-label="Les inn tekst">🎙</button>
+              </div>
             </div>
               <textarea id="editConsequence">${esc(item.consequence || "")}</textarea>
             </div>
@@ -875,7 +949,10 @@ html.classic-design-root .login-menu{
             <div class="full">
               <div class="voice-field-header">
               <label for="editNote">Notat</label>
-              <button type="button" class="mic-button" data-dictate-target="editNote" title="Les inn tekst" aria-label="Les inn tekst">🎙</button>
+              <div class="voice-actions">
+                <button type="button" class="clear-voice-button" onclick="clearOpplevelserVoiceField('editNote')" title="Tøm felt" aria-label="Tøm felt">×</button>
+                <button type="button" class="clear-voice-button" onclick="clearOpplevelserVoiceField(\'editNote\')" title="Tøm felt" aria-label="Tøm felt">×</button><button type="button" class="mic-button" data-dictate-target="editNote" title="Les inn tekst" aria-label="Les inn tekst">🎙</button>
+              </div>
             </div>
               <textarea id="editNote">${esc(item.note || "")}</textarea>
             </div>
@@ -1389,6 +1466,27 @@ html.classic-design-root .login-menu{
   }else{
     window.setupOpplevelserLoginWidget(null);
   }
+})();
+</script>
+
+
+<script>
+(function(){
+  window.clearOpplevelserVoiceField = function(textareaId){
+    const textarea = document.getElementById(textareaId);
+    if(!textarea){
+      return;
+    }
+
+    if(textarea.value && !confirm("Tømme dette feltet?")){
+      return;
+    }
+
+    textarea.value = "";
+    textarea.focus();
+    textarea.dispatchEvent(new Event("input", { bubbles:true }));
+    textarea.dispatchEvent(new Event("change", { bubbles:true }));
+  };
 })();
 </script>
 
