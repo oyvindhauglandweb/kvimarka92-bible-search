@@ -72,7 +72,7 @@
     }
 
 </style>
-<!-- version: opplevelser-registrer-v8-dropdown-layout-fix-2026-06-15 -->
+<!-- version: opplevelser-registrer-v9-no-preflight-2026-06-15 -->
 </head>
 <body>
   <main class="wrap">
@@ -164,13 +164,24 @@
     }
 
     async function apiFetch(path, options){
+      const safeOptions = options || {};
+      const method = String(safeOptions.method || "GET").toUpperCase();
+      const headers = {
+        ...(safeOptions.headers || {})
+      };
+
+      // Ikke sett Content-Type på GET. Da unngår vi CORS preflight mot Cloudflare Access.
+      // For POST bruker vi text/plain, samme mønster som flere eksisterende Kvimarka92-sider,
+      // slik at nettleseren ikke sender OPTIONS-preflight før selve API-kallet.
+      if(method !== "GET" && safeOptions.body !== undefined && !headers["Content-Type"]){
+        headers["Content-Type"] = "text/plain;charset=UTF-8";
+      }
+
       const res = await fetch(API_BASE + path, {
         credentials:"include",
-        ...options,
-        headers:{
-          "Content-Type":"application/json",
-          ...(options && options.headers ? options.headers : {})
-        }
+        ...safeOptions,
+        method,
+        headers
       });
 
       const data = await res.json().catch(() => ({}));
