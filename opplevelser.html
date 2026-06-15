@@ -16,6 +16,7 @@
       --danger:#b42318;
       --ok:#067647;
       --soft:#eef2ff;
+      --input-bg:transparent;
     }
     @media (prefers-color-scheme: dark){
       :root{
@@ -26,6 +27,7 @@
         --border:#303746;
         --accent:#7aa2ff;
         --soft:#20293a;
+        --input-bg:#151a24;
       }
     }
     *{ box-sizing:border-box; }
@@ -36,19 +38,23 @@
     .sub{ color:var(--muted); margin:0 0 18px; }
     .toolbar{ display:grid; grid-template-columns:1fr auto auto; gap:10px; align-items:end; margin-bottom:14px; }
     label{ display:block; font-weight:650; margin:0 0 6px; }
-    input, select{ width:100%; min-height:44px; border:1px solid var(--border); border-radius:10px; padding:10px 12px; font:inherit; background:transparent; color:var(--text); box-sizing:border-box; }
+    input, textarea, select{ width:100%; min-height:44px; border:1px solid var(--border); border-radius:10px; padding:10px 12px; font:inherit; background:var(--input-bg); color:var(--text); box-sizing:border-box; }
+    textarea{ min-height:94px; resize:vertical; }
     button{ border:0; border-radius:999px; padding:10px 14px; min-height:42px; font-weight:700; cursor:pointer; background:var(--accent); color:white; }
     button.secondary{ background:transparent; color:var(--text); border:1px solid var(--border); }
     button:disabled{ opacity:.6; cursor:not-allowed; }
     .status{ margin-top:14px; padding:10px 12px; border-radius:10px; border:1px solid var(--border); color:var(--muted); white-space:pre-wrap; }
     .status.err{ color:var(--danger); }
+    .status.ok{ color:var(--ok); }
     .list{ display:grid; grid-template-columns:340px 1fr; gap:14px; }
     .items{ border:1px solid var(--border); border-radius:12px; overflow:hidden; background:rgba(127,127,127,.04); }
     .item{ display:block; width:100%; padding:12px; border:0; border-bottom:1px solid var(--border); border-radius:0; background:transparent; color:var(--text); text-align:left; cursor:pointer; }
     .item:hover, .item.active{ background:var(--soft); }
     .item-title{ font-weight:800; margin-bottom:4px; }
     .item-meta{ color:var(--muted); font-size:.92rem; line-height:1.35; }
+    .desktop-extra{ display:inline; }
     .details{ border:1px solid var(--border); border-radius:12px; padding:14px; min-height:360px; }
+    .detail-head{ display:flex; justify-content:space-between; align-items:flex-start; gap:12px; margin-bottom:10px; }
     .detail-title{ font-size:1.3rem; font-weight:850; margin:0 0 8px; }
     .detail-meta{ color:var(--muted); margin-bottom:14px; }
     .section{ margin-top:14px; }
@@ -56,12 +62,25 @@
     .section p{ margin:0; line-height:1.45; white-space:pre-wrap; }
     .bible{ border:1px dashed var(--border); border-radius:10px; padding:10px 12px; }
     .empty{ color:var(--muted); padding:18px; }
+    .edit-grid{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+    .edit-grid .full{ grid-column:1 / -1; }
+    .edit-actions{ display:flex; flex-wrap:wrap; gap:10px; margin-top:14px; }
+    .readonly-actions{ display:flex; gap:10px; flex-wrap:wrap; }
     @media(max-width:800px){
+      .wrap{ padding:10px; }
       .toolbar{ grid-template-columns:1fr; }
       .list{ grid-template-columns:1fr; }
+      .details{ min-height:0; }
+      .desktop-extra{ display:none; }
+      .item-meta{ font-size:.9rem; }
+      .edit-grid{ grid-template-columns:1fr; }
+      .edit-grid .full{ grid-column:auto; }
+      .detail-head{ flex-direction:column; }
+      .readonly-actions{ width:100%; }
+      .readonly-actions button{ width:100%; }
     }
   </style>
-  <!-- version: opplevelser-list-v1-2026-06-15 -->
+  <!-- version: opplevelser-list-v2-live-search-edit-2026-06-15 -->
 </head>
 <body>
   <main class="wrap">
@@ -72,7 +91,7 @@
       <div class="toolbar">
         <div>
           <label for="searchBox">Søk</label>
-          <input id="searchBox" type="search" placeholder="Søk i overskrift, tekst, sted, miljø eller bibelsted">
+          <input id="searchBox" type="search" placeholder="Søk i overskrift, tekst, sted, miljø eller bibelsted" autocomplete="off">
         </div>
         <button type="button" id="refreshBtn">Søk</button>
         <button type="button" class="secondary" onclick="window.location.href='opplevelser-registrer.html'">Ny opplevelse</button>
@@ -96,6 +115,8 @@
 
     let currentItems = [];
     let selectedId = null;
+    let editMode = false;
+    let searchTimer = null;
 
     const el = id => document.getElementById(id);
     const statusEl = el("status");
@@ -114,10 +135,22 @@
         .replaceAll("'", "&#039;");
     }
 
-    async function apiFetch(path){
+    async function apiFetch(path, options){
+      const safeOptions = options || {};
+      const method = String(safeOptions.method || "GET").toUpperCase();
+      const headers = {
+        ...(safeOptions.headers || {})
+      };
+
+      if(method !== "GET" && safeOptions.body !== undefined && !headers["Content-Type"]){
+        headers["Content-Type"] = "text/plain;charset=UTF-8";
+      }
+
       const res = await fetch(API_BASE + path, {
-        method:"GET",
-        credentials:"include"
+        credentials:"include",
+        ...safeOptions,
+        method,
+        headers
       });
 
       const data = await res.json().catch(() => ({}));
@@ -131,6 +164,10 @@
 
     function bestTitle(item){
       return item.heading || item.bibleReference || item.place || item.environment || "(uten overskrift)";
+    }
+
+    function selectedItem(){
+      return currentItems.find(entry => entry.id === selectedId) || null;
     }
 
     function renderItems(){
@@ -148,8 +185,10 @@
           <div class="item-meta">
             ${esc(item.experienceDate || "")}
             ${item.place ? " · " + esc(item.place) : ""}
-            ${item.environment ? " · " + esc(item.environment) : ""}
-            ${item.bibleReference ? "<br>" + esc(item.bibleReference) : ""}
+            <span class="desktop-extra">
+              ${item.environment ? " · " + esc(item.environment) : ""}
+              ${item.bibleReference ? "<br>" + esc(item.bibleReference) : ""}
+            </span>
           </div>
         </button>
       `).join("");
@@ -172,7 +211,7 @@
     }
 
     function renderDetails(){
-      const item = currentItems.find(entry => entry.id === selectedId);
+      const item = selectedItem();
       const box = el("details");
 
       if(!item){
@@ -180,12 +219,24 @@
         return;
       }
 
+      if(editMode){
+        renderEditForm(item);
+        return;
+      }
+
       box.innerHTML = `
-        <div class="detail-title">${esc(bestTitle(item))}</div>
-        <div class="detail-meta">
-          ${esc(item.experienceDate || "")}
-          ${item.place ? " · " + esc(item.place) : ""}
-          ${item.environment ? " · " + esc(item.environment) : ""}
+        <div class="detail-head">
+          <div>
+            <div class="detail-title">${esc(bestTitle(item))}</div>
+            <div class="detail-meta">
+              ${esc(item.experienceDate || "")}
+              ${item.place ? " · " + esc(item.place) : ""}
+              ${item.environment ? " · " + esc(item.environment) : ""}
+            </div>
+          </div>
+          <div class="readonly-actions">
+            <button type="button" class="secondary" onclick="startEdit()">Rediger</button>
+          </div>
         </div>
 
         ${item.bibleReference || item.bibleText ? `
@@ -206,10 +257,133 @@
       `;
     }
 
+    function renderEditForm(item){
+      el("details").innerHTML = `
+        <form id="editForm">
+          <div class="edit-grid">
+            <div class="full">
+              <label for="editHeading">Overskrift</label>
+              <input id="editHeading" value="${esc(item.heading || "")}" maxlength="160">
+            </div>
+
+            <div>
+              <label for="editDate">Dato</label>
+              <input id="editDate" type="date" value="${esc(item.experienceDate || "")}">
+            </div>
+
+            <div>
+              <label for="editPlace">Sted</label>
+              <input id="editPlace" value="${esc(item.place || "")}">
+            </div>
+
+            <div>
+              <label for="editEnvironment">Miljø</label>
+              <input id="editEnvironment" value="${esc(item.environment || "")}">
+            </div>
+
+            <div>
+              <label for="editBibleReference">Bibelreferanse</label>
+              <input id="editBibleReference" value="${esc(item.bibleReference || "")}">
+            </div>
+
+            <div>
+              <label for="editBibleSource">Bibelkilde</label>
+              <input id="editBibleSource" value="${esc(item.bibleSource || "Bibelen på Norsk (1930)")}" >
+            </div>
+
+            <div class="full">
+              <label for="editBibleText">Bibeltekst</label>
+              <textarea id="editBibleText">${esc(item.bibleText || "")}</textarea>
+            </div>
+
+            <div class="full">
+              <label for="editOccasion">Foranledning</label>
+              <textarea id="editOccasion">${esc(item.occasion || "")}</textarea>
+            </div>
+
+            <div class="full">
+              <label for="editExperience">Opplevelse</label>
+              <textarea id="editExperience">${esc(item.experience || "")}</textarea>
+            </div>
+
+            <div class="full">
+              <label for="editConsequence">Konsekvens</label>
+              <textarea id="editConsequence">${esc(item.consequence || "")}</textarea>
+            </div>
+
+            <div class="full">
+              <label for="editNote">Notat</label>
+              <textarea id="editNote">${esc(item.note || "")}</textarea>
+            </div>
+          </div>
+
+          <div class="edit-actions">
+            <button type="submit">Lagre endringer</button>
+            <button type="button" class="secondary" onclick="cancelEdit()">Avbryt</button>
+          </div>
+        </form>
+      `;
+
+      el("editForm").addEventListener("submit", saveEdit);
+    }
+
     window.selectItem = function(id){
       selectedId = id;
+      editMode = false;
       renderItems();
     };
+
+    window.startEdit = function(){
+      editMode = true;
+      renderDetails();
+    };
+
+    window.cancelEdit = function(){
+      editMode = false;
+      renderDetails();
+    };
+
+    async function saveEdit(event){
+      event.preventDefault();
+
+      const item = selectedItem();
+      if(!item) return;
+
+      setStatus("Lagrer endringer ...");
+
+      const payload = {
+        id:item.id,
+        heading:el("editHeading").value,
+        experienceDate:el("editDate").value,
+        place:el("editPlace").value,
+        environment:el("editEnvironment").value,
+        bibleReference:el("editBibleReference").value,
+        bibleSource:el("editBibleSource").value,
+        bibleText:el("editBibleText").value,
+        occasion:el("editOccasion").value,
+        experience:el("editExperience").value,
+        consequence:el("editConsequence").value,
+        note:el("editNote").value
+      };
+
+      try{
+        const data = await apiFetch("/experience-update", {
+          method:"POST",
+          body:JSON.stringify(payload)
+        });
+
+        const index = currentItems.findIndex(entry => entry.id === item.id);
+        if(index >= 0 && data.row){
+          currentItems[index] = data.row;
+        }
+
+        editMode = false;
+        renderItems();
+        setStatus("Endringer lagret.", "ok");
+      }catch(error){
+        setStatus("Kunne ikke lagre endringer: " + error.message, "err");
+      }
+    }
 
     async function loadExperiences(){
       const q = el("searchBox").value.trim();
@@ -219,14 +393,28 @@
       currentItems = data.items || [];
 
       el("userLine").textContent = `Innlogget som ${data.user.name || data.user.email} (${data.user.experienceAccess})`;
-      selectedId = currentItems.length ? currentItems[0].id : null;
+
+      if(!selectedId || !currentItems.some(item => item.id === selectedId)){
+        selectedId = currentItems.length ? currentItems[0].id : null;
+      }
+
+      editMode = false;
       renderItems();
       setStatus(`Fant ${data.count} opplevelse(r).`);
+    }
+
+    function scheduleLiveSearch(){
+      window.clearTimeout(searchTimer);
+      searchTimer = window.setTimeout(() => {
+        loadExperiences().catch(error => setStatus("Kunne ikke hente opplevelser: " + error.message, "err"));
+      }, 250);
     }
 
     el("refreshBtn").addEventListener("click", () => {
       loadExperiences().catch(error => setStatus("Kunne ikke hente opplevelser: " + error.message, "err"));
     });
+
+    el("searchBox").addEventListener("input", scheduleLiveSearch);
 
     el("searchBox").addEventListener("keydown", event => {
       if(event.key === "Enter"){
