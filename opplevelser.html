@@ -157,7 +157,7 @@
     }
 
   </style>
-  <!-- version: opplevelser-list-v3-mobile-list-first-2026-06-15 -->
+  <!-- version: opplevelser-list-v4-bible-edit-2026-06-15 -->
 </head>
 <body>
   <main class="wrap">
@@ -190,10 +190,57 @@
         : "https://api-kvimarka92.carstereogarage.com"
     );
 
+    const SELECTED_VERSE_KEY = "kvimarka92SelectedBibleVerse";
+
     let currentItems = [];
     let selectedId = null;
     let editMode = false;
     let searchTimer = null;
+
+    function setBibleVerseInEditForm(verse){
+      if(!verse){
+        return;
+      }
+
+      const referenceEl = document.getElementById("editBibleReference");
+      const textEl = document.getElementById("editBibleText");
+      const sourceEl = document.getElementById("editBibleSource");
+
+      if(referenceEl){
+        referenceEl.value = String(verse.reference || "");
+      }
+
+      if(textEl){
+        textEl.value = String(verse.text || "");
+      }
+
+      if(sourceEl){
+        sourceEl.value = String(verse.source || "Bibelen på Norsk (1930)");
+      }
+    }
+
+    function openBibleSearchFromEdit(){
+      const currentVerse = {
+        reference:document.getElementById("editBibleReference")?.value || "",
+        text:document.getElementById("editBibleText")?.value || "",
+        source:document.getElementById("editBibleSource")?.value || "Bibelen på Norsk (1930)",
+        sourceId:"nb-1930",
+        selectedAt:new Date().toISOString()
+      };
+
+      localStorage.setItem(SELECTED_VERSE_KEY, JSON.stringify(currentVerse));
+      sessionStorage.setItem(SELECTED_VERSE_KEY, JSON.stringify(currentVerse));
+
+      window.open("bibel-sok.html", "kvimarka92BibleSearch", "width=980,height=760");
+    }
+
+    window.addEventListener("message", event => {
+      if(!event.data || event.data.type !== "kvimarka92:bible-verse-selected"){
+        return;
+      }
+
+      setBibleVerseInEditForm(event.data.payload);
+    });
 
     const el = id => document.getElementById(id);
     const statusEl = el("status");
@@ -390,6 +437,10 @@
             </div>
 
             <div class="full">
+              <button type="button" class="secondary" onclick="openBibleSearchFromEdit()">Endre bibelsted</button>
+            </div>
+
+            <div class="full">
               <label for="editBibleText">Bibeltekst</label>
               <textarea id="editBibleText">${esc(item.bibleText || "")}</textarea>
             </div>
@@ -436,6 +487,8 @@
       editMode = false;
       setMobileDetailState(false);
     };
+
+    window.openBibleSearchFromEdit = openBibleSearchFromEdit;
 
     window.startEdit = function(){
       editMode = true;

@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Bibelsøk 1930</title>
-  <!-- version: bible-search-select-v10-full-single-verse-text-2026-06-15 -->
+  <!-- version: bible-search-select-v11-restore-selected-2026-06-15 -->
   <style>
     :root{
       color-scheme:dark;
@@ -98,6 +98,50 @@ const selectedCard = document.getElementById("selectedCard");
 const selectedReference = document.getElementById("selectedReference");
 const selectedText = document.getElementById("selectedText");
 const copyStatus = document.getElementById("copyStatus");
+
+const SELECTED_VERSE_KEY = "kvimarka92SelectedBibleVerse";
+
+function readStoredSelectedBibleVerse(){
+  for(const storage of [sessionStorage, localStorage]){
+    try{
+      const raw = storage.getItem(SELECTED_VERSE_KEY);
+      if(!raw){
+        continue;
+      }
+
+      const data = JSON.parse(raw);
+
+      if(data && (data.reference || data.text)){
+        return data;
+      }
+    }catch(error){}
+  }
+
+  return null;
+}
+
+function setSelectedBibleVersePayload(payload, message){
+  if(!payload || (!payload.reference && !payload.text)){
+    return;
+  }
+
+  selectedBibleVerse = {
+    reference:String(payload.reference || "").trim(),
+    text:String(payload.text || "").trim(),
+    score:Number(payload.score || 0),
+    source:String(payload.source || "Bibelen på Norsk (1930)").trim(),
+    sourceId:String(payload.sourceId || "nb-1930").trim(),
+    selectedAt:payload.selectedAt || new Date().toISOString()
+  };
+
+  selectedReference.textContent = selectedBibleVerse.reference;
+  selectedText.textContent = selectedBibleVerse.text;
+  selectedCard.classList.add("visible");
+  copyStatus.textContent = message || "";
+
+  localStorage.setItem(SELECTED_VERSE_KEY, JSON.stringify(selectedBibleVerse));
+  sessionStorage.setItem(SELECTED_VERSE_KEY, JSON.stringify(selectedBibleVerse));
+}
 
 function esc(value){
   return String(value ?? "").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;");
@@ -355,7 +399,13 @@ async function loadIndex(){
     passages = Array.isArray(indexData) ? indexData : [];
     verses = Array.isArray(versesData) ? versesData : [];
     buildVerseMap();
-    resultsBox.textContent = `Søkeindeks lastet (${passages.length} tekstvinduer, ${verses.length} vers). Skriv minst to tegn.`;
+    const storedVerse = readStoredSelectedBibleVerse();
+    if(storedVerse){
+      setSelectedBibleVersePayload(storedVerse, "Eksisterende bibelsted er hentet fra opplevelsen. Søk for å velge et annet.");
+      resultsBox.textContent = "Eksisterende bibelsted er valgt. Skriv søkeord for å finne et annet bibelsted.";
+    }else{
+      resultsBox.textContent = `Søkeindeks lastet (${passages.length} tekstvinduer, ${verses.length} vers). Skriv minst to tegn.`;
+    }
   }catch(error){
     resultsBox.innerHTML = `
       <div class="loading">
