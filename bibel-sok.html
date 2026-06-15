@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Bibelsøk 1930</title>
-  <!-- version: bible-search-select-v8-clean-range-2026-06-15 -->
+  <!-- version: bible-search-select-v9-expanded-result-text-2026-06-15 -->
   <style>
     :root{
       color-scheme:dark;
@@ -32,7 +32,7 @@
     .ref{font-weight:bold;color:var(--link);}
     .selected-range{color:var(--muted);font-size:13px;margin-top:3px;}
     .score{color:var(--muted);font-size:13px;margin-top:3px;}
-    .snippet{margin-top:6px;line-height:1.45;}
+    .snippet{margin-top:6px;line-height:1.45;white-space:pre-wrap;}
     .range-controls{justify-self:end;display:flex;flex-direction:column;gap:10px;width:150px;}
     .range-row{display:grid;grid-template-columns:32px 44px 32px;gap:5px;align-items:center;justify-content:end;}
     .range-label{grid-column:1 / -1;color:var(--muted);font-size:12px;text-align:center;white-space:nowrap;line-height:1.1;}
@@ -189,6 +189,21 @@ function getTextForRange(result){
   return rows.map(row => `${row.verse} ${row.text}`).join("\n");
 }
 
+function getResultDisplayText(result){
+  const range = getRange(result);
+  const base = getBaseRange(result);
+  const expanded =
+    Number(range.from) !== Number(base.from) ||
+    Number(range.to) !== Number(base.to);
+
+  if(expanded){
+    return getTextForRange(result);
+  }
+
+  return String(result?.snippet || result?.verse?.text || result?.text || "").trim();
+}
+
+
 function getPayload(result){
   const range = getRange(result);
   return {
@@ -308,7 +323,7 @@ function render(){
           <div class="ref">${esc(result.reference)}</div>
           ${isExpanded ? `<div class="selected-range">Valg: ${esc(selectedRef)}</div>` : ""}
           <div class="score">Score: ${esc(result.score)}</div>
-          <div class="snippet">${esc(result.snippet)}</div>
+          <div class="snippet">${esc(getResultDisplayText(result))}</div>
         </button>
         <div class="range-controls" aria-label="Velg versområde">
           <div class="range-row">
