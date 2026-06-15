@@ -41,7 +41,7 @@
     .bible-card strong{ color:var(--text); }
     .small{ font-size:.92rem; color:var(--muted); }
   </style>
-<!-- version: opplevelser-registrer-v4-environment-select-2026-06-15 -->
+<!-- version: opplevelser-registrer-v5-environment-options-api-2026-06-15 -->
 </head>
 <body>
   <main class="wrap">
@@ -64,10 +64,6 @@
             <label for="environment">Miljø</label>
             <select id="environment" name="environment">
               <option value="">Velg miljø</option>
-              <option value="Hjemme">Hjemme</option>
-              <option value="Bilen">Bilen</option>
-              <option value="Naturen">Naturen</option>
-              <option value="Møte">Møte</option>
             </select>
           </div>
 
@@ -284,7 +280,7 @@
         const data = await apiFetch("/experience-options", { method:"GET" });
         initDate(data.today);
         fillDatalist("placesList", data.places || []);
-        fillSelect("environment", data.environments || [], ["Hjemme", "Bilen", "Naturen", "Møte"]);
+        fillSelect("environment", data.environmentOptions || data.environments || [], ["Hjemme", "Bilen", "Naturen", "Møte"]);
         el("userLine").textContent = `Innlogget som ${data.user.name || data.user.email} (${data.user.experienceAccess})`;
 
         const storedVerse = readSelectedBibleVerseFromStorage();
