@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="no">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Opplevelser</title>
+  <style>
+    :root{
+      color-scheme: light dark;
+      --bg:#f4f5f7;
+      --card:#ffffff;
+      --text:#172033;
+      --muted:#5d6678;
+      --border:#d8dde8;
+      --accent:#2563eb;
+      --danger:#b42318;
+      --ok:#067647;
+      --soft:#eef2ff;
+    }
+    @media (prefers-color-scheme: dark){
+      :root{
+        --bg:#10131a;
+        --card:#171b24;
+        --text:#f1f5f9;
+        --muted:#a7b0c0;
+        --border:#303746;
+        --accent:#7aa2ff;
+        --soft:#20293a;
+      }
+    }
+    *{ box-sizing:border-box; }
+    body{ margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif; background:var(--bg); color:var(--text); }
+    .wrap{ max-width:1100px; margin:0 auto; padding:18px; }
+    .card{ background:var(--card); border:1px solid var(--border); border-radius:16px; padding:18px; box-shadow:0 10px 25px rgba(15,23,42,.08); }
+    h1{ margin:0 0 4px; font-size:1.6rem; }
+    .sub{ color:var(--muted); margin:0 0 18px; }
+    .toolbar{ display:grid; grid-template-columns:1fr auto auto; gap:10px; align-items:end; margin-bottom:14px; }
+    label{ display:block; font-weight:650; margin:0 0 6px; }
+    input, select{ width:100%; min-height:44px; border:1px solid var(--border); border-radius:10px; padding:10px 12px; font:inherit; background:transparent; color:var(--text); box-sizing:border-box; }
+    button{ border:0; border-radius:999px; padding:10px 14px; min-height:42px; font-weight:700; cursor:pointer; background:var(--accent); color:white; }
+    button.secondary{ background:transparent; color:var(--text); border:1px solid var(--border); }
+    button:disabled{ opacity:.6; cursor:not-allowed; }
+    .status{ margin-top:14px; padding:10px 12px; border-radius:10px; border:1px solid var(--border); color:var(--muted); white-space:pre-wrap; }
+    .status.err{ color:var(--danger); }
+    .list{ display:grid; grid-template-columns:340px 1fr; gap:14px; }
+    .items{ border:1px solid var(--border); border-radius:12px; overflow:hidden; background:rgba(127,127,127,.04); }
+    .item{ display:block; width:100%; padding:12px; border:0; border-bottom:1px solid var(--border); border-radius:0; background:transparent; color:var(--text); text-align:left; cursor:pointer; }
+    .item:hover, .item.active{ background:var(--soft); }
+    .item-title{ font-weight:800; margin-bottom:4px; }
+    .item-meta{ color:var(--muted); font-size:.92rem; line-height:1.35; }
+    .details{ border:1px solid var(--border); border-radius:12px; padding:14px; min-height:360px; }
+    .detail-title{ font-size:1.3rem; font-weight:850; margin:0 0 8px; }
+    .detail-meta{ color:var(--muted); margin-bottom:14px; }
+    .section{ margin-top:14px; }
+    .section h3{ margin:0 0 6px; font-size:1rem; }
+    .section p{ margin:0; line-height:1.45; white-space:pre-wrap; }
+    .bible{ border:1px dashed var(--border); border-radius:10px; padding:10px 12px; }
+    .empty{ color:var(--muted); padding:18px; }
+    @media(max-width:800px){
+      .toolbar{ grid-template-columns:1fr; }
+      .list{ grid-template-columns:1fr; }
+    }
+  </style>
+  <!-- version: opplevelser-list-v1-2026-06-15 -->
+</head>
+<body>
+  <main class="wrap">
+    <section class="card">
+      <h1>Opplevelser</h1>
+      <p class="sub" id="userLine">Laster opplevelser ...</p>
+
+      <div class="toolbar">
+        <div>
+          <label for="searchBox">Søk</label>
+          <input id="searchBox" type="search" placeholder="Søk i overskrift, tekst, sted, miljø eller bibelsted">
+        </div>
+        <button type="button" id="refreshBtn">Søk</button>
+        <button type="button" class="secondary" onclick="window.location.href='opplevelser-registrer.html'">Ny opplevelse</button>
+      </div>
+
+      <div class="list">
+        <div class="items" id="items"><div class="empty">Laster ...</div></div>
+        <div class="details" id="details"><div class="empty">Velg en opplevelse i listen.</div></div>
+      </div>
+
+      <div id="status" class="status">Klar.</div>
+    </section>
+  </main>
+
+  <script>
+    const API_BASE = window.OPPLEVELSER_API_BASE || (
+      location.hostname === "kvimarka92.carstereogarage.com" || location.hostname === "www.kvimarka92.carstereogarage.com"
+        ? ""
+        : "https://api-kvimarka92.carstereogarage.com"
+    );
+
+    let currentItems = [];
+    let selectedId = null;
+
+    const el = id => document.getElementById(id);
+    const statusEl = el("status");
+
+    function setStatus(text, kind){
+      statusEl.textContent = text;
+      statusEl.className = "status" + (kind ? " " + kind : "");
+    }
+
+    function esc(value){
+      return String(value == null ? "" : value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    async function apiFetch(path){
+      const res = await fetch(API_BASE + path, {
+        method:"GET",
+        credentials:"include"
+      });
+
+      const data = await res.json().catch(() => ({}));
+
+      if(!res.ok){
+        throw new Error(data.detail || data.error || `HTTP ${res.status}`);
+      }
+
+      return data;
+    }
+
+    function bestTitle(item){
+      return item.heading || item.bibleReference || item.place || item.environment || "(uten overskrift)";
+    }
+
+    function renderItems(){
+      const box = el("items");
+
+      if(!currentItems.length){
+        box.innerHTML = '<div class="empty">Ingen opplevelser funnet.</div>';
+        el("details").innerHTML = '<div class="empty">Ingen opplevelser å vise.</div>';
+        return;
+      }
+
+      box.innerHTML = currentItems.map(item => `
+        <button type="button" class="item ${selectedId === item.id ? "active" : ""}" onclick="selectItem(${Number(item.id)})">
+          <div class="item-title">${esc(bestTitle(item))}</div>
+          <div class="item-meta">
+            ${esc(item.experienceDate || "")}
+            ${item.place ? " · " + esc(item.place) : ""}
+            ${item.environment ? " · " + esc(item.environment) : ""}
+            ${item.bibleReference ? "<br>" + esc(item.bibleReference) : ""}
+          </div>
+        </button>
+      `).join("");
+
+      if(!selectedId || !currentItems.some(item => item.id === selectedId)){
+        selectedId = currentItems[0].id;
+      }
+
+      renderDetails();
+    }
+
+    function renderSection(title, text){
+      if(!String(text || "").trim()) return "";
+      return `
+        <div class="section">
+          <h3>${esc(title)}</h3>
+          <p>${esc(text)}</p>
+        </div>
+      `;
+    }
+
+    function renderDetails(){
+      const item = currentItems.find(entry => entry.id === selectedId);
+      const box = el("details");
+
+      if(!item){
+        box.innerHTML = '<div class="empty">Velg en opplevelse i listen.</div>';
+        return;
+      }
+
+      box.innerHTML = `
+        <div class="detail-title">${esc(bestTitle(item))}</div>
+        <div class="detail-meta">
+          ${esc(item.experienceDate || "")}
+          ${item.place ? " · " + esc(item.place) : ""}
+          ${item.environment ? " · " + esc(item.environment) : ""}
+        </div>
+
+        ${item.bibleReference || item.bibleText ? `
+          <div class="section">
+            <h3>Bibelsted</h3>
+            <div class="bible">
+              <strong>${esc(item.bibleReference || "")}</strong>
+              ${item.bibleText ? `<p>${esc(item.bibleText)}</p>` : ""}
+              ${item.bibleSource ? `<div class="item-meta">${esc(item.bibleSource)}</div>` : ""}
+            </div>
+          </div>
+        ` : ""}
+
+        ${renderSection("Foranledning", item.occasion)}
+        ${renderSection("Opplevelse", item.experience)}
+        ${renderSection("Konsekvens", item.consequence)}
+        ${renderSection("Notat", item.note)}
+      `;
+    }
+
+    window.selectItem = function(id){
+      selectedId = id;
+      renderItems();
+    };
+
+    async function loadExperiences(){
+      const q = el("searchBox").value.trim();
+      setStatus("Laster ...");
+
+      const data = await apiFetch(`/experience-list?limit=300&q=${encodeURIComponent(q)}`);
+      currentItems = data.items || [];
+
+      el("userLine").textContent = `Innlogget som ${data.user.name || data.user.email} (${data.user.experienceAccess})`;
+      selectedId = currentItems.length ? currentItems[0].id : null;
+      renderItems();
+      setStatus(`Fant ${data.count} opplevelse(r).`);
+    }
+
+    el("refreshBtn").addEventListener("click", () => {
+      loadExperiences().catch(error => setStatus("Kunne ikke hente opplevelser: " + error.message, "err"));
+    });
+
+    el("searchBox").addEventListener("keydown", event => {
+      if(event.key === "Enter"){
+        event.preventDefault();
+        loadExperiences().catch(error => setStatus("Kunne ikke hente opplevelser: " + error.message, "err"));
+      }
+    });
+
+    loadExperiences().catch(error => setStatus("Kunne ikke hente opplevelser: " + error.message, "err"));
+  </script>
+</body>
+</html>

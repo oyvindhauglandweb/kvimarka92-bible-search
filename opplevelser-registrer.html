@@ -72,7 +72,7 @@
     }
 
 </style>
-<!-- version: opplevelser-registrer-v9-no-preflight-2026-06-15 -->
+<!-- version: opplevelser-registrer-v10-heading-2026-06-15 -->
 </head>
 <body>
   <main class="wrap">
@@ -85,6 +85,10 @@
           <div>
             <label for="experienceDate">Dato for opplevelse</label>
             <input id="experienceDate" name="experienceDate" type="date" required>
+          </div>
+          <div>
+            <label for="heading">Overskrift</label>
+            <input id="heading" name="heading" type="text" maxlength="160" placeholder="Kort overskrift">
           </div>
           <div>
             <label for="place">Sted</label>
@@ -137,6 +141,7 @@
         <div class="buttons">
           <button type="submit" id="saveBtn">Lagre opplevelse</button>
           <button type="button" class="secondary" id="resetBtn">Tøm skjema</button>
+          <button type="button" class="secondary" onclick="window.location.href='opplevelser.html'">Søk i opplevelser</button>
         </div>
       </form>
 
@@ -351,6 +356,7 @@
 
       const payload = {
         experienceDate:el("experienceDate").value,
+        heading:el("heading").value,
         place:el("place").value,
         environment:el("environment").value,
         occasion:el("occasion").value,
