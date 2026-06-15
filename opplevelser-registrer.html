@@ -41,7 +41,7 @@
     .bible-card strong{ color:var(--text); }
     .small{ font-size:.92rem; color:var(--muted); }
   </style>
-<!-- version: opplevelser-registrer-v3-api-root-2026-06-15 -->
+<!-- version: opplevelser-registrer-v4-environment-select-2026-06-15 -->
 </head>
 <body>
   <main class="wrap">
@@ -62,8 +62,13 @@
           </div>
           <div>
             <label for="environment">Miljø</label>
-            <input id="environment" name="environment" list="environmentsList" autocomplete="off">
-            <datalist id="environmentsList"></datalist>
+            <select id="environment" name="environment">
+              <option value="">Velg miljø</option>
+              <option value="Hjemme">Hjemme</option>
+              <option value="Bilen">Bilen</option>
+              <option value="Naturen">Naturen</option>
+              <option value="Møte">Møte</option>
+            </select>
           </div>
 
           <div class="full">
@@ -113,7 +118,11 @@
   </main>
 
   <script>
-    const API_BASE = window.OPPLEVELSER_API_BASE || "https://api-kvimarka92.carstereogarage.com";
+    const API_BASE = window.OPPLEVELSER_API_BASE || (
+      location.hostname === "kvimarka92.carstereogarage.com" || location.hostname === "www.kvimarka92.carstereogarage.com"
+        ? ""
+        : "https://api-kvimarka92.carstereogarage.com"
+    );
 
     const BIBLE_SEARCH_URL = window.OPPLEVELSER_BIBLE_SEARCH_URL || "./bibel-sok.html";
     const SELECTED_VERSE_KEY = "kvimarka92SelectedBibleVerse";
@@ -157,6 +166,39 @@
         option.value = name;
         list.appendChild(option);
       });
+    }
+
+    function fillSelect(id, items, defaults){
+      const select = el(id);
+      const currentValue = select.value;
+      const names = [];
+
+      (defaults || []).forEach(name => {
+        const text = String(name || "").trim();
+        if(text && !names.includes(text)) names.push(text);
+      });
+
+      (items || []).forEach(item => {
+        const text = String((item && (item.name || item.environmentName || item.value)) || item || "").trim();
+        if(text && !names.includes(text)) names.push(text);
+      });
+
+      select.innerHTML = "";
+      const emptyOption = document.createElement("option");
+      emptyOption.value = "";
+      emptyOption.textContent = "Velg miljø";
+      select.appendChild(emptyOption);
+
+      names.forEach(name => {
+        const option = document.createElement("option");
+        option.value = name;
+        option.textContent = name;
+        select.appendChild(option);
+      });
+
+      if(currentValue && names.includes(currentValue)){
+        select.value = currentValue;
+      }
     }
 
     function setBibleVerse(verse){
@@ -242,7 +284,7 @@
         const data = await apiFetch("/experience-options", { method:"GET" });
         initDate(data.today);
         fillDatalist("placesList", data.places || []);
-        fillDatalist("environmentsList", data.environments || []);
+        fillSelect("environment", data.environments || [], ["Hjemme", "Bilen", "Naturen", "Møte"]);
         el("userLine").textContent = `Innlogget som ${data.user.name || data.user.email} (${data.user.experienceAccess})`;
 
         const storedVerse = readSelectedBibleVerseFromStorage();
