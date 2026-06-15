@@ -301,10 +301,10 @@ body.light-mode html:not(.classic-design-root) #status{
 }
 
 </style>
-<!-- version: REGISTER v15 design-polish 2026-06-15 -->
+<!-- version: REGISTER v16 clear-bible-on-new 2026-06-16 -->
 </head>
 <body class="dark-mode">
-<div class="file-version-marker">REGISTER v15 design-polish 2026-06-15</div>
+<div class="file-version-marker">REGISTER v16 clear-bible-on-new 2026-06-16</div>
 
 <main class="wrap">
     <section class="card">
@@ -713,6 +713,46 @@ body.light-mode html:not(.classic-design-root) #status{
   }else{
     initOpplevelserStandard();
   }
+})();
+</script>
+
+
+<script>
+(function(){
+  const KEY = "kvimarka92SelectedBibleVerse";
+
+  function clearBibleFieldsOnFreshRegistration(){
+    try{
+      sessionStorage.removeItem(KEY);
+      localStorage.removeItem(KEY);
+    }catch(error){}
+
+    function clearNow(){
+      const ref = document.getElementById("bibleReference");
+      const text = document.getElementById("bibleText");
+      const source = document.getElementById("bibleSource");
+      const card = document.getElementById("biblePreviewCard") || document.getElementById("selectedBibleCard") || document.getElementById("bibleCard");
+
+      if(ref) ref.value = "";
+      if(text) text.value = "";
+      if(source) source.value = "Bibelen på Norsk (1930)";
+
+      if(card){
+        card.style.display = "none";
+      }
+
+      document.querySelectorAll("[data-bible-reference-output]").forEach(el => el.textContent = "");
+      document.querySelectorAll("[data-bible-text-output]").forEach(el => el.textContent = "");
+    }
+
+    if(document.readyState === "loading"){
+      document.addEventListener("DOMContentLoaded", clearNow);
+    }else{
+      clearNow();
+    }
+  }
+
+  clearBibleFieldsOnFreshRegistration();
 })();
 </script>
 

@@ -385,11 +385,48 @@ body.light-mode html:not(.classic-design-root) #status{
   background:rgba(0,0,0,.045) !important;
 }
 
+
+/* Opplevelser v10 list selection fix: never blue list cards */
+.items .item,
+html:not(.classic-design-root) .items .item{
+  background:rgba(255,255,255,.035) !important;
+  color:var(--opp-text) !important;
+  border:0 !important;
+  box-shadow:none !important;
+}
+
+.items .item:hover,
+html:not(.classic-design-root) .items .item:hover{
+  background:rgba(255,255,255,.060) !important;
+  color:var(--opp-text) !important;
+}
+
+.items .item.active,
+html:not(.classic-design-root) .items .item.active{
+  background:rgba(255,255,255,.095) !important;
+  color:var(--opp-text) !important;
+}
+
+body.light-mode .items .item,
+body.light-mode html:not(.classic-design-root) .items .item{
+  background:rgba(0,0,0,.030) !important;
+}
+
+body.light-mode .items .item:hover,
+body.light-mode html:not(.classic-design-root) .items .item:hover{
+  background:rgba(0,0,0,.055) !important;
+}
+
+body.light-mode .items .item.active,
+body.light-mode html:not(.classic-design-root) .items .item.active{
+  background:rgba(0,0,0,.085) !important;
+}
+
 </style>
-  <!-- version: LIST v9 design-polish 2026-06-15 -->
+  <!-- version: LIST v10 grey-selection-fix 2026-06-16 -->
 </head>
 <body class="dark-mode">
-<div class="file-version-marker">LIST v9 design-polish 2026-06-15</div>
+<div class="file-version-marker">LIST v10 grey-selection-fix 2026-06-16</div>
 
 <main class="wrap">
     <section class="card">
