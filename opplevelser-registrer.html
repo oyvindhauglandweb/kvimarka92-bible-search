@@ -41,6 +41,7 @@
     .bible-card strong{ color:var(--text); }
     .small{ font-size:.92rem; color:var(--muted); }
   </style>
+<!-- version: opplevelser-registrer-v3-api-root-2026-06-15 -->
 </head>
 <body>
   <main class="wrap">
@@ -112,11 +113,7 @@
   </main>
 
   <script>
-    const API_BASE = window.OPPLEVELSER_API_BASE || (
-      location.hostname === "kvimarka92.carstereogarage.com" || location.hostname === "www.kvimarka92.carstereogarage.com"
-        ? ""
-        : "https://kvimarka92.carstereogarage.com"
-    );
+    const API_BASE = window.OPPLEVELSER_API_BASE || "https://api-kvimarka92.carstereogarage.com";
 
     const BIBLE_SEARCH_URL = window.OPPLEVELSER_BIBLE_SEARCH_URL || "./bibel-sok.html";
     const SELECTED_VERSE_KEY = "kvimarka92SelectedBibleVerse";

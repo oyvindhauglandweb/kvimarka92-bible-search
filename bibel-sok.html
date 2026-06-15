@@ -107,6 +107,7 @@
       .action-button{width:100%;}
     }
   </style>
+<!-- version: bible-search-select-v4-root-close-2026-06-15 -->
 </head>
 <body>
   <div class="wrap">
@@ -137,7 +138,7 @@
   </div>
 
 <script type="module">
-import { searchBibleVerses } from "../src/search.js";
+import { searchBibleVerses } from "./src/search.js";
 
 let passages = [];
 let currentResults = [];
@@ -307,7 +308,7 @@ function render(){
 
 async function loadIndex(){
   try{
-    const response = await fetch("../data/index/nb-1930-search-index.json", { cache:"no-store" });
+    const response = await fetch("./data/index/nb-1930-search-index.json", { cache:"no-store" });
 
     if(!response.ok){
       throw new Error(`HTTP ${response.status}`);
