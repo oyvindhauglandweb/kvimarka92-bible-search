@@ -243,11 +243,68 @@ body.light-mode:not(.classic-design-root) .card{
   .top-button{width:40px !important;height:40px !important;font-size:22px !important;}
 }
 
+
+/* Opplevelser v15 design polish */
+.top-button,
+html:not(.classic-design-root) .top-button,
+html:not(.classic-design-root) button.top-button{
+  background:rgba(255,255,255,.055) !important;
+  color:var(--opp-text) !important;
+  border:0 !important;
+  box-shadow:none !important;
+}
+.top-button:hover,
+html:not(.classic-design-root) .top-button:hover{
+  background:rgba(255,255,255,.10) !important;
+  color:var(--opp-text) !important;
+}
+.top-button.app-switch-button{
+  font-size:28px !important;
+}
+.top-button.home-button{
+  font-size:30px !important;
+}
+.top-button.font-size-button{
+  font-size:18px !important;
+}
+.top-button.design-toggle-button{
+  font-size:21px !important;
+}
+
+/* Valgt opplevelse: diskret grå utheving i stedet for blå flate */
+.item.active,
+html:not(.classic-design-root) .item.active{
+  background:rgba(255,255,255,.085) !important;
+  color:var(--opp-text) !important;
+}
+body.light-mode .item.active,
+body.light-mode html:not(.classic-design-root) .item.active{
+  background:rgba(0,0,0,.075) !important;
+}
+
+/* Bibelsted/status skal være myke flater uten linjemarkering */
+html:not(.classic-design-root) .bible,
+html:not(.classic-design-root) .selected-text,
+html:not(.classic-design-root) .status,
+html:not(.classic-design-root) .status.card,
+html:not(.classic-design-root) #status{
+  border:0 !important;
+  background:rgba(0,0,0,.16) !important;
+  box-shadow:none !important;
+}
+body.light-mode html:not(.classic-design-root) .bible,
+body.light-mode html:not(.classic-design-root) .selected-text,
+body.light-mode html:not(.classic-design-root) .status,
+body.light-mode html:not(.classic-design-root) .status.card,
+body.light-mode html:not(.classic-design-root) #status{
+  background:rgba(0,0,0,.045) !important;
+}
+
 </style>
-<!-- version: REGISTER v14 standard-design 2026-06-15 -->
+<!-- version: REGISTER v15 design-polish 2026-06-15 -->
 </head>
 <body class="dark-mode">
-<div class="file-version-marker">REGISTER v14 standard-design 2026-06-15</div>
+<div class="file-version-marker">REGISTER v15 design-polish 2026-06-15</div>
 
 <main class="wrap">
     <section class="card">
@@ -257,7 +314,7 @@ body.light-mode:not(.classic-design-root) .card{
         <div class="top-buttons">
           <a class="top-button" href="https://kvimarka92.carstereogarage.com/index.html?restoreMenu=1" onclick="goOpplevelserBack(event)" title="Tilbake til forrige side" aria-label="Tilbake til forrige side">←</a>
           <a class="top-button app-switch-button" href="opplevelser.html" title="Søk i eksisterende" aria-label="Søk i eksisterende">⌕</a>
-          <a class="top-button" href="https://kvimarka92.carstereogarage.com/index.html" title="Hovedmeny" aria-label="Hovedmeny">⌂</a>
+          <a class="top-button home-button" href="https://kvimarka92.carstereogarage.com/index.html" title="Hovedmeny" aria-label="Hovedmeny">⌂</a>
           <a class="top-button" href="https://kvimarka92.carstereogarage.com/help.html?case=Opplevelser" title="Hjelp" aria-label="Hjelp">?</a>
           
           <button type="button" class="top-button font-size-button" id="opplevelserFontToggle" onclick="toggleOpplevelserFontSize()" title="Endre tekststørrelse" aria-label="Endre tekststørrelse">A</button>
