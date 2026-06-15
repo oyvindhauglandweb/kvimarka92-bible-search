@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Bibelsøk 1930</title>
-  <!-- version: bible-search-select-v6-range-counters-2026-06-15 -->
+  <!-- version: bible-search-select-v7-reference-based-range-2026-06-15 -->
   <style>
     :root{
       color-scheme:dark;
@@ -325,6 +325,44 @@ function cleanInt(value, fallback = 0){
   return Number.isFinite(number) ? number : fallback;
 }
 
+function parseBibleReference(reference){
+  const text = String(reference || "").trim();
+  const match = text.match(/^(.+?)\s+(\d+)\s*,\s*(\d+)(?:\s*[–-]\s*(\d+))?$/);
+
+  if(!match){
+    return null;
+  }
+
+  return {
+    bookLabel:match[1].trim(),
+    chapter:Number(match[2]),
+    from:Number(match[3]),
+    to:Number(match[4] || match[3])
+  };
+}
+
+function getBookNoByLabel(bookLabel){
+  const wanted = String(bookLabel || "").trim().toLowerCase();
+
+  if(!wanted){
+    return 0;
+  }
+
+  const exact = verses.find(row =>
+    getBookLabelFromReference(row.reference).toLowerCase() === wanted
+  );
+
+  if(exact){
+    return Number(exact.bookNo || 0);
+  }
+
+  const loose = verses.find(row =>
+    getBookLabelFromReference(row.reference).toLowerCase().replace(/\s+/g, " ") === wanted.replace(/\s+/g, " ")
+  );
+
+  return loose ? Number(loose.bookNo || 0) : 0;
+}
+
 function getVerseText(result){
   return String(result?.verse?.text || result?.text || "").trim();
 }
@@ -340,12 +378,17 @@ function getBookLabelFromReference(reference){
 }
 
 function normalizeVerseRow(row){
-  const verseFrom = cleanInt(row.verseFrom || row.verse || row.verseNo);
-  const verseTo = cleanInt(row.verseTo || row.verse || row.verseNo || verseFrom);
+  const parsed = parseBibleReference(row.reference);
+  const parsedFrom = parsed ? parsed.from : 0;
+  const parsedTo = parsed ? parsed.to : parsedFrom;
+  const parsedChapter = parsed ? parsed.chapter : 0;
+
+  const verseFrom = cleanInt(row.verseFrom || row.verse || row.verseNo || parsedFrom, parsedFrom);
+  const verseTo = cleanInt(row.verseTo || row.verse || row.verseNo || parsedTo || verseFrom, verseFrom);
   return {
     ...row,
     bookNo:cleanInt(row.bookNo || row.book_no || row.bookNumber || row.book),
-    chapter:cleanInt(row.chapter),
+    chapter:cleanInt(row.chapter || parsedChapter),
     verse:verseFrom,
     verseFrom,
     verseTo,
@@ -355,10 +398,28 @@ function normalizeVerseRow(row){
 }
 
 function buildVerseLookup(){
+  const bookNoByLabel = new Map();
+  let nextBookNo = 1;
+
+  verses = verses.map(row => {
+    const verse = normalizeVerseRow(row);
+    const label = getBookLabelFromReference(verse.reference);
+
+    if(!verse.bookNo && label){
+      const key = label.toLowerCase();
+      if(!bookNoByLabel.has(key)){
+        bookNoByLabel.set(key, nextBookNo);
+        nextBookNo += 1;
+      }
+      verse.bookNo = bookNoByLabel.get(key);
+    }
+
+    return verse;
+  });
+
   verseByKey = new Map();
 
-  verses.forEach(row => {
-    const verse = normalizeVerseRow(row);
+  verses.forEach(verse => {
     if(verse.bookNo && verse.chapter && verse.verse){
       verseByKey.set(verseKey(verse.bookNo, verse.chapter, verse.verse), verse);
     }
@@ -366,6 +427,19 @@ function buildVerseLookup(){
 }
 
 function getBaseRange(result){
+  const parsed = parseBibleReference(result?.reference);
+
+  if(parsed){
+    const bookNo = getBookNoByLabel(parsed.bookLabel);
+    return {
+      bookNo,
+      chapter:parsed.chapter,
+      from:parsed.from,
+      to:parsed.to,
+      bookLabel:parsed.bookLabel
+    };
+  }
+
   const verse = normalizeVerseRow(result?.verse || {});
   const from = cleanInt(verse.verseFrom || verse.verse);
   const to = cleanInt(verse.verseTo || verse.verse || from);
