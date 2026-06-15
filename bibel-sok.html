@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Bibelsøk 1930</title>
-  <!-- version: bible-search-select-v5-verse-counters-2026-06-15 -->
+  <!-- version: bible-search-select-v6-range-counters-2026-06-15 -->
   <style>
     :root{
       color-scheme:dark;
@@ -188,6 +188,82 @@
       }
     }
 
+  
+    /* v6: range counters pinned to far right */
+    .result-inner{
+      display:grid !important;
+      grid-template-columns:minmax(0, 1fr) 150px !important;
+      gap:16px !important;
+      align-items:start !important;
+      width:100% !important;
+    }
+    .result-main{
+      min-width:0 !important;
+    }
+    .verse-counters{
+      justify-self:end !important;
+      align-self:start !important;
+      display:flex !important;
+      flex-direction:column !important;
+      gap:8px !important;
+      align-items:stretch !important;
+      width:150px !important;
+      min-width:150px !important;
+    }
+    .counter-row{
+      display:grid !important;
+      grid-template-columns:30px 42px 30px !important;
+      gap:5px !important;
+      align-items:center !important;
+      justify-content:end !important;
+    }
+    .counter-label{
+      grid-column:1 / -1 !important;
+      color:var(--muted) !important;
+      font-size:12px !important;
+      text-align:center !important;
+      line-height:1.1 !important;
+      margin-bottom:1px !important;
+      white-space:nowrap !important;
+    }
+    .counter-button{
+      width:30px !important;
+      height:28px !important;
+      border:1px solid var(--border) !important;
+      border-radius:7px !important;
+      background:var(--field) !important;
+      color:var(--text) !important;
+      font-weight:bold !important;
+      cursor:pointer !important;
+      line-height:1 !important;
+      padding:0 !important;
+    }
+    .counter-value{
+      display:flex !important;
+      align-items:center !important;
+      justify-content:center !important;
+      min-width:42px !important;
+      height:28px !important;
+      border:1px solid var(--border) !important;
+      border-radius:7px !important;
+      background:rgba(255,255,255,.045) !important;
+      color:var(--text) !important;
+      font-weight:bold !important;
+      font-size:14px !important;
+    }
+    @media(max-width:700px){
+      .result-inner{
+        grid-template-columns:1fr !important;
+      }
+      .verse-counters{
+        justify-self:start !important;
+        width:auto !important;
+        min-width:0 !important;
+        flex-direction:row !important;
+        flex-wrap:wrap !important;
+      }
+    }
+
   </style>
 </head>
 <body>
@@ -303,13 +379,40 @@ function getBaseRange(result){
   };
 }
 
-function getExpansion(index){
-  return resultExpansions.get(index) || { before:0, after:0 };
+function getVerseRangeSelection(result, index){
+  const existing = resultExpansions.get(index);
+
+  if(existing && Number(existing.from) && Number(existing.to)){
+    return existing;
+  }
+
+  const base = getBaseRange(result);
+  return {
+    from:base.from,
+    to:base.to
+  };
+}
+
+function getChapterMinMax(bookNo, chapter){
+  const matching = verses.filter(row =>
+    Number(row.bookNo) === Number(bookNo) &&
+    Number(row.chapter) === Number(chapter)
+  );
+
+  if(!matching.length){
+    return { min:1, max:999 };
+  }
+
+  const verseNumbers = matching.map(row => Number(row.verse)).filter(Number.isFinite);
+  return {
+    min:Math.min(...verseNumbers),
+    max:Math.max(...verseNumbers)
+  };
 }
 
 function getExpandedRange(result, index){
   const base = getBaseRange(result);
-  const expansion = getExpansion(index);
+  const selected = getVerseRangeSelection(result, index);
 
   if(!base.bookNo || !base.chapter || !base.from){
     return {
@@ -319,25 +422,14 @@ function getExpandedRange(result, index){
     };
   }
 
-  let expandedFrom = base.from;
-  let expandedTo = base.to;
-
-  for(let count = 0; count < expansion.before; count += 1){
-    const previous = verseByKey.get(verseKey(base.bookNo, base.chapter, expandedFrom - 1));
-    if(!previous) break;
-    expandedFrom -= 1;
-  }
-
-  for(let count = 0; count < expansion.after; count += 1){
-    const next = verseByKey.get(verseKey(base.bookNo, base.chapter, expandedTo + 1));
-    if(!next) break;
-    expandedTo += 1;
-  }
+  const limits = getChapterMinMax(base.bookNo, base.chapter);
+  const selectedFrom = Math.max(limits.min, Math.min(limits.max, Number(selected.from || base.from)));
+  const selectedTo = Math.max(limits.min, Math.min(limits.max, Number(selected.to || base.to)));
 
   return {
     ...base,
-    expandedFrom,
-    expandedTo
+    expandedFrom:Math.min(selectedFrom, selectedTo),
+    expandedTo:Math.max(selectedFrom, selectedTo)
   };
 }
 
@@ -508,28 +600,42 @@ window.selectBibleResult = function(index){
   });
 };
 
-window.changeVerseExpansion = function(event, index, direction, delta){
+window.changeVerseRange = function(event, index, direction, delta){
   event.preventDefault();
   event.stopPropagation();
 
-  const current = getExpansion(index);
+  const result = currentResults[index];
+  if(!result){
+    return;
+  }
+
+  const base = getBaseRange(result);
+  const current = getVerseRangeSelection(result, index);
+  const limits = getChapterMinMax(base.bookNo, base.chapter);
+
   const next = {
-    before:current.before,
-    after:current.after
+    from:Number(current.from || base.from),
+    to:Number(current.to || base.to)
   };
 
-  if(direction === "before"){
-    next.before = Math.max(0, Math.min(20, next.before + delta));
+  if(direction === "from"){
+    next.from = Math.max(limits.min, Math.min(limits.max, next.from + delta));
+    if(next.from > next.to){
+      next.to = next.from;
+    }
   }else{
-    next.after = Math.max(0, Math.min(20, next.after + delta));
+    next.to = Math.max(limits.min, Math.min(limits.max, next.to + delta));
+    if(next.to < next.from){
+      next.from = next.to;
+    }
   }
 
   resultExpansions.set(index, next);
 
-  const selectedButton = document.querySelector(`.result-button.selected[data-result-index="${index}"]`);
+  const wasSelected = !!document.querySelector(`.result-button.selected[data-result-index="${index}"]`);
   render();
 
-  if(selectedButton){
+  if(wasSelected){
     const newSelectedButton = document.querySelector(`.result-button[data-result-index="${index}"]`);
     if(newSelectedButton){
       newSelectedButton.classList.add("selected");
@@ -555,7 +661,7 @@ function render(){
 
   currentResults = searchBibleVerses(query, passages, { limit: 12 });
   resultExpansions = new Map(
-    currentResults.map((result, index) => [index, resultExpansions.get(index) || { before:0, after:0 }])
+    currentResults.map((result, index) => [index, resultExpansions.get(index) || getVerseRangeSelection(result, index)])
   );
 
   if(!currentResults.length){
@@ -564,7 +670,7 @@ function render(){
   }
 
   resultsBox.innerHTML = currentResults.map((result, index) => {
-    const expansion = getExpansion(index);
+    const selectedRange = getVerseRangeSelection(result, index);
     const expandedRef = makeReferenceFromRange(result, index);
     const referenceNote = expandedRef !== result.reference
       ? `<div class="expanded-reference-note">Valg: ${esc(expandedRef)}</div>`
@@ -586,19 +692,19 @@ function render(){
             <div class="snippet">${esc(result.snippet)}</div>
           </div>
 
-          <div class="verse-counters" aria-label="Legg til vers før eller etter">
+          <div class="verse-counters" aria-label="Velg versområde">
             <div class="counter-row">
-              <div class="counter-label">Vers før</div>
-              <button class="counter-button" type="button" onclick="changeVerseExpansion(event, ${index}, 'before', -1)" aria-label="Færre vers før">−</button>
-              <div class="counter-value">${esc(expansion.before)}</div>
-              <button class="counter-button" type="button" onclick="changeVerseExpansion(event, ${index}, 'before', 1)" aria-label="Flere vers før">+</button>
+              <div class="counter-label">Fra vers</div>
+              <button class="counter-button" type="button" onclick="changeVerseRange(event, ${index}, 'from', -1)" aria-label="Tidligere startvers">−</button>
+              <div class="counter-value">${esc(selectedRange.from)}</div>
+              <button class="counter-button" type="button" onclick="changeVerseRange(event, ${index}, 'from', 1)" aria-label="Senere startvers">+</button>
             </div>
 
             <div class="counter-row">
-              <div class="counter-label">Vers etter</div>
-              <button class="counter-button" type="button" onclick="changeVerseExpansion(event, ${index}, 'after', -1)" aria-label="Færre vers etter">−</button>
-              <div class="counter-value">${esc(expansion.after)}</div>
-              <button class="counter-button" type="button" onclick="changeVerseExpansion(event, ${index}, 'after', 1)" aria-label="Flere vers etter">+</button>
+              <div class="counter-label">Til vers</div>
+              <button class="counter-button" type="button" onclick="changeVerseRange(event, ${index}, 'to', -1)" aria-label="Tidligere sluttvers">−</button>
+              <div class="counter-value">${esc(selectedRange.to)}</div>
+              <button class="counter-button" type="button" onclick="changeVerseRange(event, ${index}, 'to', 1)" aria-label="Senere sluttvers">+</button>
             </div>
           </div>
         </div>
