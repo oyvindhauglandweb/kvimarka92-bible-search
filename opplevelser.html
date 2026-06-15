@@ -79,8 +79,85 @@
       .readonly-actions{ width:100%; }
       .readonly-actions button{ width:100%; }
     }
+  
+    .mobile-only{ display:none; }
+
+    @media(max-width:800px){
+      .mobile-only{ display:inline-flex; }
+      .card{ padding:14px; }
+      h1{ font-size:1.45rem; }
+      .sub{ font-size:.95rem; }
+
+      .toolbar{
+        grid-template-columns:1fr;
+        gap:8px;
+      }
+
+      .toolbar button{
+        width:100%;
+      }
+
+      .list{
+        grid-template-columns:1fr;
+      }
+
+      .items.mobile-detail-open{
+        display:none;
+      }
+
+      .details{
+        display:none;
+        min-height:0;
+      }
+
+      .details.mobile-visible{
+        display:block;
+      }
+
+      .item{
+        padding:14px 12px;
+      }
+
+      .item-title{
+        font-size:1rem;
+        line-height:1.25;
+        margin-bottom:6px;
+      }
+
+      .item-meta{
+        font-size:.92rem;
+        line-height:1.35;
+      }
+
+      .desktop-extra{
+        display:none !important;
+      }
+
+      .detail-head{
+        flex-direction:column;
+      }
+
+      .readonly-actions{
+        width:100%;
+        display:grid;
+        grid-template-columns:1fr;
+      }
+
+      .readonly-actions button{
+        width:100%;
+      }
+
+      .edit-grid{
+        grid-template-columns:1fr;
+      }
+
+      .edit-grid .full{
+        grid-column:auto;
+      }
+    }
+
   </style>
-  <!-- version: opplevelser-list-v2-live-search-edit-2026-06-15 -->
+  <!-- version: opplevelser-list-v3-mobile-list-first-2026-06-15 -->
 </head>
 <body>
   <main class="wrap">
@@ -170,12 +247,27 @@
       return currentItems.find(entry => entry.id === selectedId) || null;
     }
 
+    function isMobileView(){
+      return window.matchMedia("(max-width:800px)").matches;
+    }
+
+    function setMobileDetailState(open){
+      if(isMobileView()){
+        el("items").classList.toggle("mobile-detail-open", !!open);
+        el("details").classList.toggle("mobile-visible", !!open);
+      }else{
+        el("items").classList.remove("mobile-detail-open");
+        el("details").classList.remove("mobile-visible");
+      }
+    }
+
     function renderItems(){
       const box = el("items");
 
       if(!currentItems.length){
         box.innerHTML = '<div class="empty">Ingen opplevelser funnet.</div>';
         el("details").innerHTML = '<div class="empty">Ingen opplevelser å vise.</div>';
+        setMobileDetailState(false);
         return;
       }
 
@@ -194,10 +286,15 @@
       `).join("");
 
       if(!selectedId || !currentItems.some(item => item.id === selectedId)){
-        selectedId = currentItems[0].id;
+        selectedId = isMobileView() ? null : currentItems[0].id;
       }
 
-      renderDetails();
+      if(selectedId){
+        renderDetails();
+      }else{
+        el("details").innerHTML = '<div class="empty">Velg en opplevelse i listen.</div>';
+        setMobileDetailState(false);
+      }
     }
 
     function renderSection(title, text){
@@ -235,6 +332,7 @@
             </div>
           </div>
           <div class="readonly-actions">
+            <button type="button" class="secondary mobile-only" onclick="backToMobileList()">Tilbake til liste</button>
             <button type="button" class="secondary" onclick="startEdit()">Rediger</button>
           </div>
         </div>
@@ -331,6 +429,12 @@
       selectedId = id;
       editMode = false;
       renderItems();
+      setMobileDetailState(true);
+    };
+
+    window.backToMobileList = function(){
+      editMode = false;
+      setMobileDetailState(false);
     };
 
     window.startEdit = function(){
@@ -341,6 +445,7 @@
     window.cancelEdit = function(){
       editMode = false;
       renderDetails();
+      setMobileDetailState(true);
     };
 
     async function saveEdit(event){
@@ -379,6 +484,7 @@
 
         editMode = false;
         renderItems();
+        setMobileDetailState(true);
         setStatus("Endringer lagret.", "ok");
       }catch(error){
         setStatus("Kunne ikke lagre endringer: " + error.message, "err");
@@ -394,7 +500,10 @@
 
       el("userLine").textContent = `Innlogget som ${data.user.name || data.user.email} (${data.user.experienceAccess})`;
 
-      if(!selectedId || !currentItems.some(item => item.id === selectedId)){
+      if(isMobileView()){
+        selectedId = null;
+        setMobileDetailState(false);
+      }else if(!selectedId || !currentItems.some(item => item.id === selectedId)){
         selectedId = currentItems.length ? currentItems[0].id : null;
       }
 
@@ -420,6 +529,18 @@
       if(event.key === "Enter"){
         event.preventDefault();
         loadExperiences().catch(error => setStatus("Kunne ikke hente opplevelser: " + error.message, "err"));
+      }
+    });
+
+    window.addEventListener("resize", () => {
+      if(!isMobileView()){
+        if(!selectedId && currentItems.length){
+          selectedId = currentItems[0].id;
+          renderItems();
+        }
+        setMobileDetailState(false);
+      }else if(!selectedId){
+        setMobileDetailState(false);
       }
     });
 
