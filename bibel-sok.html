@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Bibelsøk 1930</title>
-  <!-- version: bible-search-select-v7-reference-based-range-2026-06-15 -->
+  <!-- version: bible-search-select-v8-clean-range-2026-06-15 -->
   <style>
     :root{
       color-scheme:dark;
@@ -17,292 +17,80 @@
       --link:#82cfff;
       --ok:#8ee698;
     }
+    *{box-sizing:border-box;}
     body{margin:0;background:var(--bg);color:var(--text);font-family:Arial,sans-serif;padding:18px;}
     .wrap{max-width:900px;margin:0 auto;}
     h1{margin:0 0 8px;text-align:center;}
     .sub{color:var(--muted);text-align:center;margin-bottom:20px;}
     .card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:14px;}
     input{width:100%;background:var(--field);color:var(--text);border:1px solid var(--border);border-radius:8px;padding:12px;font:inherit;box-sizing:border-box;}
-    .result-button{
-      display:block;
-      width:100%;
-      border:0;
-      border-top:1px solid var(--border);
-      padding:12px 0;
-      background:transparent;
-      color:var(--text);
-      text-align:left;
-      cursor:pointer;
-      font:inherit;
-    }
-    .result-button:first-child{border-top:0;}
-    .result-button:hover{background:rgba(130,207,255,.08);}
-    .result-button.selected{background:rgba(142,230,152,.09);}
+    .result-card{display:grid;grid-template-columns:minmax(0,1fr) 150px;gap:16px;align-items:start;width:100%;border-top:1px solid var(--border);padding:12px 0;background:transparent;color:var(--text);}
+    .result-card:first-child{border-top:0;}
+    .result-card.selected .result-main{background:rgba(142,230,152,.09);}
+    .result-main{min-width:0;border:0;border-radius:8px;padding:8px;background:transparent;color:var(--text);text-align:left;cursor:pointer;font:inherit;}
+    .result-main:hover{background:rgba(130,207,255,.08);}
     .ref{font-weight:bold;color:var(--link);}
+    .selected-range{color:var(--muted);font-size:13px;margin-top:3px;}
     .score{color:var(--muted);font-size:13px;margin-top:3px;}
     .snippet{margin-top:6px;line-height:1.45;}
+    .range-controls{justify-self:end;display:flex;flex-direction:column;gap:10px;width:150px;}
+    .range-row{display:grid;grid-template-columns:32px 44px 32px;gap:5px;align-items:center;justify-content:end;}
+    .range-label{grid-column:1 / -1;color:var(--muted);font-size:12px;text-align:center;white-space:nowrap;line-height:1.1;}
+    .range-button{width:32px;height:30px;border:1px solid var(--border);border-radius:7px;background:var(--field);color:var(--text);font-weight:bold;font-size:16px;cursor:pointer;padding:0;}
+    .range-button:hover{background:#333;}
+    .range-value{display:flex;align-items:center;justify-content:center;min-width:44px;height:30px;border:1px solid var(--border);border-radius:7px;background:rgba(255,255,255,.045);color:var(--text);font-weight:bold;font-size:14px;}
     .loading{color:var(--muted);}
-    .selected-card{
-      display:none;
-      border-color:rgba(142,230,152,.65);
-      box-shadow:0 0 0 1px rgba(142,230,152,.18);
-    }
+    .selected-card{display:none;border-color:rgba(142,230,152,.65);box-shadow:0 0 0 1px rgba(142,230,152,.18);}
     .selected-card.visible{display:block;}
-    .selected-label{
-      color:var(--muted);
-      font-size:13px;
-      margin-bottom:6px;
-    }
-    .selected-reference{
-      color:var(--ok);
-      font-weight:bold;
-      font-size:18px;
-      margin-bottom:10px;
-    }
-    .selected-text{
-      white-space:pre-wrap;
-      line-height:1.55;
-      background:rgba(255,255,255,.035);
-      border:1px solid var(--border);
-      border-radius:10px;
-      padding:12px;
-    }
-    .actions{
-      display:flex;
-      flex-wrap:wrap;
-      gap:10px;
-      margin-top:12px;
-    }
-    .action-button{
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      min-height:36px;
-      padding:0 14px;
-      background:var(--card);
-      border:1px solid var(--border);
-      border-radius:8px;
-      color:var(--text);
-      text-decoration:none;
-      font-size:14px;
-      font-weight:bold;
-      box-sizing:border-box;
-      cursor:pointer;
-    }
+    .selected-label{color:var(--muted);font-size:13px;margin-bottom:6px;}
+    .selected-reference{color:var(--ok);font-weight:bold;font-size:18px;margin-bottom:10px;}
+    .selected-text{white-space:pre-wrap;line-height:1.55;background:rgba(255,255,255,.035);border:1px solid var(--border);border-radius:10px;padding:12px;}
+    .actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px;}
+    .action-button{display:inline-flex;align-items:center;justify-content:center;min-height:36px;padding:0 14px;background:var(--card);border:1px solid var(--border);border-radius:8px;color:var(--text);text-decoration:none;font-size:14px;font-weight:bold;box-sizing:border-box;cursor:pointer;}
     .action-button:hover{background:#333;}
-    .action-button.primary{
-      background:var(--link);
-      border-color:var(--link);
-      color:#fff;
-    }
-    .copy-status{
-      color:var(--ok);
-      font-size:13px;
-      margin-top:8px;
-      min-height:18px;
-    }
+    .action-button.primary{background:var(--link);border-color:var(--link);color:#fff;}
+    .copy-status{color:var(--ok);font-size:13px;margin-top:8px;min-height:18px;}
     @media(max-width:700px){
       body{padding:10px;}
+      .result-card{grid-template-columns:1fr;}
+      .range-controls{justify-self:start;width:auto;flex-direction:row;flex-wrap:wrap;}
       .actions{display:grid;grid-template-columns:1fr;}
       .action-button{width:100%;}
     }
-  
-    .result-inner{
-      display:grid;
-      grid-template-columns:1fr auto;
-      gap:12px;
-      align-items:start;
-      width:100%;
-    }
-    .result-main{
-      min-width:0;
-    }
-    .verse-counters{
-      display:flex;
-      flex-direction:column;
-      gap:7px;
-      align-items:flex-end;
-      min-width:128px;
-    }
-    .counter-row{
-      display:grid;
-      grid-template-columns:auto 34px auto;
-      gap:5px;
-      align-items:center;
-    }
-    .counter-label{
-      grid-column:1 / -1;
-      color:var(--muted);
-      font-size:12px;
-      text-align:center;
-      line-height:1.1;
-      margin-bottom:1px;
-    }
-    .counter-button{
-      width:30px;
-      height:28px;
-      border:1px solid var(--border);
-      border-radius:7px;
-      background:var(--field);
-      color:var(--text);
-      font-weight:bold;
-      cursor:pointer;
-      line-height:1;
-    }
-    .counter-button:hover{
-      background:#333;
-    }
-    .counter-value{
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      min-width:34px;
-      height:28px;
-      border:1px solid var(--border);
-      border-radius:7px;
-      background:rgba(255,255,255,.045);
-      color:var(--text);
-      font-weight:bold;
-      font-size:14px;
-    }
-    .expanded-reference-note{
-      color:var(--muted);
-      font-size:12px;
-      margin-top:4px;
-    }
-    @media(max-width:700px){
-      .result-inner{
-        grid-template-columns:1fr;
-      }
-      .verse-counters{
-        flex-direction:row;
-        align-items:center;
-        justify-content:flex-start;
-        min-width:0;
-      }
-      .counter-row{
-        grid-template-columns:auto 34px auto;
-      }
-      .counter-label{
-        text-align:left;
-      }
-    }
-
-  
-    /* v6: range counters pinned to far right */
-    .result-inner{
-      display:grid !important;
-      grid-template-columns:minmax(0, 1fr) 150px !important;
-      gap:16px !important;
-      align-items:start !important;
-      width:100% !important;
-    }
-    .result-main{
-      min-width:0 !important;
-    }
-    .verse-counters{
-      justify-self:end !important;
-      align-self:start !important;
-      display:flex !important;
-      flex-direction:column !important;
-      gap:8px !important;
-      align-items:stretch !important;
-      width:150px !important;
-      min-width:150px !important;
-    }
-    .counter-row{
-      display:grid !important;
-      grid-template-columns:30px 42px 30px !important;
-      gap:5px !important;
-      align-items:center !important;
-      justify-content:end !important;
-    }
-    .counter-label{
-      grid-column:1 / -1 !important;
-      color:var(--muted) !important;
-      font-size:12px !important;
-      text-align:center !important;
-      line-height:1.1 !important;
-      margin-bottom:1px !important;
-      white-space:nowrap !important;
-    }
-    .counter-button{
-      width:30px !important;
-      height:28px !important;
-      border:1px solid var(--border) !important;
-      border-radius:7px !important;
-      background:var(--field) !important;
-      color:var(--text) !important;
-      font-weight:bold !important;
-      cursor:pointer !important;
-      line-height:1 !important;
-      padding:0 !important;
-    }
-    .counter-value{
-      display:flex !important;
-      align-items:center !important;
-      justify-content:center !important;
-      min-width:42px !important;
-      height:28px !important;
-      border:1px solid var(--border) !important;
-      border-radius:7px !important;
-      background:rgba(255,255,255,.045) !important;
-      color:var(--text) !important;
-      font-weight:bold !important;
-      font-size:14px !important;
-    }
-    @media(max-width:700px){
-      .result-inner{
-        grid-template-columns:1fr !important;
-      }
-      .verse-counters{
-        justify-self:start !important;
-        width:auto !important;
-        min-width:0 !important;
-        flex-direction:row !important;
-        flex-wrap:wrap !important;
-      }
-    }
-
   </style>
 </head>
 <body>
   <div class="wrap">
     <h1>Bibelsøk 1930</h1>
     <div class="sub">Finn bibelsted fra sitatfragment</div>
-
     <div class="card">
       <input id="query" type="text" placeholder="Skriv deler av et bibelsitat..." autocomplete="off">
     </div>
-
     <div class="card selected-card" id="selectedCard">
       <div class="selected-label">Valgt bibelsted</div>
       <div class="selected-reference" id="selectedReference"></div>
       <div class="selected-text" id="selectedText"></div>
-
       <div class="actions">
         <button class="action-button" type="button" onclick="copySelectedReference()">Kopier referanse</button>
         <button class="action-button" type="button" onclick="copySelectedFullText()">Kopier referanse + tekst</button>
         <button class="action-button primary" type="button" onclick="useSelectedBibleVerse()">Bruk valgt bibelsted</button>
       </div>
-
       <div class="copy-status" id="copyStatus"></div>
     </div>
-
     <div class="card" id="results">
       <div class="loading">Laster søkeindeks...</div>
     </div>
   </div>
-
 <script type="module">
 import { searchBibleVerses } from "./src/search.js";
 
 let passages = [];
 let verses = [];
-let verseByKey = new Map();
+let verseMap = new Map();
 let currentResults = [];
+let rangeByReference = new Map();
+let selectedIndex = null;
 let selectedBibleVerse = null;
-let resultExpansions = new Map();
 
 const input = document.getElementById("query");
 const resultsBox = document.getElementById("results");
@@ -312,259 +100,100 @@ const selectedText = document.getElementById("selectedText");
 const copyStatus = document.getElementById("copyStatus");
 
 function esc(value){
-  return String(value ?? "")
-    .replaceAll("&","&amp;")
-    .replaceAll("<","&lt;")
-    .replaceAll(">","&gt;")
-    .replaceAll('"',"&quot;")
-    .replaceAll("'","&#039;");
+  return String(value ?? "").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;");
 }
 
-function cleanInt(value, fallback = 0){
-  const number = Number(value);
-  return Number.isFinite(number) ? number : fallback;
-}
-
-function parseBibleReference(reference){
+function parseReference(reference){
   const text = String(reference || "").trim();
   const match = text.match(/^(.+?)\s+(\d+)\s*,\s*(\d+)(?:\s*[–-]\s*(\d+))?$/);
-
-  if(!match){
-    return null;
-  }
-
-  return {
-    bookLabel:match[1].trim(),
-    chapter:Number(match[2]),
-    from:Number(match[3]),
-    to:Number(match[4] || match[3])
-  };
+  if(!match) return null;
+  return { book:match[1].trim(), chapter:Number(match[2]), from:Number(match[3]), to:Number(match[4] || match[3]) };
 }
 
-function getBookNoByLabel(bookLabel){
-  const wanted = String(bookLabel || "").trim().toLowerCase();
-
-  if(!wanted){
-    return 0;
-  }
-
-  const exact = verses.find(row =>
-    getBookLabelFromReference(row.reference).toLowerCase() === wanted
-  );
-
-  if(exact){
-    return Number(exact.bookNo || 0);
-  }
-
-  const loose = verses.find(row =>
-    getBookLabelFromReference(row.reference).toLowerCase().replace(/\s+/g, " ") === wanted.replace(/\s+/g, " ")
-  );
-
-  return loose ? Number(loose.bookNo || 0) : 0;
+function refKey(book, chapter, verse){
+  return `${String(book || "").trim().toLowerCase()}|${Number(chapter)}|${Number(verse)}`;
 }
 
-function getVerseText(result){
-  return String(result?.verse?.text || result?.text || "").trim();
+function rangeKey(result){
+  return String(result?.reference || "").trim();
 }
 
-function verseKey(bookNo, chapter, verse){
-  return `${cleanInt(bookNo)}:${cleanInt(chapter)}:${cleanInt(verse)}`;
+function makeReference(book, chapter, from, to){
+  if(Number(from) === Number(to)) return `${book} ${chapter},${from}`;
+  return `${book} ${chapter},${from}–${to}`;
 }
 
-function getBookLabelFromReference(reference){
-  const text = String(reference || "").trim();
-  const match = text.match(/^(.+?)\s+\d+\s*,/);
-  return match ? match[1] : "";
+function getBaseRange(result){
+  const parsed = parseReference(result?.reference);
+  if(parsed) return parsed;
+  return { book:String(result?.reference || "").trim(), chapter:0, from:0, to:0 };
+}
+
+function getRange(result){
+  const key = rangeKey(result);
+  const existing = rangeByReference.get(key);
+  if(existing) return existing;
+  const base = getBaseRange(result);
+  const range = { book:base.book, chapter:base.chapter, from:base.from, to:base.to };
+  rangeByReference.set(key, range);
+  return range;
+}
+
+function getChapterLimits(book, chapter){
+  const numbers = verses
+    .filter(row => String(row.book || "").trim().toLowerCase() === String(book || "").trim().toLowerCase() && Number(row.chapter) === Number(chapter))
+    .map(row => Number(row.verse))
+    .filter(Number.isFinite);
+  if(!numbers.length) return { min:1, max:999 };
+  return { min:Math.min(...numbers), max:Math.max(...numbers) };
 }
 
 function normalizeVerseRow(row){
-  const parsed = parseBibleReference(row.reference);
-  const parsedFrom = parsed ? parsed.from : 0;
-  const parsedTo = parsed ? parsed.to : parsedFrom;
-  const parsedChapter = parsed ? parsed.chapter : 0;
-
-  const verseFrom = cleanInt(row.verseFrom || row.verse || row.verseNo || parsedFrom, parsedFrom);
-  const verseTo = cleanInt(row.verseTo || row.verse || row.verseNo || parsedTo || verseFrom, verseFrom);
+  const parsed = parseReference(row.reference);
   return {
     ...row,
-    bookNo:cleanInt(row.bookNo || row.book_no || row.bookNumber || row.book),
-    chapter:cleanInt(row.chapter || parsedChapter),
-    verse:verseFrom,
-    verseFrom,
-    verseTo,
+    book:parsed ? parsed.book : String(row.bookName || row.book || "").trim(),
+    chapter:parsed ? parsed.chapter : Number(row.chapter || 0),
+    verse:parsed ? parsed.from : Number(row.verse || row.verseFrom || row.verseNo || 0),
     text:String(row.text || "").trim(),
     reference:String(row.reference || "").trim()
   };
 }
 
-function buildVerseLookup(){
-  const bookNoByLabel = new Map();
-  let nextBookNo = 1;
-
-  verses = verses.map(row => {
-    const verse = normalizeVerseRow(row);
-    const label = getBookLabelFromReference(verse.reference);
-
-    if(!verse.bookNo && label){
-      const key = label.toLowerCase();
-      if(!bookNoByLabel.has(key)){
-        bookNoByLabel.set(key, nextBookNo);
-        nextBookNo += 1;
-      }
-      verse.bookNo = bookNoByLabel.get(key);
-    }
-
-    return verse;
-  });
-
-  verseByKey = new Map();
-
-  verses.forEach(verse => {
-    if(verse.bookNo && verse.chapter && verse.verse){
-      verseByKey.set(verseKey(verse.bookNo, verse.chapter, verse.verse), verse);
+function buildVerseMap(){
+  verses = verses.map(normalizeVerseRow);
+  verseMap = new Map();
+  verses.forEach(row => {
+    if(row.book && row.chapter && row.verse){
+      verseMap.set(refKey(row.book, row.chapter, row.verse), row);
     }
   });
 }
 
-function getBaseRange(result){
-  const parsed = parseBibleReference(result?.reference);
-
-  if(parsed){
-    const bookNo = getBookNoByLabel(parsed.bookLabel);
-    return {
-      bookNo,
-      chapter:parsed.chapter,
-      from:parsed.from,
-      to:parsed.to,
-      bookLabel:parsed.bookLabel
-    };
-  }
-
-  const verse = normalizeVerseRow(result?.verse || {});
-  const from = cleanInt(verse.verseFrom || verse.verse);
-  const to = cleanInt(verse.verseTo || verse.verse || from);
-
-  return {
-    bookNo:verse.bookNo,
-    chapter:verse.chapter,
-    from,
-    to:to || from,
-    bookLabel:getBookLabelFromReference(result?.reference || verse.reference)
-  };
-}
-
-function getVerseRangeSelection(result, index){
-  const existing = resultExpansions.get(index);
-
-  if(existing && Number(existing.from) && Number(existing.to)){
-    return existing;
-  }
-
-  const base = getBaseRange(result);
-  return {
-    from:base.from,
-    to:base.to
-  };
-}
-
-function getChapterMinMax(bookNo, chapter){
-  const matching = verses.filter(row =>
-    Number(row.bookNo) === Number(bookNo) &&
-    Number(row.chapter) === Number(chapter)
-  );
-
-  if(!matching.length){
-    return { min:1, max:999 };
-  }
-
-  const verseNumbers = matching.map(row => Number(row.verse)).filter(Number.isFinite);
-  return {
-    min:Math.min(...verseNumbers),
-    max:Math.max(...verseNumbers)
-  };
-}
-
-function getExpandedRange(result, index){
-  const base = getBaseRange(result);
-  const selected = getVerseRangeSelection(result, index);
-
-  if(!base.bookNo || !base.chapter || !base.from){
-    return {
-      ...base,
-      expandedFrom:base.from,
-      expandedTo:base.to
-    };
-  }
-
-  const limits = getChapterMinMax(base.bookNo, base.chapter);
-  const selectedFrom = Math.max(limits.min, Math.min(limits.max, Number(selected.from || base.from)));
-  const selectedTo = Math.max(limits.min, Math.min(limits.max, Number(selected.to || base.to)));
-
-  return {
-    ...base,
-    expandedFrom:Math.min(selectedFrom, selectedTo),
-    expandedTo:Math.max(selectedFrom, selectedTo)
-  };
-}
-
-function makeReferenceFromRange(result, index){
-  const range = getExpandedRange(result, index);
-
-  if(!range.bookLabel || !range.chapter || !range.expandedFrom){
-    return String(result?.reference || "").trim();
-  }
-
-  if(range.expandedFrom === range.expandedTo){
-    return `${range.bookLabel} ${range.chapter},${range.expandedFrom}`;
-  }
-
-  return `${range.bookLabel} ${range.chapter},${range.expandedFrom}–${range.expandedTo}`;
-}
-
-function getVersesInRange(result, index){
-  const range = getExpandedRange(result, index);
-
-  if(!range.bookNo || !range.chapter || !range.expandedFrom){
-    return [{
-      verse:0,
-      text:getVerseText(result)
-    }];
-  }
-
+function getRowsForRange(range){
+  const from = Math.min(Number(range.from || 0), Number(range.to || 0));
+  const to = Math.max(Number(range.from || 0), Number(range.to || 0));
   const rows = [];
-  for(let verseNo = range.expandedFrom; verseNo <= range.expandedTo; verseNo += 1){
-    const row = verseByKey.get(verseKey(range.bookNo, range.chapter, verseNo));
-    if(row){
-      rows.push(row);
-    }
+  for(let verseNo = from; verseNo <= to; verseNo += 1){
+    const row = verseMap.get(refKey(range.book, range.chapter, verseNo));
+    if(row) rows.push(row);
   }
-
-  if(!rows.length){
-    return [{
-      verse:0,
-      text:getVerseText(result)
-    }];
-  }
-
   return rows;
 }
 
-function getExpandedText(result, index){
-  const rows = getVersesInRange(result, index);
-
-  if(rows.length <= 1){
-    return String(rows[0]?.text || "").trim();
-  }
-
-  return rows
-    .map(row => `${row.verse} ${row.text}`)
-    .join("\n");
+function getTextForRange(result){
+  const range = getRange(result);
+  const rows = getRowsForRange(range);
+  if(!rows.length) return String(result?.verse?.text || result?.text || result?.snippet || "").trim();
+  if(rows.length === 1) return rows[0].text;
+  return rows.map(row => `${row.verse} ${row.text}`).join("\n");
 }
 
-function getSelectedPayload(result, index){
+function getPayload(result){
+  const range = getRange(result);
   return {
-    reference:makeReferenceFromRange(result, index),
-    text:getExpandedText(result, index),
+    reference:makeReference(range.book, range.chapter, range.from, range.to),
+    text:getTextForRange(result),
     score:Number(result?.score || 0),
     source:"Bibelen på Norsk (1930)",
     sourceId:"nb-1930",
@@ -573,38 +202,38 @@ function getSelectedPayload(result, index){
 }
 
 function selectedFullText(){
-  if(!selectedBibleVerse){
-    return "";
-  }
-
+  if(!selectedBibleVerse) return "";
   return `${selectedBibleVerse.reference}\n${selectedBibleVerse.text}`;
 }
 
-async function copyText(text){
-  if(!text){
-    return;
-  }
+function updateSelected(index){
+  const result = currentResults[index];
+  if(!result) return;
+  selectedIndex = index;
+  selectedBibleVerse = getPayload(result);
+  selectedReference.textContent = selectedBibleVerse.reference;
+  selectedText.textContent = selectedBibleVerse.text;
+  selectedCard.classList.add("visible");
+  copyStatus.textContent = "";
+  localStorage.setItem("kvimarka92SelectedBibleVerse", JSON.stringify(selectedBibleVerse));
+  sessionStorage.setItem("kvimarka92SelectedBibleVerse", JSON.stringify(selectedBibleVerse));
+}
 
+async function copyText(text){
+  if(!text) return;
   try{
     await navigator.clipboard.writeText(text);
     copyStatus.textContent = "Kopiert.";
   }catch(error){
     copyStatus.textContent = "Kunne ikke kopiere automatisk. Marker teksten og kopier manuelt.";
   }
-
   window.setTimeout(() => {
-    if(copyStatus.textContent === "Kopiert."){
-      copyStatus.textContent = "";
-    }
+    if(copyStatus.textContent === "Kopiert.") copyStatus.textContent = "";
   }, 2500);
 }
 
 window.copySelectedReference = function(){
-  if(!selectedBibleVerse){
-    return;
-  }
-
-  copyText(selectedBibleVerse.reference);
+  if(selectedBibleVerse) copyText(selectedBibleVerse.reference);
 };
 
 window.copySelectedFullText = function(){
@@ -612,22 +241,13 @@ window.copySelectedFullText = function(){
 };
 
 window.useSelectedBibleVerse = function(){
-  if(!selectedBibleVerse){
-    return;
-  }
-
+  if(!selectedBibleVerse) return;
   localStorage.setItem("kvimarka92SelectedBibleVerse", JSON.stringify(selectedBibleVerse));
   sessionStorage.setItem("kvimarka92SelectedBibleVerse", JSON.stringify(selectedBibleVerse));
-
   if(window.opener && !window.opener.closed){
-    window.opener.postMessage({
-      type:"kvimarka92:bible-verse-selected",
-      payload:selectedBibleVerse
-    }, window.location.origin);
+    window.opener.postMessage({ type:"kvimarka92:bible-verse-selected", payload:selectedBibleVerse }, window.location.origin);
   }
-
   copyStatus.textContent = "Valgt bibelsted er lagret for videre bruk.";
-
   if(window.opener && !window.opener.closed){
     setTimeout(() => {
       try{ window.close(); }catch(error){}
@@ -635,165 +255,83 @@ window.useSelectedBibleVerse = function(){
   }
 };
 
-function updateSelectedFromIndex(index){
-  const result = currentResults[index];
-
-  if(!result){
-    return;
-  }
-
-  selectedBibleVerse = getSelectedPayload(result, index);
-
-  selectedReference.textContent = selectedBibleVerse.reference;
-  selectedText.textContent = selectedBibleVerse.text;
-  selectedCard.classList.add("visible");
-  copyStatus.textContent = "";
-
-  localStorage.setItem("kvimarka92SelectedBibleVerse", JSON.stringify(selectedBibleVerse));
-  sessionStorage.setItem("kvimarka92SelectedBibleVerse", JSON.stringify(selectedBibleVerse));
-}
-
 window.selectBibleResult = function(index){
-  const result = currentResults[index];
-
-  if(!result){
-    return;
-  }
-
-  updateSelectedFromIndex(index);
-
-  document.querySelectorAll(".result-button").forEach(button => button.classList.remove("selected"));
-  const selectedButton = document.querySelector(`.result-button[data-result-index="${index}"]`);
-  if(selectedButton){
-    selectedButton.classList.add("selected");
-  }
-
-  selectedCard.scrollIntoView({
-    behavior:"smooth",
-    block:"nearest"
-  });
+  updateSelected(index);
+  render();
+  selectedCard.scrollIntoView({ behavior:"smooth", block:"nearest" });
 };
 
-window.changeVerseRange = function(event, index, direction, delta){
+window.changeRange = function(event, index, side, delta){
   event.preventDefault();
   event.stopPropagation();
-
   const result = currentResults[index];
-  if(!result){
-    return;
-  }
-
-  const base = getBaseRange(result);
-  const current = getVerseRangeSelection(result, index);
-  const limits = getChapterMinMax(base.bookNo, base.chapter);
-
-  const next = {
-    from:Number(current.from || base.from),
-    to:Number(current.to || base.to)
-  };
-
-  if(direction === "from"){
-    next.from = Math.max(limits.min, Math.min(limits.max, next.from + delta));
-    if(next.from > next.to){
-      next.to = next.from;
-    }
+  if(!result) return;
+  const range = getRange(result);
+  const limits = getChapterLimits(range.book, range.chapter);
+  if(side === "from"){
+    range.from = Math.max(limits.min, Math.min(limits.max, Number(range.from) + Number(delta)));
+    if(range.from > range.to) range.to = range.from;
   }else{
-    next.to = Math.max(limits.min, Math.min(limits.max, next.to + delta));
-    if(next.to < next.from){
-      next.from = next.to;
-    }
+    range.to = Math.max(limits.min, Math.min(limits.max, Number(range.to) + Number(delta)));
+    if(range.to < range.from) range.from = range.to;
   }
-
-  resultExpansions.set(index, next);
-
-  const wasSelected = !!document.querySelector(`.result-button.selected[data-result-index="${index}"]`);
+  rangeByReference.set(rangeKey(result), range);
+  if(selectedIndex === index) updateSelected(index);
   render();
-
-  if(wasSelected){
-    const newSelectedButton = document.querySelector(`.result-button[data-result-index="${index}"]`);
-    if(newSelectedButton){
-      newSelectedButton.classList.add("selected");
-    }
-    updateSelectedFromIndex(index);
-  }
 };
 
 function render(){
   const query = input.value.trim();
-
   if(!passages.length){
     resultsBox.innerHTML = '<div class="loading">Søkeindeks er ikke lastet.</div>';
     return;
   }
-
   if(query.length < 2){
     resultsBox.textContent = "Skriv minst to tegn.";
     currentResults = [];
-    resultExpansions = new Map();
+    selectedIndex = null;
     return;
   }
-
   currentResults = searchBibleVerses(query, passages, { limit: 12 });
-  resultExpansions = new Map(
-    currentResults.map((result, index) => [index, resultExpansions.get(index) || getVerseRangeSelection(result, index)])
-  );
-
   if(!currentResults.length){
     resultsBox.textContent = "Ingen treff.";
     return;
   }
-
   resultsBox.innerHTML = currentResults.map((result, index) => {
-    const selectedRange = getVerseRangeSelection(result, index);
-    const expandedRef = makeReferenceFromRange(result, index);
-    const referenceNote = expandedRef !== result.reference
-      ? `<div class="expanded-reference-note">Valg: ${esc(expandedRef)}</div>`
-      : "";
-
+    const range = getRange(result);
+    const selectedClass = selectedIndex === index ? " selected" : "";
+    const selectedRef = makeReference(range.book, range.chapter, range.from, range.to);
+    const isExpanded = selectedRef !== result.reference;
     return `
-      <button
-        class="result-button"
-        type="button"
-        data-result-index="${index}"
-        onclick="selectBibleResult(${index})"
-        title="Velg ${esc(result.reference)}"
-      >
-        <div class="result-inner">
-          <div class="result-main">
-            <div class="ref">${esc(result.reference)}</div>
-            ${referenceNote}
-            <div class="score">Score: ${esc(result.score)}</div>
-            <div class="snippet">${esc(result.snippet)}</div>
+      <div class="result-card${selectedClass}" data-result-index="${index}">
+        <button class="result-main" type="button" onclick="selectBibleResult(${index})" title="Velg ${esc(result.reference)}">
+          <div class="ref">${esc(result.reference)}</div>
+          ${isExpanded ? `<div class="selected-range">Valg: ${esc(selectedRef)}</div>` : ""}
+          <div class="score">Score: ${esc(result.score)}</div>
+          <div class="snippet">${esc(result.snippet)}</div>
+        </button>
+        <div class="range-controls" aria-label="Velg versområde">
+          <div class="range-row">
+            <div class="range-label">Fra vers</div>
+            <button class="range-button" type="button" onclick="changeRange(event, ${index}, 'from', -1)">−</button>
+            <div class="range-value">${esc(range.from)}</div>
+            <button class="range-button" type="button" onclick="changeRange(event, ${index}, 'from', 1)">+</button>
           </div>
-
-          <div class="verse-counters" aria-label="Velg versområde">
-            <div class="counter-row">
-              <div class="counter-label">Fra vers</div>
-              <button class="counter-button" type="button" onclick="changeVerseRange(event, ${index}, 'from', -1)" aria-label="Tidligere startvers">−</button>
-              <div class="counter-value">${esc(selectedRange.from)}</div>
-              <button class="counter-button" type="button" onclick="changeVerseRange(event, ${index}, 'from', 1)" aria-label="Senere startvers">+</button>
-            </div>
-
-            <div class="counter-row">
-              <div class="counter-label">Til vers</div>
-              <button class="counter-button" type="button" onclick="changeVerseRange(event, ${index}, 'to', -1)" aria-label="Tidligere sluttvers">−</button>
-              <div class="counter-value">${esc(selectedRange.to)}</div>
-              <button class="counter-button" type="button" onclick="changeVerseRange(event, ${index}, 'to', 1)" aria-label="Senere sluttvers">+</button>
-            </div>
+          <div class="range-row">
+            <div class="range-label">Til vers</div>
+            <button class="range-button" type="button" onclick="changeRange(event, ${index}, 'to', -1)">−</button>
+            <div class="range-value">${esc(range.to)}</div>
+            <button class="range-button" type="button" onclick="changeRange(event, ${index}, 'to', 1)">+</button>
           </div>
         </div>
-      </button>
+      </div>
     `;
   }).join("");
 }
 
 async function loadJson(path){
   const response = await fetch(path, { cache:"no-store" });
-
-  if(!response.ok){
-    throw new Error(`${path}: HTTP ${response.status}`);
-  }
-
+  if(!response.ok) throw new Error(`${path}: HTTP ${response.status}`);
   return await response.json();
 }
 
@@ -803,11 +341,9 @@ async function loadIndex(){
       loadJson("./data/index/nb-1930-search-index.json"),
       loadJson("./data/normalized/nb-1930-verses.json")
     ]);
-
-    passages = indexData;
-    verses = Array.isArray(versesData) ? versesData.map(normalizeVerseRow) : [];
-    buildVerseLookup();
-
+    passages = Array.isArray(indexData) ? indexData : [];
+    verses = Array.isArray(versesData) ? versesData : [];
+    buildVerseMap();
     resultsBox.textContent = `Søkeindeks lastet (${passages.length} tekstvinduer, ${verses.length} vers). Skriv minst to tegn.`;
   }catch(error){
     resultsBox.innerHTML = `
