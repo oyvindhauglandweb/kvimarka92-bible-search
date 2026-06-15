@@ -40,24 +40,32 @@
     .bible-card{ border:1px dashed var(--border); border-radius:12px; padding:12px; color:var(--muted); }
     .bible-card strong{ color:var(--text); }
     .small{ font-size:.92rem; color:var(--muted); }
-  
+
     .field select{
+      display:block;
       width:100%;
-      min-height:42px;
-      padding:0 12px;
+      min-height:44px;
+      padding:0 36px 0 12px;
       border:1px solid var(--border);
-      border-radius:9px;
-      background:var(--input-bg);
+      border-radius:10px;
+      background-color:var(--input-bg);
       color:var(--text);
       font-size:15px;
       font-family:Arial,sans-serif;
+      line-height:44px;
       box-sizing:border-box;
       outline:none;
+      appearance:auto;
     }
 
     .field select:focus{
       border-color:var(--accent);
       box-shadow:0 0 0 2px rgba(125,185,255,.20);
+    }
+
+    .field select:disabled{
+      opacity:.65;
+      cursor:not-allowed;
     }
 
     .field select option{
@@ -66,7 +74,7 @@
     }
 
 </style>
-<!-- version: opplevelser-registrer-v6-environment-options-strict-2026-06-15 -->
+<!-- version: opplevelser-registrer-v7-token-dropdown-layout-2026-06-15 -->
 </head>
 <body>
   <main class="wrap">
@@ -318,6 +326,11 @@
 
         setStatus("Klar.");
       }catch(error){
+        const envSelect = el("environment");
+        if(envSelect){
+          envSelect.innerHTML = '<option value="">Kunne ikke hente miljøvalg</option>';
+          envSelect.disabled = true;
+        }
         setStatus("Kunne ikke laste Opplevelser: " + error.message, "err");
       }
     }
