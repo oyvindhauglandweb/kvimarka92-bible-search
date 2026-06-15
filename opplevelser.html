@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Opplevelser - registrer v2</title>
+  <title>Opplevelser</title>
   <style>
     :root{
       color-scheme: light dark;
@@ -15,63 +15,148 @@
       --accent:#2563eb;
       --danger:#b42318;
       --ok:#067647;
+      --soft:#eef2ff;
+      --input-bg:transparent;
     }
     @media (prefers-color-scheme: dark){
-      :root{ --bg:#10131a; --card:#171b24; --text:#f1f5f9; --muted:#a7b0c0; --border:#303746; --accent:#7aa2ff; }
+      :root{
+        --bg:#10131a;
+        --card:#171b24;
+        --text:#f1f5f9;
+        --muted:#a7b0c0;
+        --border:#303746;
+        --accent:#7aa2ff;
+        --soft:#20293a;
+        --input-bg:#151a24;
+      }
     }
     *{ box-sizing:border-box; }
     body{ margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif; background:var(--bg); color:var(--text); }
-    .wrap{ max-width:920px; margin:0 auto; padding:18px; }
+    .wrap{ max-width:1100px; margin:0 auto; padding:18px; }
     .card{ background:var(--card); border:1px solid var(--border); border-radius:16px; padding:18px; box-shadow:0 10px 25px rgba(15,23,42,.08); }
     h1{ margin:0 0 4px; font-size:1.6rem; }
     .sub{ color:var(--muted); margin:0 0 18px; }
-    .grid{ display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px; }
-    .full{ grid-column:1 / -1; }
+    .toolbar{ display:grid; grid-template-columns:1fr auto; gap:10px; align-items:end; margin-bottom:14px; }
     label{ display:block; font-weight:650; margin:0 0 6px; }
-    input, textarea, select{ width:100%; min-height:44px; border:1px solid var(--border); border-radius:10px; padding:10px 12px; font:inherit; background:transparent; color:var(--text); box-sizing:border-box; }
-    textarea{ min-height:110px; resize:vertical; }
-    .buttons{ display:flex; flex-wrap:wrap; gap:10px; margin-top:16px; }
-    button{ border:0; border-radius:999px; padding:10px 14px; font-weight:700; cursor:pointer; background:var(--accent); color:white; }
+    input, textarea, select{ width:100%; min-height:44px; border:1px solid var(--border); border-radius:10px; padding:10px 12px; font:inherit; background:var(--input-bg); color:var(--text); box-sizing:border-box; }
+    textarea{ min-height:94px; resize:vertical; }
+    button{ border:0; border-radius:999px; padding:10px 14px; min-height:42px; font-weight:700; cursor:pointer; background:var(--accent); color:white; }
     button.secondary{ background:transparent; color:var(--text); border:1px solid var(--border); }
     button:disabled{ opacity:.6; cursor:not-allowed; }
     .status{ margin-top:14px; padding:10px 12px; border-radius:10px; border:1px solid var(--border); color:var(--muted); white-space:pre-wrap; }
-    .status.ok{ color:var(--ok); }
     .status.err{ color:var(--danger); }
-    .bible-card{ border:1px dashed var(--border); border-radius:12px; padding:12px; color:var(--muted); }
-    .bible-card strong{ color:var(--text); }
-    .small{ font-size:.92rem; color:var(--muted); }
+    .status.ok{ color:var(--ok); }
+    .list{ display:grid; grid-template-columns:340px 1fr; gap:14px; }
+    .items{ border:1px solid var(--border); border-radius:12px; overflow:hidden; background:rgba(127,127,127,.04); }
+    .item{ display:block; width:100%; padding:12px; border:0; border-bottom:1px solid var(--border); border-radius:0; background:transparent; color:var(--text); text-align:left; cursor:pointer; }
+    .item:hover, .item.active{ background:var(--soft); }
+    .item-title{ font-weight:800; margin-bottom:4px; }
+    .item-meta{ color:var(--muted); font-size:.92rem; line-height:1.35; }
+    .desktop-extra{ display:inline; }
+    .details{ border:1px solid var(--border); border-radius:12px; padding:14px; min-height:360px; }
+    .detail-head{ display:flex; justify-content:space-between; align-items:flex-start; gap:12px; margin-bottom:10px; }
+    .detail-title{ font-size:1.3rem; font-weight:850; margin:0 0 8px; }
+    .detail-meta{ color:var(--muted); margin-bottom:14px; }
+    .section{ margin-top:14px; }
+    .section h3{ margin:0 0 6px; font-size:1rem; }
+    .section p{ margin:0; line-height:1.45; white-space:pre-wrap; }
+    .bible{ border:1px dashed var(--border); border-radius:10px; padding:10px 12px; }
+    .empty{ color:var(--muted); padding:18px; }
+    .edit-grid{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+    .edit-grid .full{ grid-column:1 / -1; }
+    .edit-actions{ display:flex; flex-wrap:wrap; gap:10px; margin-top:14px; }
+    .readonly-actions{ display:flex; gap:10px; flex-wrap:wrap; }
+    @media(max-width:800px){
+      .wrap{ padding:10px; }
+      .toolbar{ grid-template-columns:1fr; }
+      .list{ grid-template-columns:1fr; }
+      .details{ min-height:0; }
+      .desktop-extra{ display:none; }
+      .item-meta{ font-size:.9rem; }
+      .edit-grid{ grid-template-columns:1fr; }
+      .edit-grid .full{ grid-column:auto; }
+      .detail-head{ flex-direction:column; }
+      .readonly-actions{ width:100%; }
+      .readonly-actions button{ width:100%; }
+    }
+  
+    .mobile-only{ display:none; }
 
-    select{
-      display:block;
-      width:100%;
-      min-height:44px;
-      padding:0 38px 0 12px;
-      border:1px solid var(--border);
-      border-radius:10px;
-      background:var(--card);
-      color:var(--text);
-      font:inherit;
-      line-height:44px;
-      box-sizing:border-box;
-      outline:none;
+    @media(max-width:800px){
+      .mobile-only{ display:inline-flex; }
+      .card{ padding:14px; }
+      h1{ font-size:1.45rem; }
+      .sub{ font-size:.95rem; }
+
+      .toolbar{
+        grid-template-columns:1fr;
+        gap:8px;
+      }
+
+      .toolbar button{
+        width:100%;
+      }
+
+      .list{
+        grid-template-columns:1fr;
+      }
+
+      .items.mobile-detail-open{
+        display:none;
+      }
+
+      .details{
+        display:none;
+        min-height:0;
+      }
+
+      .details.mobile-visible{
+        display:block;
+      }
+
+      .item{
+        padding:14px 12px;
+      }
+
+      .item-title{
+        font-size:1rem;
+        line-height:1.25;
+        margin-bottom:6px;
+      }
+
+      .item-meta{
+        font-size:.92rem;
+        line-height:1.35;
+      }
+
+      .desktop-extra{
+        display:none !important;
+      }
+
+      .detail-head{
+        flex-direction:column;
+      }
+
+      .readonly-actions{
+        width:100%;
+        display:grid;
+        grid-template-columns:1fr;
+      }
+
+      .readonly-actions button{
+        width:100%;
+      }
+
+      .edit-grid{
+        grid-template-columns:1fr;
+      }
+
+      .edit-grid .full{
+        grid-column:auto;
+      }
     }
 
-    select:focus{
-      border-color:var(--accent);
-      box-shadow:0 0 0 2px rgba(122,162,255,.22);
-    }
-
-    select:disabled{
-      opacity:.65;
-      cursor:not-allowed;
-    }
-
-    select option{
-      background:#242424;
-      color:#ffffff;
-    }
-
-
+  
 
 /* Opplevelser standard design v14 */
 html.opplevelser-size-small{--opp-font-scale:1;}
@@ -301,135 +386,179 @@ body.light-mode html:not(.classic-design-root) #status{
 }
 
 
-/* Opplevelser v17 login icon */
-.login-corner{
-  position:fixed;
-  top:18px;
-  right:18px;
-  z-index:2147483600;
+/* Opplevelser v10 list selection fix: never blue list cards */
+.items .item,
+html:not(.classic-design-root) .items .item{
+  background:rgba(255,255,255,.035) !important;
+  color:var(--opp-text) !important;
+  border:0 !important;
+  box-shadow:none !important;
 }
-.login-corner-button{
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  min-width:44px;
-  height:44px;
-  padding:0 10px;
-  border:0;
-  border-radius:10px;
-  background:rgba(255,255,255,.055);
-  color:var(--opp-text, #eee);
-  text-decoration:none;
-  font-size:18px;
-  font-weight:bold;
-  line-height:1;
-  box-shadow:none;
-  cursor:pointer;
+
+.items .item:hover,
+html:not(.classic-design-root) .items .item:hover{
+  background:rgba(255,255,255,.060) !important;
+  color:var(--opp-text) !important;
 }
-.login-corner-button:hover{
-  background:rgba(255,255,255,.10);
+
+.items .item.active,
+html:not(.classic-design-root) .items .item.active{
+  background:rgba(255,255,255,.095) !important;
+  color:var(--opp-text) !important;
 }
-.login-corner-initials{
-  font-size:11px;
-  font-weight:800;
-  letter-spacing:.02em;
+
+body.light-mode .items .item,
+body.light-mode html:not(.classic-design-root) .items .item{
+  background:rgba(0,0,0,.030) !important;
 }
-body.light-mode .login-corner-button{
-  background:rgba(0,0,0,.06);
-  color:var(--opp-text, #333);
+
+body.light-mode .items .item:hover,
+body.light-mode html:not(.classic-design-root) .items .item:hover{
+  background:rgba(0,0,0,.055) !important;
 }
-body.light-mode .login-corner-button:hover{
-  background:rgba(0,0,0,.10);
-}
-@media(max-width:700px){
-  .login-corner{
-    top:8px;
-    right:8px;
-  }
-  .login-corner-button{
-    min-width:40px;
-    height:40px;
-    border-radius:9px;
-  }
+
+body.light-mode .items .item.active,
+body.light-mode html:not(.classic-design-root) .items .item.active{
+  background:rgba(0,0,0,.085) !important;
 }
 
 
-/* Opplevelser v18 speech-to-text */
-.voice-field-header{
+
+/* Opplevelser v19: login widget copied from Kvimarka92 index style */
+.login-widget{
+  position:absolute;
+  top:20px;
+  right:max(20px, calc((100vw - 980px) / 2));
+  z-index:9999;
+  height:38px;
   display:flex;
   align-items:center;
-  justify-content:space-between;
-  gap:10px;
-  margin-bottom:6px;
 }
-.voice-field-header label{
-  margin:0 !important;
-}
-.mic-button{
-  display:none;
+
+.login-status{
+  display:flex;
   align-items:center;
   justify-content:center;
-  width:36px;
-  height:32px;
-  min-height:32px;
+  width:38px;
+  height:38px;
+  min-width:38px;
+  min-height:38px;
   padding:0;
-  border:0;
-  border-radius:999px;
-  background:rgba(255,255,255,.07);
-  color:var(--opp-text, #eee);
-  font-size:17px;
-  line-height:1;
-  cursor:pointer;
-}
-.mic-button:hover{
-  background:rgba(255,255,255,.13);
-}
-.mic-button.visible{
-  display:inline-flex;
-}
-.mic-button.listening{
-  background:#c2410c !important;
-  color:#fff !important;
-  animation:oppMicPulse 1s infinite;
-}
-@keyframes oppMicPulse{
-  0%{box-shadow:0 0 0 0 rgba(194,65,12,.55);}
-  70%{box-shadow:0 0 0 8px rgba(194,65,12,0);}
-  100%{box-shadow:0 0 0 0 rgba(194,65,12,0);}
-}
-.voice-status{
-  display:none;
-  color:var(--opp-muted, #bbb);
+  border:1px solid var(--opp-border, var(--border, #555));
+  background:var(--opp-card, var(--card, #242424));
+  border-radius:50%;
+  color:var(--opp-muted, var(--muted, #bbb));
+  text-decoration:none;
   font-size:13px;
-  margin:4px 0 8px;
+  font-weight:bold;
+  line-height:1;
+  opacity:.86;
+  box-sizing:border-box;
+  cursor:pointer;
+  white-space:nowrap;
 }
-.voice-status.visible{
+
+.login-status:hover{
+  opacity:1;
+  color:var(--opp-text, var(--text, #eee));
+  background-color:var(--opp-card, var(--card, #242424));
+}
+
+.login-status.is-signin{
+  border:none;
+  border-radius:0;
+  background-color:transparent;
+  background-image:url("LogInDG.png");
+  background-repeat:no-repeat;
+  background-position:center;
+  background-size:38px 38px;
+  text-indent:-9999px;
+  overflow:hidden;
+}
+
+.login-menu{
+  position:absolute;
+  top:44px;
+  right:0;
+  min-width:247px;
+  padding:10px;
+  border:0;
+  border-radius:10px;
+  background:rgba(255,255,255,.06);
+  color:var(--opp-text, var(--text, #eee));
+  box-shadow:none;
+  box-sizing:border-box;
+}
+
+html.classic-design-root .login-menu{
+  border:1px solid var(--opp-border, var(--border, #555));
+  background:var(--opp-card, var(--card, #242424));
+  box-shadow:0 8px 24px rgba(0,0,0,.18);
+}
+
+.login-menu-name{
+  font-weight:bold;
+  font-size:13px;
+  margin-bottom:8px;
+  color:var(--opp-text, var(--text, #eee));
+  white-space:nowrap;
+}
+
+.login-menu-link{
   display:block;
+  padding:8px 10px;
+  margin:0 -4px -4px;
+  border-radius:8px;
+  color:var(--opp-link, var(--link, #7cc7e8));
+  text-decoration:none;
+  font-weight:bold;
+  font-size:13px;
 }
-body.light-mode .mic-button{
-  background:rgba(0,0,0,.07);
-  color:var(--opp-text, #333);
+
+.login-menu-link:hover{
+  background:rgba(127,127,127,.10);
 }
-body.light-mode .mic-button:hover{
-  background:rgba(0,0,0,.13);
+
+.login-menu-link:active{
+  background:rgba(127,127,127,.22);
+}
+
+@media(max-width:800px){
+  .login-widget{
+    top:10px;
+    right:10px;
+  }
 }
 
 </style>
-<!-- version: REGISTER v18 speech-to-text 2026-06-16 -->
+  <!-- version: LIST v13 index-login-widget 2026-06-16 -->
 </head>
 <body class="dark-mode">
-<div class="file-version-marker">REGISTER v18 speech-to-text 2026-06-16</div>
+<div class="file-version-marker">LIST v13 index-login-widget 2026-06-16</div>
 
-<div class="login-corner"><a id="loginCornerButton" class="login-corner-button" href="https://api-kvimarka92.carstereogarage.com/login" title="Logg inn / Min bruker" aria-label="Logg inn / Min bruker">👤</a></div>
+
+<div class="login-widget">
+  <a id="loginStatus"
+     class="login-status is-signin"
+     href="https://api-kvimarka92.carstereogarage.com/login"
+     title="Logg inn"
+     aria-label="Logg inn">Sign in</a>
+
+  <div id="loginMenu" class="login-menu" style="display:none;">
+    <div id="loginMenuName" class="login-menu-name"></div>
+    <a id="logoutLink" class="login-menu-link" href="#">Logg ut</a>
+  </div>
+</div>
+
 
 <main class="wrap">
     <section class="card">
       <div class="header">
         <h1 class="site-title">Opplevelser</h1>
-        <div class="subtitle">Registrer ny</div>
+        <div class="subtitle">Søk i eksisterende</div>
         <div class="top-buttons">
           <a class="top-button" href="https://kvimarka92.carstereogarage.com/index.html?restoreMenu=1" onclick="goOpplevelserBack(event)" title="Tilbake til forrige side" aria-label="Tilbake til forrige side">←</a>
-          <a class="top-button app-switch-button" href="opplevelser.html" title="Søk i eksisterende" aria-label="Søk i eksisterende">⌕</a>
+          <a class="top-button app-switch-button" href="opplevelser-registrer.html" title="Registrere ny" aria-label="Registrere ny">✎</a>
           <a class="top-button home-button" href="https://kvimarka92.carstereogarage.com/index.html" title="Hovedmeny" aria-label="Hovedmeny">⌂</a>
           <a class="top-button" href="https://kvimarka92.carstereogarage.com/help.html?case=Opplevelser" title="Hjelp" aria-label="Hjelp">?</a>
           
@@ -439,82 +568,19 @@ body.light-mode .mic-button:hover{
       </div>
       <p class="sub" id="userLine" style="display:none;"></p>
 
-      <form id="experienceForm">
-        <div class="grid">
-          <div>
-            <label for="heading">Overskrift</label>
-            <input id="heading" name="heading" type="text" maxlength="160" placeholder="Kort overskrift">
-          </div>
-          <div>
-            <label for="experienceDate">Dato for opplevelse</label>
-            <input id="experienceDate" name="experienceDate" type="date" required>
-          </div>
-          <div>
-            <label for="place">Sted</label>
-            <input id="place" name="place" list="placesList" autocomplete="off">
-            <datalist id="placesList"></datalist>
-          </div>
-          <div>
-            <label for="environment">Miljø</label>
-            <select id="environment" name="environment">
-              <option value="">Laster miljøvalg ...</option>
-            </select>
-          </div>
-
-          <div class="full">
-            <div class="voice-field-header">
-            <label for="occasion">Foranledning</label>
-            <button type="button" class="mic-button" data-dictate-target="occasion" title="Les inn tekst" aria-label="Les inn tekst">🎙</button>
-          </div>
-          <textarea id="occasion" name="occasion"></textarea>
-          </div>
-
-          <div class="full">
-            <div class="voice-field-header">
-            <label for="experience">Opplevelse</label>
-            <button type="button" class="mic-button" data-dictate-target="experience" title="Les inn tekst" aria-label="Les inn tekst">🎙</button>
-          </div>
-          <textarea id="experience" name="experience"></textarea>
-          </div>
-
-          <div class="full">
-            <label>Bibelsted</label>
-            <div class="bible-card" id="bibleCard">
-              Ingen bibelreferanse valgt ennå.
-            </div>
-            <input id="bibleReference" name="bibleReference" type="hidden">
-            <input id="bibleText" name="bibleText" type="hidden">
-            <input id="bibleSource" name="bibleSource" type="hidden" value="Bibelen på Norsk (1930)">
-            <div class="buttons" style="margin-top:10px">
-              <button type="button" class="secondary" id="findBibleBtn">Finn bibelsted</button>
-              <button type="button" class="secondary" id="clearBibleBtn">Fjern bibelsted</button>
-            </div>
-            <p class="small">Bibelsted hentes fra <code>bibel-sok.html</code> via valgt vers i nettleseren.</p>
-          </div>
-
-          <div class="full">
-            <div class="voice-field-header">
-            <label for="consequence">Konsekvens</label>
-            <button type="button" class="mic-button" data-dictate-target="consequence" title="Les inn tekst" aria-label="Les inn tekst">🎙</button>
-          </div>
-          <textarea id="consequence" name="consequence"></textarea>
-          </div>
-
-          <div class="full">
-            <div class="voice-field-header">
-            <label for="note">Notat</label>
-            <button type="button" class="mic-button" data-dictate-target="note" title="Les inn tekst" aria-label="Les inn tekst">🎙</button>
-          </div>
-          <textarea id="note" name="note"></textarea>
-          </div>
+      <div class="toolbar">
+        <div>
+          <label for="searchBox">Søk</label>
+          <input id="searchBox" type="search" placeholder="Søk i overskrift, tekst, sted, miljø eller bibelsted" autocomplete="off">
         </div>
+        <button type="button" id="refreshBtn">Søk</button>
 
-        <div class="buttons">
-          <button type="submit" id="saveBtn">Lagre opplevelse</button>
-          <button type="button" class="secondary" id="resetBtn">Tøm skjema</button>
+      </div>
 
-        </div>
-      </form>
+      <div class="list">
+        <div class="items" id="items"><div class="empty">Laster ...</div></div>
+        <div class="details" id="details"><div class="empty">Velg en opplevelse i listen.</div></div>
+      </div>
 
       <div id="status" class="status">Klar.</div>
     </section>
@@ -527,16 +593,73 @@ body.light-mode .mic-button:hover{
         : "https://api-kvimarka92.carstereogarage.com"
     );
 
-    const BIBLE_SEARCH_URL = window.OPPLEVELSER_BIBLE_SEARCH_URL || "./bibel-sok.html";
     const SELECTED_VERSE_KEY = "kvimarka92SelectedBibleVerse";
+
+    let currentItems = [];
+    let selectedId = null;
+    let editMode = false;
+    let searchTimer = null;
+
+    function setBibleVerseInEditForm(verse){
+      if(!verse){
+        return;
+      }
+
+      const referenceEl = document.getElementById("editBibleReference");
+      const textEl = document.getElementById("editBibleText");
+      const sourceEl = document.getElementById("editBibleSource");
+
+      if(referenceEl){
+        referenceEl.value = String(verse.reference || "");
+      }
+
+      if(textEl){
+        textEl.value = String(verse.text || "");
+      }
+
+      if(sourceEl){
+        sourceEl.value = String(verse.source || "Bibelen på Norsk (1930)");
+      }
+    }
+
+    function openBibleSearchFromEdit(){
+      const currentVerse = {
+        reference:document.getElementById("editBibleReference")?.value || "",
+        text:document.getElementById("editBibleText")?.value || "",
+        source:document.getElementById("editBibleSource")?.value || "Bibelen på Norsk (1930)",
+        sourceId:"nb-1930",
+        selectedAt:new Date().toISOString()
+      };
+
+      localStorage.setItem(SELECTED_VERSE_KEY, JSON.stringify(currentVerse));
+      sessionStorage.setItem(SELECTED_VERSE_KEY, JSON.stringify(currentVerse));
+
+      window.open("bibel-sok.html", "kvimarka92BibleSearch", "width=980,height=760");
+    }
+
+    window.addEventListener("message", event => {
+      if(!event.data || event.data.type !== "kvimarka92:bible-verse-selected"){
+        return;
+      }
+
+      setBibleVerseInEditForm(event.data.payload);
+    });
 
     const el = id => document.getElementById(id);
     const statusEl = el("status");
-    const form = el("experienceForm");
 
     function setStatus(text, kind){
       statusEl.textContent = text;
       statusEl.className = "status" + (kind ? " " + kind : "");
+    }
+
+    function esc(value){
+      return String(value == null ? "" : value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
     }
 
     async function apiFetch(path, options){
@@ -546,9 +669,6 @@ body.light-mode .mic-button:hover{
         ...(safeOptions.headers || {})
       };
 
-      // Ikke sett Content-Type på GET. Da unngår vi CORS preflight mot Cloudflare Access.
-      // For POST bruker vi text/plain, samme mønster som flere eksisterende Kvimarka92-sider,
-      // slik at nettleseren ikke sender OPTIONS-preflight før selve API-kallet.
       if(method !== "GET" && safeOptions.body !== undefined && !headers["Content-Type"]){
         headers["Content-Type"] = "text/plain;charset=UTF-8";
       }
@@ -569,193 +689,332 @@ body.light-mode .mic-button:hover{
       return data;
     }
 
-    function fillDatalist(id, items, getName){
-      const list = el(id);
-      list.innerHTML = "";
-
-      (items || []).forEach(item => {
-        const name = getName ? getName(item) : item.name;
-        if(!name) return;
-        const option = document.createElement("option");
-        option.value = name;
-        list.appendChild(option);
-      });
+    function bestTitle(item){
+      return item.heading || item.bibleReference || item.place || item.environment || "(uten overskrift)";
     }
 
-    function fillSelect(id, items){
-      const select = el(id);
-      const currentValue = select.value;
-      const names = [];
-
-      (items || []).forEach(item => {
-        const text = String((item && (item.name || item.environmentName || item.value)) || item || "").trim();
-        if(text && !names.includes(text)) names.push(text);
-      });
-
-      select.innerHTML = "";
-
-      const emptyOption = document.createElement("option");
-      emptyOption.value = "";
-      emptyOption.textContent = names.length ? "Velg miljø" : "Ingen miljøvalg funnet";
-      select.appendChild(emptyOption);
-
-      names.forEach(name => {
-        const option = document.createElement("option");
-        option.value = name;
-        option.textContent = name;
-        select.appendChild(option);
-      });
-
-      select.disabled = names.length === 0;
-
-      if(currentValue && names.includes(currentValue)){
-        select.value = currentValue;
-      }
+    function selectedItem(){
+      return currentItems.find(entry => entry.id === selectedId) || null;
     }
 
-    function setBibleVerse(verse){
-      const reference = (verse && verse.reference || "").trim();
-      const text = (verse && verse.text || "").trim();
-      const source = (verse && verse.source || "Bibelen på Norsk (1930)").trim();
+    function isMobileView(){
+      return window.matchMedia("(max-width:800px)").matches;
+    }
 
-      el("bibleReference").value = reference;
-      el("bibleText").value = text;
-      el("bibleSource").value = source;
-
-      if(reference || text){
-        el("bibleCard").innerHTML = `<strong>${escapeHtml(reference || "Valgt bibelsted")}</strong><br>${escapeHtml(text)}<br><span class="small">${escapeHtml(source)}</span>`;
+    function setMobileDetailState(open){
+      if(isMobileView()){
+        el("items").classList.toggle("mobile-detail-open", !!open);
+        el("details").classList.toggle("mobile-visible", !!open);
       }else{
-        el("bibleCard").textContent = "Ingen bibelreferanse valgt ennå.";
+        el("items").classList.remove("mobile-detail-open");
+        el("details").classList.remove("mobile-visible");
       }
     }
 
-    function escapeHtml(value){
-      return String(value || "")
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#039;");
-    }
+    function renderItems(){
+      const box = el("items");
 
-    function readSelectedBibleVerseFromStorage(){
-      const raw = localStorage.getItem(SELECTED_VERSE_KEY) || sessionStorage.getItem(SELECTED_VERSE_KEY);
-      if(!raw) return null;
-      try{ return JSON.parse(raw); }catch(error){ return null; }
-    }
-
-    function pollSelectedBibleVerseForAWhile(){
-      let count = 0;
-      const timer = setInterval(() => {
-        count += 1;
-        const verse = readSelectedBibleVerseFromStorage();
-        if(verse && (verse.reference || verse.text)){
-          setBibleVerse(verse);
-          setStatus("Bibelsted valgt: " + (verse.reference || ""), "ok");
-          clearInterval(timer);
-        }
-        if(count > 120){
-          clearInterval(timer);
-        }
-      }, 1000);
-    }
-
-    window.addEventListener("message", event => {
-      const data = event.data || {};
-      if(data.type === "kvimarka92:bible-verse-selected"){
-        setBibleVerse(data.payload || data.verse || data);
-        setStatus("Bibelsted valgt.", "ok");
+      if(!currentItems.length){
+        box.innerHTML = '<div class="empty">Ingen opplevelser funnet.</div>';
+        el("details").innerHTML = '<div class="empty">Ingen opplevelser å vise.</div>';
+        setMobileDetailState(false);
+        return;
       }
-    });
 
-    el("findBibleBtn").addEventListener("click", () => {
-      window.open(BIBLE_SEARCH_URL, "kvimarka92BibleSearch", "width=980,height=760");
-      pollSelectedBibleVerseForAWhile();
-    });
+      box.innerHTML = currentItems.map(item => `
+        <button type="button" class="item ${selectedId === item.id ? "active" : ""}" onclick="selectItem(${Number(item.id)})">
+          <div class="item-title">${esc(bestTitle(item))}</div>
+          <div class="item-meta">
+            ${esc(item.experienceDate || "")}
+            ${item.place ? " · " + esc(item.place) : ""}
+            <span class="desktop-extra">
+              ${item.environment ? " · " + esc(item.environment) : ""}
+              ${item.bibleReference ? "<br>" + esc(item.bibleReference) : ""}
+            </span>
+          </div>
+        </button>
+      `).join("");
 
-    el("clearBibleBtn").addEventListener("click", () => {
-      setBibleVerse(null);
-      localStorage.removeItem(SELECTED_VERSE_KEY);
-      sessionStorage.removeItem(SELECTED_VERSE_KEY);
-      setStatus("Bibelsted fjernet.");
-    });
+      if(!selectedId || !currentItems.some(item => item.id === selectedId)){
+        selectedId = isMobileView() ? null : currentItems[0].id;
+      }
 
-    el("resetBtn").addEventListener("click", () => {
-      form.reset();
-      setBibleVerse(null);
-      initDate();
-      setStatus("Skjema tømt.");
-    });
-
-    function initDate(defaultDate){
-      el("experienceDate").value = defaultDate || new Date().toISOString().slice(0, 10);
-    }
-
-    async function loadOptions(){
-      try{
-        const data = await apiFetch("/experience-options", { method:"GET" });
-        initDate(data.today);
-        fillDatalist("placesList", data.places || []);
-        const environmentOptions = data.environmentOptions || [];
-        fillSelect("environment", environmentOptions);
-
-        if(!environmentOptions.length){
-          setStatus("Miljøvalg mangler: Worker returnerte ingen Baserow-options for Experiences → Environment.", "err");
-        }
-        updateOpplevelserLoginIcon(data.user);
-      el("userLine").textContent = "";
-
-        const storedVerse = readSelectedBibleVerseFromStorage();
-        if(storedVerse && (storedVerse.reference || storedVerse.text)){
-          setBibleVerse(storedVerse);
-        }
-
-        setStatus("Klar.");
-      }catch(error){
-        const envSelect = el("environment");
-        if(envSelect){
-          envSelect.innerHTML = '<option value="">Kunne ikke hente miljøvalg</option>';
-          envSelect.disabled = true;
-        }
-        setStatus("Kunne ikke laste Opplevelser: " + error.message, "err");
+      if(selectedId){
+        renderDetails();
+      }else{
+        el("details").innerHTML = '<div class="empty">Velg en opplevelse i listen.</div>';
+        setMobileDetailState(false);
       }
     }
 
-    form.addEventListener("submit", async event => {
+    function renderSection(title, text){
+      if(!String(text || "").trim()) return "";
+      return `
+        <div class="section">
+          <h3>${esc(title)}</h3>
+          <p>${esc(text)}</p>
+        </div>
+      `;
+    }
+
+    function renderDetails(){
+      const item = selectedItem();
+      const box = el("details");
+
+      if(!item){
+        box.innerHTML = '<div class="empty">Velg en opplevelse i listen.</div>';
+        return;
+      }
+
+      if(editMode){
+        renderEditForm(item);
+        return;
+      }
+
+      box.innerHTML = `
+        <div class="detail-head">
+          <div>
+            <div class="detail-title">${esc(bestTitle(item))}</div>
+            <div class="detail-meta">
+              ${esc(item.experienceDate || "")}
+              ${item.place ? " · " + esc(item.place) : ""}
+              ${item.environment ? " · " + esc(item.environment) : ""}
+            </div>
+          </div>
+          <div class="readonly-actions">
+            <button type="button" class="secondary mobile-only" onclick="backToMobileList()">Tilbake til liste</button>
+            <button type="button" class="secondary" onclick="startEdit()">Rediger</button>
+          </div>
+        </div>
+
+        ${item.bibleReference || item.bibleText ? `
+          <div class="section">
+            <h3>Bibelsted</h3>
+            <div class="bible">
+              <strong>${esc(item.bibleReference || "")}</strong>
+              ${item.bibleText ? `<p>${esc(item.bibleText)}</p>` : ""}
+              ${item.bibleSource ? `<div class="item-meta">${esc(item.bibleSource)}</div>` : ""}
+            </div>
+          </div>
+        ` : ""}
+
+        ${renderSection("Foranledning", item.occasion)}
+        ${renderSection("Opplevelse", item.experience)}
+        ${renderSection("Konsekvens", item.consequence)}
+        ${renderSection("Notat", item.note)}
+      `;
+    }
+
+    function renderEditForm(item){
+      el("details").innerHTML = `
+        <form id="editForm">
+          <div class="edit-grid">
+            <div class="full">
+              <label for="editHeading">Overskrift</label>
+              <input id="editHeading" value="${esc(item.heading || "")}" maxlength="160">
+            </div>
+
+            <div>
+              <label for="editDate">Dato</label>
+              <input id="editDate" type="date" value="${esc(item.experienceDate || "")}">
+            </div>
+
+            <div>
+              <label for="editPlace">Sted</label>
+              <input id="editPlace" value="${esc(item.place || "")}">
+            </div>
+
+            <div>
+              <label for="editEnvironment">Miljø</label>
+              <input id="editEnvironment" value="${esc(item.environment || "")}">
+            </div>
+
+            <div>
+              <label for="editBibleReference">Bibelreferanse</label>
+              <input id="editBibleReference" value="${esc(item.bibleReference || "")}">
+            </div>
+
+            <div>
+              <label for="editBibleSource">Bibelkilde</label>
+              <input id="editBibleSource" value="${esc(item.bibleSource || "Bibelen på Norsk (1930)")}" >
+            </div>
+
+            <div class="full">
+              <button type="button" class="secondary" onclick="openBibleSearchFromEdit()">Endre bibelsted</button>
+            </div>
+
+            <div class="full">
+              <label for="editBibleText">Bibeltekst</label>
+              <textarea id="editBibleText">${esc(item.bibleText || "")}</textarea>
+            </div>
+
+            <div class="full">
+              <div class="voice-field-header">
+              <label for="editOccasion">Foranledning</label>
+              <button type="button" class="mic-button" data-dictate-target="editOccasion" title="Les inn tekst" aria-label="Les inn tekst">🎙</button>
+            </div>
+              <textarea id="editOccasion">${esc(item.occasion || "")}</textarea>
+            </div>
+
+            <div class="full">
+              <div class="voice-field-header">
+              <label for="editExperience">Opplevelse</label>
+              <button type="button" class="mic-button" data-dictate-target="editExperience" title="Les inn tekst" aria-label="Les inn tekst">🎙</button>
+            </div>
+              <textarea id="editExperience">${esc(item.experience || "")}</textarea>
+            </div>
+
+            <div class="full">
+              <div class="voice-field-header">
+              <label for="editConsequence">Konsekvens</label>
+              <button type="button" class="mic-button" data-dictate-target="editConsequence" title="Les inn tekst" aria-label="Les inn tekst">🎙</button>
+            </div>
+              <textarea id="editConsequence">${esc(item.consequence || "")}</textarea>
+            </div>
+
+            <div class="full">
+              <div class="voice-field-header">
+              <label for="editNote">Notat</label>
+              <button type="button" class="mic-button" data-dictate-target="editNote" title="Les inn tekst" aria-label="Les inn tekst">🎙</button>
+            </div>
+              <textarea id="editNote">${esc(item.note || "")}</textarea>
+            </div>
+          </div>
+
+          <div class="edit-actions">
+            <button type="submit">Lagre endringer</button>
+            <button type="button" class="secondary" onclick="cancelEdit()">Avbryt</button>
+          </div>
+        </form>
+      `;
+
+      el("editForm").addEventListener("submit", saveEdit);
+      if(window.initOpplevelserMicButtons){ window.initOpplevelserMicButtons(); }
+    }
+
+    window.selectItem = function(id){
+      selectedId = id;
+      editMode = false;
+      renderItems();
+      setMobileDetailState(true);
+    };
+
+    window.backToMobileList = function(){
+      editMode = false;
+      setMobileDetailState(false);
+    };
+
+    window.openBibleSearchFromEdit = openBibleSearchFromEdit;
+
+    window.startEdit = function(){
+      editMode = true;
+      renderDetails();
+    };
+
+    window.cancelEdit = function(){
+      editMode = false;
+      renderDetails();
+      setMobileDetailState(true);
+    };
+
+    async function saveEdit(event){
       event.preventDefault();
-      el("saveBtn").disabled = true;
-      setStatus("Lagrer ...");
+
+      const item = selectedItem();
+      if(!item) return;
+
+      setStatus("Lagrer endringer ...");
 
       const payload = {
-        experienceDate:el("experienceDate").value,
-        heading:el("heading").value,
-        place:el("place").value,
-        environment:el("environment").value,
-        occasion:el("occasion").value,
-        experience:el("experience").value,
-        bibleReference:el("bibleReference").value,
-        bibleText:el("bibleText").value,
-        bibleSource:el("bibleSource").value,
-        consequence:el("consequence").value,
-        note:el("note").value
+        id:item.id,
+        heading:el("editHeading").value,
+        experienceDate:el("editDate").value,
+        place:el("editPlace").value,
+        environment:el("editEnvironment").value,
+        bibleReference:el("editBibleReference").value,
+        bibleSource:el("editBibleSource").value,
+        bibleText:el("editBibleText").value,
+        occasion:el("editOccasion").value,
+        experience:el("editExperience").value,
+        consequence:el("editConsequence").value,
+        note:el("editNote").value
       };
 
       try{
-        const data = await apiFetch("/experience-create", {
+        const data = await apiFetch("/experience-update", {
           method:"POST",
           body:JSON.stringify(payload)
         });
 
-        setStatus(`Opplevelse lagret. Rad-ID: ${data.id}`, "ok");
-        await loadOptions();
+        const index = currentItems.findIndex(entry => entry.id === item.id);
+        if(index >= 0 && data.row){
+          currentItems[index] = data.row;
+        }
+
+        editMode = false;
+        renderItems();
+        setMobileDetailState(true);
+        setStatus("Endringer lagret.", "ok");
       }catch(error){
-        setStatus("Lagring feilet: " + error.message, "err");
-      }finally{
-        el("saveBtn").disabled = false;
+        setStatus("Kunne ikke lagre endringer: " + error.message, "err");
+      }
+    }
+
+    async function loadExperiences(){
+      const q = el("searchBox").value.trim();
+      setStatus("Laster ...");
+
+      const data = await apiFetch(`/experience-list?limit=300&q=${encodeURIComponent(q)}`);
+      currentItems = data.items || [];
+
+      setupOpplevelserLoginWidget(data.user);
+      el("userLine").textContent = "";
+
+      if(isMobileView()){
+        selectedId = null;
+        setMobileDetailState(false);
+      }else if(!selectedId || !currentItems.some(item => item.id === selectedId)){
+        selectedId = currentItems.length ? currentItems[0].id : null;
+      }
+
+      editMode = false;
+      renderItems();
+      setStatus(`Fant ${data.count} opplevelse(r).`);
+    }
+
+    function scheduleLiveSearch(){
+      window.clearTimeout(searchTimer);
+      searchTimer = window.setTimeout(() => {
+        loadExperiences().catch(error => setStatus("Kunne ikke hente opplevelser: " + error.message, "err"));
+      }, 250);
+    }
+
+    el("refreshBtn").addEventListener("click", () => {
+      loadExperiences().catch(error => setStatus("Kunne ikke hente opplevelser: " + error.message, "err"));
+    });
+
+    el("searchBox").addEventListener("input", scheduleLiveSearch);
+
+    el("searchBox").addEventListener("keydown", event => {
+      if(event.key === "Enter"){
+        event.preventDefault();
+        loadExperiences().catch(error => setStatus("Kunne ikke hente opplevelser: " + error.message, "err"));
       }
     });
 
-    loadOptions();
+    window.addEventListener("resize", () => {
+      if(!isMobileView()){
+        if(!selectedId && currentItems.length){
+          selectedId = currentItems[0].id;
+          renderItems();
+        }
+        setMobileDetailState(false);
+      }else if(!selectedId){
+        setMobileDetailState(false);
+      }
+    });
+
+    loadExperiences().catch(error => setStatus("Kunne ikke hente opplevelser: " + error.message, "err"));
   </script>
 
 <script>
@@ -842,94 +1101,6 @@ body.light-mode .mic-button:hover{
   }else{
     initOpplevelserStandard();
   }
-})();
-</script>
-
-
-<script>
-(function(){
-  const KEY = "kvimarka92SelectedBibleVerse";
-
-  function clearBibleFieldsOnFreshRegistration(){
-    try{
-      sessionStorage.removeItem(KEY);
-      localStorage.removeItem(KEY);
-    }catch(error){}
-
-    function clearNow(){
-      const ref = document.getElementById("bibleReference");
-      const text = document.getElementById("bibleText");
-      const source = document.getElementById("bibleSource");
-      const card = document.getElementById("biblePreviewCard") || document.getElementById("selectedBibleCard") || document.getElementById("bibleCard");
-
-      if(ref) ref.value = "";
-      if(text) text.value = "";
-      if(source) source.value = "Bibelen på Norsk (1930)";
-
-      if(card){
-        card.style.display = "none";
-      }
-
-      document.querySelectorAll("[data-bible-reference-output]").forEach(el => el.textContent = "");
-      document.querySelectorAll("[data-bible-text-output]").forEach(el => el.textContent = "");
-    }
-
-    if(document.readyState === "loading"){
-      document.addEventListener("DOMContentLoaded", clearNow);
-    }else{
-      clearNow();
-    }
-  }
-
-  clearBibleFieldsOnFreshRegistration();
-})();
-</script>
-
-
-<script>
-(function(){
-  function initialsFromName(nameOrEmail){
-    const text = String(nameOrEmail || "").trim();
-    if(!text){
-      return "👤";
-    }
-
-    const name = text.includes("@") ? text.split("@")[0] : text;
-    const parts = name
-      .replace(/[._-]+/g, " ")
-      .split(/\s+/)
-      .map(part => part.trim())
-      .filter(Boolean);
-
-    if(parts.length >= 2){
-      return (parts[0][0] + parts[1][0]).toUpperCase();
-    }
-
-    if(parts.length === 1){
-      return parts[0].slice(0, 2).toUpperCase();
-    }
-
-    return "👤";
-  }
-
-  window.updateOpplevelserLoginIcon = function(user){
-    const btn = document.getElementById("loginCornerButton");
-    if(!btn){
-      return;
-    }
-
-    const name = String((user && (user.name || user.email)) || "").trim();
-
-    if(name){
-      btn.innerHTML = '<span class="login-corner-initials">' + initialsFromName(name) + '</span>';
-      btn.title = "Innlogget som " + name + " – klikk for innlogging/bruker";
-      btn.setAttribute("aria-label", btn.title);
-    }else{
-      btn.textContent = "👤";
-      btn.title = "Logg inn";
-      btn.setAttribute("aria-label", "Logg inn");
-    }
-  };
 })();
 </script>
 
@@ -1102,6 +1273,121 @@ body.light-mode .mic-button:hover{
     document.addEventListener("DOMContentLoaded", initMicButtons);
   }else{
     initMicButtons();
+  }
+})();
+</script>
+
+
+<script>
+(function(){
+  const LOGIN_API_BASE = "https://api-kvimarka92.carstereogarage.com";
+
+  function getInitials(nameOrEmail){
+    const value = String(nameOrEmail || "").trim();
+
+    if(!value){
+      return "?";
+    }
+
+    const namePart = value.includes("@")
+      ? value.split("@")[0]
+      : value;
+
+    const parts = namePart
+      .split(/\s+/)
+      .filter(Boolean);
+
+    if(parts.length >= 2){
+      return (parts[0][0] + parts[1][0]).toUpperCase();
+    }
+
+    return namePart.slice(0, 2).toUpperCase();
+  }
+
+  async function performOpplevelserLogout(){
+    try{
+      await fetch(`${LOGIN_API_BASE}/cdn-cgi/access/logout`, {
+        method:"GET",
+        credentials:"include",
+        mode:"no-cors"
+      });
+    }catch(error){
+      console.warn("Logout request may have been blocked, continuing anyway.", error);
+    }
+
+    window.location.href = window.location.pathname + "?logout=" + Date.now();
+  }
+
+  window.setupOpplevelserLoginWidget = function(user){
+    const loginStatus = document.getElementById("loginStatus");
+    const loginMenu = document.getElementById("loginMenu");
+    const loginMenuName = document.getElementById("loginMenuName");
+    const logoutLink = document.getElementById("logoutLink");
+
+    if(!loginStatus || !loginMenu){
+      return;
+    }
+
+    if(user && (user.name || user.email)){
+      const displayName = user.name || user.email || "Innlogget";
+
+      loginStatus.textContent = getInitials(displayName);
+      loginStatus.href = "#";
+      loginStatus.classList.remove("is-signin");
+      loginStatus.classList.add("signed-in");
+      loginStatus.title = displayName;
+      loginStatus.setAttribute("aria-label", displayName);
+
+      if(loginMenuName){
+        loginMenuName.textContent = displayName;
+      }
+
+      loginStatus.onclick = function(event){
+        event.preventDefault();
+        loginMenu.style.display =
+          loginMenu.style.display === "block" ? "none" : "block";
+      };
+
+      if(logoutLink){
+        logoutLink.onclick = function(event){
+          event.preventDefault();
+          performOpplevelserLogout();
+        };
+      }
+    }else{
+      const returnUrl =
+        window.location.origin +
+        window.location.pathname +
+        window.location.search;
+
+      loginStatus.textContent = "Sign in";
+      loginStatus.href =
+        `${LOGIN_API_BASE}/login?returnUrl=${encodeURIComponent(returnUrl)}`;
+
+      loginStatus.classList.add("is-signin");
+      loginStatus.classList.remove("signed-in");
+      loginStatus.title = "Logg inn";
+      loginStatus.setAttribute("aria-label", "Logg inn");
+      loginStatus.onclick = null;
+      loginMenu.style.display = "none";
+    }
+  };
+
+  document.addEventListener("click", function(event){
+    const widget = document.querySelector(".login-widget");
+    const menu = document.getElementById("loginMenu");
+
+    if(widget && menu && !widget.contains(event.target)){
+      menu.style.display = "none";
+    }
+  });
+
+  if(document.readyState === "loading"){
+    document.addEventListener("DOMContentLoaded", function(){
+      window.setupOpplevelserLoginWidget(null);
+    });
+  }else{
+    window.setupOpplevelserLoginWidget(null);
   }
 })();
 </script>

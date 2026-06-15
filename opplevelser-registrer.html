@@ -301,126 +301,133 @@ body.light-mode html:not(.classic-design-root) #status{
 }
 
 
-/* Opplevelser v17 login icon */
-.login-corner{
-  position:fixed;
-  top:18px;
-  right:18px;
-  z-index:2147483600;
-}
-.login-corner-button{
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  min-width:44px;
-  height:44px;
-  padding:0 10px;
-  border:0;
-  border-radius:10px;
-  background:rgba(255,255,255,.055);
-  color:var(--opp-text, #eee);
-  text-decoration:none;
-  font-size:18px;
-  font-weight:bold;
-  line-height:1;
-  box-shadow:none;
-  cursor:pointer;
-}
-.login-corner-button:hover{
-  background:rgba(255,255,255,.10);
-}
-.login-corner-initials{
-  font-size:11px;
-  font-weight:800;
-  letter-spacing:.02em;
-}
-body.light-mode .login-corner-button{
-  background:rgba(0,0,0,.06);
-  color:var(--opp-text, #333);
-}
-body.light-mode .login-corner-button:hover{
-  background:rgba(0,0,0,.10);
-}
-@media(max-width:700px){
-  .login-corner{
-    top:8px;
-    right:8px;
-  }
-  .login-corner-button{
-    min-width:40px;
-    height:40px;
-    border-radius:9px;
-  }
-}
 
-
-/* Opplevelser v18 speech-to-text */
-.voice-field-header{
+/* Opplevelser v19: login widget copied from Kvimarka92 index style */
+.login-widget{
+  position:absolute;
+  top:20px;
+  right:max(20px, calc((100vw - 980px) / 2));
+  z-index:9999;
+  height:38px;
   display:flex;
   align-items:center;
-  justify-content:space-between;
-  gap:10px;
-  margin-bottom:6px;
 }
-.voice-field-header label{
-  margin:0 !important;
-}
-.mic-button{
-  display:none;
+
+.login-status{
+  display:flex;
   align-items:center;
   justify-content:center;
-  width:36px;
-  height:32px;
-  min-height:32px;
+  width:38px;
+  height:38px;
+  min-width:38px;
+  min-height:38px;
   padding:0;
-  border:0;
-  border-radius:999px;
-  background:rgba(255,255,255,.07);
-  color:var(--opp-text, #eee);
-  font-size:17px;
-  line-height:1;
-  cursor:pointer;
-}
-.mic-button:hover{
-  background:rgba(255,255,255,.13);
-}
-.mic-button.visible{
-  display:inline-flex;
-}
-.mic-button.listening{
-  background:#c2410c !important;
-  color:#fff !important;
-  animation:oppMicPulse 1s infinite;
-}
-@keyframes oppMicPulse{
-  0%{box-shadow:0 0 0 0 rgba(194,65,12,.55);}
-  70%{box-shadow:0 0 0 8px rgba(194,65,12,0);}
-  100%{box-shadow:0 0 0 0 rgba(194,65,12,0);}
-}
-.voice-status{
-  display:none;
-  color:var(--opp-muted, #bbb);
+  border:1px solid var(--opp-border, var(--border, #555));
+  background:var(--opp-card, var(--card, #242424));
+  border-radius:50%;
+  color:var(--opp-muted, var(--muted, #bbb));
+  text-decoration:none;
   font-size:13px;
-  margin:4px 0 8px;
+  font-weight:bold;
+  line-height:1;
+  opacity:.86;
+  box-sizing:border-box;
+  cursor:pointer;
+  white-space:nowrap;
 }
-.voice-status.visible{
+
+.login-status:hover{
+  opacity:1;
+  color:var(--opp-text, var(--text, #eee));
+  background-color:var(--opp-card, var(--card, #242424));
+}
+
+.login-status.is-signin{
+  border:none;
+  border-radius:0;
+  background-color:transparent;
+  background-image:url("LogInDG.png");
+  background-repeat:no-repeat;
+  background-position:center;
+  background-size:38px 38px;
+  text-indent:-9999px;
+  overflow:hidden;
+}
+
+.login-menu{
+  position:absolute;
+  top:44px;
+  right:0;
+  min-width:247px;
+  padding:10px;
+  border:0;
+  border-radius:10px;
+  background:rgba(255,255,255,.06);
+  color:var(--opp-text, var(--text, #eee));
+  box-shadow:none;
+  box-sizing:border-box;
+}
+
+html.classic-design-root .login-menu{
+  border:1px solid var(--opp-border, var(--border, #555));
+  background:var(--opp-card, var(--card, #242424));
+  box-shadow:0 8px 24px rgba(0,0,0,.18);
+}
+
+.login-menu-name{
+  font-weight:bold;
+  font-size:13px;
+  margin-bottom:8px;
+  color:var(--opp-text, var(--text, #eee));
+  white-space:nowrap;
+}
+
+.login-menu-link{
   display:block;
+  padding:8px 10px;
+  margin:0 -4px -4px;
+  border-radius:8px;
+  color:var(--opp-link, var(--link, #7cc7e8));
+  text-decoration:none;
+  font-weight:bold;
+  font-size:13px;
 }
-body.light-mode .mic-button{
-  background:rgba(0,0,0,.07);
-  color:var(--opp-text, #333);
+
+.login-menu-link:hover{
+  background:rgba(127,127,127,.10);
 }
-body.light-mode .mic-button:hover{
-  background:rgba(0,0,0,.13);
+
+.login-menu-link:active{
+  background:rgba(127,127,127,.22);
+}
+
+@media(max-width:800px){
+  .login-widget{
+    top:10px;
+    right:10px;
+  }
 }
 
 </style>
-<!-- version: REGISTER v18 speech-to-text 2026-06-16 -->
+<!-- version: REGISTER v19 index-login-widget 2026-06-16 -->
 </head>
 <body class="dark-mode">
-<div class="file-version-marker">REGISTER v18 speech-to-text 2026-06-16</div>
+<div class="file-version-marker">REGISTER v19 index-login-widget 2026-06-16</div>
 
-<div class="login-corner"><a id="loginCornerButton" class="login-corner-button" href="https://api-kvimarka92.carstereogarage.com/login" title="Logg inn / Min bruker" aria-label="Logg inn / Min bruker">👤</a></div>
+
+<div class="login-widget">
+  <a id="loginStatus"
+     class="login-status is-signin"
+     href="https://api-kvimarka92.carstereogarage.com/login"
+     title="Logg inn"
+     aria-label="Logg inn">Sign in</a>
+
+  <div id="loginMenu" class="login-menu" style="display:none;">
+    <div id="loginMenuName" class="login-menu-name"></div>
+    <a id="logoutLink" class="login-menu-link" href="#">Logg ut</a>
+  </div>
+</div>
+
 
 <main class="wrap">
     <section class="card">
@@ -702,7 +709,7 @@ body.light-mode .mic-button:hover{
         if(!environmentOptions.length){
           setStatus("Miljøvalg mangler: Worker returnerte ingen Baserow-options for Experiences → Environment.", "err");
         }
-        updateOpplevelserLoginIcon(data.user);
+        setupOpplevelserLoginWidget(data.user);
       el("userLine").textContent = "";
 
         const storedVerse = readSelectedBibleVerseFromStorage();
@@ -888,54 +895,6 @@ body.light-mode .mic-button:hover{
 
 <script>
 (function(){
-  function initialsFromName(nameOrEmail){
-    const text = String(nameOrEmail || "").trim();
-    if(!text){
-      return "👤";
-    }
-
-    const name = text.includes("@") ? text.split("@")[0] : text;
-    const parts = name
-      .replace(/[._-]+/g, " ")
-      .split(/\s+/)
-      .map(part => part.trim())
-      .filter(Boolean);
-
-    if(parts.length >= 2){
-      return (parts[0][0] + parts[1][0]).toUpperCase();
-    }
-
-    if(parts.length === 1){
-      return parts[0].slice(0, 2).toUpperCase();
-    }
-
-    return "👤";
-  }
-
-  window.updateOpplevelserLoginIcon = function(user){
-    const btn = document.getElementById("loginCornerButton");
-    if(!btn){
-      return;
-    }
-
-    const name = String((user && (user.name || user.email)) || "").trim();
-
-    if(name){
-      btn.innerHTML = '<span class="login-corner-initials">' + initialsFromName(name) + '</span>';
-      btn.title = "Innlogget som " + name + " – klikk for innlogging/bruker";
-      btn.setAttribute("aria-label", btn.title);
-    }else{
-      btn.textContent = "👤";
-      btn.title = "Logg inn";
-      btn.setAttribute("aria-label", "Logg inn");
-    }
-  };
-})();
-</script>
-
-
-<script>
-(function(){
   const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
   let activeRecognition = null;
   let activeButton = null;
@@ -1102,6 +1061,121 @@ body.light-mode .mic-button:hover{
     document.addEventListener("DOMContentLoaded", initMicButtons);
   }else{
     initMicButtons();
+  }
+})();
+</script>
+
+
+<script>
+(function(){
+  const LOGIN_API_BASE = "https://api-kvimarka92.carstereogarage.com";
+
+  function getInitials(nameOrEmail){
+    const value = String(nameOrEmail || "").trim();
+
+    if(!value){
+      return "?";
+    }
+
+    const namePart = value.includes("@")
+      ? value.split("@")[0]
+      : value;
+
+    const parts = namePart
+      .split(/\s+/)
+      .filter(Boolean);
+
+    if(parts.length >= 2){
+      return (parts[0][0] + parts[1][0]).toUpperCase();
+    }
+
+    return namePart.slice(0, 2).toUpperCase();
+  }
+
+  async function performOpplevelserLogout(){
+    try{
+      await fetch(`${LOGIN_API_BASE}/cdn-cgi/access/logout`, {
+        method:"GET",
+        credentials:"include",
+        mode:"no-cors"
+      });
+    }catch(error){
+      console.warn("Logout request may have been blocked, continuing anyway.", error);
+    }
+
+    window.location.href = window.location.pathname + "?logout=" + Date.now();
+  }
+
+  window.setupOpplevelserLoginWidget = function(user){
+    const loginStatus = document.getElementById("loginStatus");
+    const loginMenu = document.getElementById("loginMenu");
+    const loginMenuName = document.getElementById("loginMenuName");
+    const logoutLink = document.getElementById("logoutLink");
+
+    if(!loginStatus || !loginMenu){
+      return;
+    }
+
+    if(user && (user.name || user.email)){
+      const displayName = user.name || user.email || "Innlogget";
+
+      loginStatus.textContent = getInitials(displayName);
+      loginStatus.href = "#";
+      loginStatus.classList.remove("is-signin");
+      loginStatus.classList.add("signed-in");
+      loginStatus.title = displayName;
+      loginStatus.setAttribute("aria-label", displayName);
+
+      if(loginMenuName){
+        loginMenuName.textContent = displayName;
+      }
+
+      loginStatus.onclick = function(event){
+        event.preventDefault();
+        loginMenu.style.display =
+          loginMenu.style.display === "block" ? "none" : "block";
+      };
+
+      if(logoutLink){
+        logoutLink.onclick = function(event){
+          event.preventDefault();
+          performOpplevelserLogout();
+        };
+      }
+    }else{
+      const returnUrl =
+        window.location.origin +
+        window.location.pathname +
+        window.location.search;
+
+      loginStatus.textContent = "Sign in";
+      loginStatus.href =
+        `${LOGIN_API_BASE}/login?returnUrl=${encodeURIComponent(returnUrl)}`;
+
+      loginStatus.classList.add("is-signin");
+      loginStatus.classList.remove("signed-in");
+      loginStatus.title = "Logg inn";
+      loginStatus.setAttribute("aria-label", "Logg inn");
+      loginStatus.onclick = null;
+      loginMenu.style.display = "none";
+    }
+  };
+
+  document.addEventListener("click", function(event){
+    const widget = document.querySelector(".login-widget");
+    const menu = document.getElementById("loginMenu");
+
+    if(widget && menu && !widget.contains(event.target)){
+      menu.style.display = "none";
+    }
+  });
+
+  if(document.readyState === "loading"){
+    document.addEventListener("DOMContentLoaded", function(){
+      window.setupOpplevelserLoginWidget(null);
+    });
+  }else{
+    window.setupOpplevelserLoginWidget(null);
   }
 })();
 </script>
