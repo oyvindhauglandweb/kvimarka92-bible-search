@@ -475,10 +475,10 @@ body.light-mode .mic-button:hover{
 }
 
 </style>
-<!-- version: REGISTER v21 one-clear-button 2026-06-16 -->
+<!-- version: REGISTER v22 bible-search-sync 2026-06-16 -->
 </head>
 <body class="dark-mode">
-<div class="file-version-marker">REGISTER v21 one-clear-button 2026-06-16</div>
+<div class="file-version-marker">REGISTER v22 bible-search-sync 2026-06-16</div>
 
 <div class="login-widget">
   <a id="loginStatus"
@@ -1271,6 +1271,110 @@ body.light-mode .mic-button:hover{
     textarea.dispatchEvent(new Event("input", { bubbles:true }));
     textarea.dispatchEvent(new Event("change", { bubbles:true }));
   };
+})();
+</script>
+
+
+<script>
+(function(){
+  const KEY = "kvimarka92SelectedBibleVerse";
+  const OVERRIDE_KEY = "kvimarka92BibleSearchInputVerse";
+
+  function readField(id){
+    const el = document.getElementById(id);
+    return el ? String(el.value || "").trim() : "";
+  }
+
+  function getCurrentBibleVerseFromPage(){
+    const reference =
+      readField("bibleReference") ||
+      readField("editBibleReference");
+
+    const text =
+      readField("bibleText") ||
+      readField("editBibleText");
+
+    const source =
+      readField("bibleSource") ||
+      readField("editBibleSource") ||
+      "Bibelen på Norsk (1930)";
+
+    return {
+      reference,
+      text,
+      source,
+      sourceId:"nb-1930",
+      selectedAt:new Date().toISOString()
+    };
+  }
+
+  function prepareBibleSearchFromCurrentPage(){
+    const verse = getCurrentBibleVerseFromPage();
+
+    try{
+      sessionStorage.setItem(OVERRIDE_KEY, JSON.stringify(verse));
+      sessionStorage.setItem(KEY, JSON.stringify(verse));
+
+      // localStorage oppdateres også slik at nytt popup-vindu kan lese samme verdi.
+      // Men sessionStorage override er fasit for akkurat denne åpningen.
+      localStorage.setItem(OVERRIDE_KEY, JSON.stringify(verse));
+      localStorage.setItem(KEY, JSON.stringify(verse));
+    }catch(error){}
+
+    return verse;
+  }
+
+  function applySelectedBibleVerseToPage(verse){
+    if(!verse){
+      return;
+    }
+
+    const normalRef = document.getElementById("bibleReference");
+    const normalText = document.getElementById("bibleText");
+    const normalSource = document.getElementById("bibleSource");
+
+    const editRef = document.getElementById("editBibleReference");
+    const editText = document.getElementById("editBibleText");
+    const editSource = document.getElementById("editBibleSource");
+
+    if(normalRef) normalRef.value = verse.reference || "";
+    if(normalText) normalText.value = verse.text || "";
+    if(normalSource) normalSource.value = verse.source || "Bibelen på Norsk (1930)";
+
+    if(editRef) editRef.value = verse.reference || "";
+    if(editText) editText.value = verse.text || "";
+    if(editSource) editSource.value = verse.source || "Bibelen på Norsk (1930)";
+
+    if(typeof window.updateBiblePreview === "function"){
+      window.updateBiblePreview();
+    }
+
+    for(const id of ["bibleReference","bibleText","bibleSource","editBibleReference","editBibleText","editBibleSource"]){
+      const field = document.getElementById(id);
+      if(field){
+        field.dispatchEvent(new Event("input", { bubbles:true }));
+        field.dispatchEvent(new Event("change", { bubbles:true }));
+      }
+    }
+
+    try{
+      sessionStorage.setItem(KEY, JSON.stringify(verse));
+      sessionStorage.setItem(OVERRIDE_KEY, JSON.stringify(verse));
+      localStorage.setItem(KEY, JSON.stringify(verse));
+      localStorage.setItem(OVERRIDE_KEY, JSON.stringify(verse));
+    }catch(error){}
+  }
+
+  window.prepareBibleSearchFromCurrentPage = prepareBibleSearchFromCurrentPage;
+  window.applySelectedBibleVerseToPage = applySelectedBibleVerseToPage;
+
+  window.addEventListener("message", event => {
+    if(!event.data || event.data.type !== "kvimarka92:bible-verse-selected"){
+      return;
+    }
+
+    applySelectedBibleVerseToPage(event.data.payload);
+  });
 })();
 </script>
 

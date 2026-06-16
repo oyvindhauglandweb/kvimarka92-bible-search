@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Bibelsøk 1930</title>
-  <!-- version: BIBLE v14 standard-design-range 2026-06-16 -->
+  <!-- version: BIBLE v15 bible-search-sync 2026-06-16 -->
   <style>
     :root{
       color-scheme:dark;
@@ -202,9 +202,9 @@ body.light-mode .action-button:hover{background:rgba(0,0,0,.10) !important;}
 </style>
 </head>
 <body class="dark-mode">
-<div class="file-version-marker">BIBLE v14 standard-design-range 2026-06-16</div>
+<div class="file-version-marker">BIBLE v15 bible-search-sync 2026-06-16</div>
 
-  <div class="wrap">
+<div class="wrap">
 
     <div class="header">
       <h1 class="site-title">Bibelsøk 1930</h1>
@@ -280,21 +280,32 @@ const selectedToVerse = document.getElementById("selectedToVerse");
 const copyStatus = document.getElementById("copyStatus");
 
 const SELECTED_VERSE_KEY = "kvimarka92SelectedBibleVerse";
+const OVERRIDE_KEY = "kvimarka92BibleSearchInputVerse";
 
 function readStoredSelectedBibleVerse(){
-  for(const storage of [sessionStorage, localStorage]){
-    try{
-      const raw = storage.getItem(SELECTED_VERSE_KEY);
-      if(!raw){
-        continue;
-      }
+  const keys = [
+    "kvimarka92BibleSearchInputVerse",
+    "kvimarka92SelectedBibleVerse"
+  ];
 
-      const data = JSON.parse(raw);
+  const stores = [sessionStorage, localStorage];
 
-      if(data && (data.reference || data.text)){
-        return data;
-      }
-    }catch(error){}
+  for(const key of keys){
+    for(const storage of stores){
+      try{
+        const raw = storage.getItem(key);
+
+        if(!raw){
+          continue;
+        }
+
+        const data = JSON.parse(raw);
+
+        if(data && (data.reference || data.text)){
+          return data;
+        }
+      }catch(error){}
+    }
   }
 
   return null;
@@ -323,6 +334,8 @@ function setSelectedBibleVersePayload(payload, message){
 
   localStorage.setItem(SELECTED_VERSE_KEY, JSON.stringify(selectedBibleVerse));
   sessionStorage.setItem(SELECTED_VERSE_KEY, JSON.stringify(selectedBibleVerse));
+  localStorage.setItem(OVERRIDE_KEY, JSON.stringify(selectedBibleVerse));
+  sessionStorage.setItem(OVERRIDE_KEY, JSON.stringify(selectedBibleVerse));
 }
 
 function esc(value){
@@ -533,6 +546,8 @@ function updateSelectedPayloadFromRange(){
 
   localStorage.setItem(SELECTED_VERSE_KEY, JSON.stringify(selectedBibleVerse));
   sessionStorage.setItem(SELECTED_VERSE_KEY, JSON.stringify(selectedBibleVerse));
+  localStorage.setItem(OVERRIDE_KEY, JSON.stringify(selectedBibleVerse));
+  sessionStorage.setItem(OVERRIDE_KEY, JSON.stringify(selectedBibleVerse));
 }
 
 window.changeSelectedRange = function(event, side, delta){
