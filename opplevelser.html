@@ -1061,7 +1061,7 @@ body.light-mode .readonly-bible-display .bible{
 }
 
 </style>
-  <!-- version: LIST v25 readonly-bible-display-fixed 2026-06-16 -->
+  <!-- version: LIST v26 bible-source-year-parentheses-fix 2026-06-16 -->
 </head>
 <body class="dark-mode">
 <div class="login-widget">
@@ -1180,6 +1180,8 @@ body.light-mode .readonly-bible-display .bible{
 
     function formatBibleSource(source){
       const text = String(source || "Bibelen på Norsk (1930)").trim();
+
+      // "Bibelen på Norsk (1930)" -> "Bibelen på Norsk 1930"
       return text.replace(/\s*\((\d{4})\)\s*$/, " $1");
     }
 
@@ -1352,7 +1354,7 @@ body.light-mode .readonly-bible-display .bible{
 
             <input id="editBibleReference" class="bible-hidden-input" type="hidden" value="${esc(item.bibleReference || "")}">
 
-            <input id="editBibleSource" class="bible-hidden-input" type="hidden" value="${esc(item.bibleSource || "Bibelen på Norsk (1930)")}">
+            <input id="editBibleSource" class="bible-hidden-input" type="hidden" value="${esc(formatBibleSource(item.bibleSource || "Bibelen på Norsk (1930)"))}">
 
             <div class="full">
               <div id="editBibleClickFrame" class="bible-click-frame" onclick="openOpplevelserBibleSearch()">
