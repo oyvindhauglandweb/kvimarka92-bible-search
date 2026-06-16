@@ -1968,8 +1968,70 @@ body.light-mode [aria-selected="true"] *{
   filter:none !important;
 }
 
+
+/* List v50c: fix search button and selected item visibility in light mode */
+
+/* Søk-knappen må være tydelig, ikke hvit/usynlig */
+body.light-mode button.search-button,
+body.light-mode .search-button,
+body.light-mode #searchButton,
+body.light-mode button[type="submit"],
+body.light-mode .search-panel button,
+body.light-mode .search-row button,
+body.light-mode form[role="search"] button{
+  background:#0ea5d4 !important;
+  color:#ffffff !important;
+  border:0 !important;
+  box-shadow:none !important;
+  opacity:1 !important;
+  filter:none !important;
+  font-weight:800 !important;
+}
+
+body.light-mode button.search-button:hover,
+body.light-mode .search-button:hover,
+body.light-mode #searchButton:hover,
+body.light-mode button[type="submit"]:hover,
+body.light-mode .search-panel button:hover,
+body.light-mode .search-row button:hover,
+body.light-mode form[role="search"] button:hover{
+  background:#0284c7 !important;
+  color:#ffffff !important;
+}
+
+/* Den faktiske listen bruker .items .item */
+body.light-mode .items .item.selected,
+body.light-mode .items .item.active,
+body.light-mode .items .item.is-selected,
+body.light-mode .items .item[data-selected="true"],
+body.light-mode .items .item[aria-selected="true"]{
+  background:#bfdbfe !important;
+  color:#111827 !important;
+  border-left:5px solid #2563eb !important;
+  box-shadow:inset 0 0 0 1px rgba(37,99,235,.22) !important;
+}
+
+body.light-mode .items .item.selected *,
+body.light-mode .items .item.active *,
+body.light-mode .items .item.is-selected *,
+body.light-mode .items .item[data-selected="true"] *,
+body.light-mode .items .item[aria-selected="true"] *{
+  color:#111827 !important;
+  opacity:1 !important;
+  filter:none !important;
+}
+
+body.light-mode .items .item:not(.selected):not(.active):not(.is-selected):not([data-selected="true"]):not([aria-selected="true"]){
+  background:#f3f4f6 !important;
+  color:#111827 !important;
+}
+
+body.light-mode .items .item:not(.selected):not(.active):not(.is-selected):not([data-selected="true"]):not([aria-selected="true"]):hover{
+  background:#e5e7eb !important;
+}
+
 </style>
-  <!-- version: LIST v50b rollback-minimal-button-selected-fix 2026-06-16 -->
+  <!-- version: LIST v50c_search_button_selected_item_fix 2026-06-16 -->
 </head>
 <body class="dark-mode">
 <div class="login-widget">
@@ -3853,6 +3915,62 @@ body.light-mode [aria-selected="true"] *{
     document.addEventListener("DOMContentLoaded", installSelectedItemMarker);
   }else{
     installSelectedItemMarker();
+  }
+})();
+</script>
+
+
+<script>
+/* List v50c: keep selected marker on the actual .items .item rows */
+(function(){
+  function markSelectedItem(row){
+    if(!row){ return; }
+
+    const list = row.closest(".items") || row.parentElement;
+
+    if(list){
+      list.querySelectorAll(".item.selected, .item.active, .item.is-selected, .item[data-selected='true'], .item[aria-selected='true']").forEach(el => {
+        if(el === row){ return; }
+        el.classList.remove("selected", "active", "is-selected");
+        el.removeAttribute("data-selected");
+        el.removeAttribute("aria-selected");
+      });
+    }
+
+    row.classList.add("selected", "is-selected");
+    row.setAttribute("data-selected", "true");
+    row.setAttribute("aria-selected", "true");
+  }
+
+  function install(){
+    document.addEventListener("click", event => {
+      const row = event.target.closest(".items .item");
+      if(row){
+        markSelectedItem(row);
+      }
+    }, true);
+
+    // Mark existing selected item, or first item after data has loaded.
+    [100, 300, 800, 1500].forEach(delay => {
+      setTimeout(() => {
+        const existing = document.querySelector(".items .item.selected, .items .item.active, .items .item.is-selected, .items .item[data-selected='true'], .items .item[aria-selected='true']");
+        if(existing){
+          markSelectedItem(existing);
+          return;
+        }
+
+        const first = document.querySelector(".items .item");
+        if(first){
+          markSelectedItem(first);
+        }
+      }, delay);
+    });
+  }
+
+  if(document.readyState === "loading"){
+    document.addEventListener("DOMContentLoaded", install);
+  }else{
+    install();
   }
 })();
 </script>
