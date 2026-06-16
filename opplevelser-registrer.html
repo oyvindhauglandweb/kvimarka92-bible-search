@@ -1564,7 +1564,7 @@ body.light-mode button[aria-label="Fjern bibelsted"]:hover{
 }
 
 </style>
-<!-- version: REGISTER v43e theme-icon-moon-in-light-mode 2026-06-17 -->
+<!-- version: REGISTER v43f direct-inline-light-button-styling 2026-06-17 -->
 </head>
 <body class="dark-mode">
 <div class="login-widget">
@@ -3283,6 +3283,197 @@ html body.light-mode button[type="submit"] *{
 
   window.addEventListener("storage", updateThemeIcon);
   window.addEventListener("pageshow", updateThemeIcon);
+})();
+</script>
+
+
+<style id="opplevelser-register-v43f-button-baseline">
+/* v43f baseline only. Actual final button colors are applied inline by JS below. */
+body.light-mode button.clear-voice-button,
+body.light-mode button.voice-clear-btn,
+body.light-mode button.bible-clear-button,
+body.light-mode button.opplevelser-clear-form-final{
+  opacity:1 !important;
+  filter:none !important;
+}
+</style>
+
+
+<script>
+/* Register v43f: direct inline light button styling */
+(function(){
+  const INLINE_PROPS = [
+    "background", "color", "border", "box-shadow", "opacity", "filter",
+    "border-radius", "display", "align-items", "justify-content",
+    "width", "height", "min-width", "min-height", "padding", "font-weight"
+  ];
+
+  function isLightMode(){
+    return (
+      document.body.classList.contains("light-mode") ||
+      document.body.classList.contains("light") ||
+      document.documentElement.classList.contains("light-mode") ||
+      document.documentElement.classList.contains("light")
+    );
+  }
+
+  function setImportant(el, prop, value){
+    el.style.setProperty(prop, value, "important");
+  }
+
+  function clearInlineButtonStyle(button){
+    INLINE_PROPS.forEach(prop => button.style.removeProperty(prop));
+  }
+
+  function buttonText(button){
+    return (button.textContent || "").trim();
+  }
+
+  function isClearButton(button){
+    const txt = buttonText(button);
+    const title = (button.getAttribute("title") || "").trim().toLowerCase();
+    const aria = (button.getAttribute("aria-label") || "").trim().toLowerCase();
+    const cls = button.className ? String(button.className).toLowerCase() : "";
+
+    return (
+      txt === "×" || txt === "x" ||
+      cls.includes("clear-voice") ||
+      cls.includes("voice-clear") ||
+      cls.includes("bible-clear") ||
+      title === "tøm felt" ||
+      aria === "tøm felt" ||
+      title === "fjern bibelsted" ||
+      aria === "fjern bibelsted"
+    );
+  }
+
+  function isClearFormButton(button){
+    return buttonText(button) === "Tøm skjema";
+  }
+
+  function isBlueActionButton(button){
+    const txt = buttonText(button);
+    const title = (button.getAttribute("title") || "").toLowerCase();
+    const aria = (button.getAttribute("aria-label") || "").toLowerCase();
+    const cls = button.className ? String(button.className).toLowerCase() : "";
+    const id = (button.id || "").toLowerCase();
+
+    return (
+      txt === "Lagre opplevelse" ||
+      id === "savebtn" ||
+      id === "savebutton" ||
+      cls.includes("mic-button") ||
+      cls.includes("voice-mic") ||
+      cls.includes("bible-edit") ||
+      cls.includes("save-button") ||
+      cls.includes("primary") ||
+      title.includes("mikrofon") ||
+      aria.includes("mikrofon") ||
+      title.includes("endre bibelsted") ||
+      aria.includes("endre bibelsted")
+    );
+  }
+
+  function styleRoundGrey(button){
+    setImportant(button, "display", "inline-flex");
+    setImportant(button, "align-items", "center");
+    setImportant(button, "justify-content", "center");
+    setImportant(button, "width", "32px");
+    setImportant(button, "height", "32px");
+    setImportant(button, "min-width", "32px");
+    setImportant(button, "min-height", "32px");
+    setImportant(button, "padding", "0");
+    setImportant(button, "border", "0");
+    setImportant(button, "border-radius", "999px");
+    setImportant(button, "background", "#e5e7eb");
+    setImportant(button, "color", "#111827");
+    setImportant(button, "box-shadow", "none");
+    setImportant(button, "opacity", "1");
+    setImportant(button, "filter", "none");
+    setImportant(button, "font-weight", "800");
+    button.classList.add("opplevelser-inline-grey-fixed");
+  }
+
+  function stylePillGrey(button){
+    setImportant(button, "display", "inline-flex");
+    setImportant(button, "align-items", "center");
+    setImportant(button, "justify-content", "center");
+    setImportant(button, "min-height", "34px");
+    setImportant(button, "padding", "8px 18px");
+    setImportant(button, "border", "0");
+    setImportant(button, "border-radius", "999px");
+    setImportant(button, "background", "#e5e7eb");
+    setImportant(button, "color", "#111827");
+    setImportant(button, "box-shadow", "none");
+    setImportant(button, "opacity", "1");
+    setImportant(button, "filter", "none");
+    setImportant(button, "font-weight", "800");
+    button.classList.add("opplevelser-clear-form-final");
+  }
+
+  function styleBlueAction(button){
+    setImportant(button, "background", "#0ea5d4");
+    setImportant(button, "color", "#ffffff");
+    setImportant(button, "border", "0");
+    setImportant(button, "box-shadow", "none");
+    setImportant(button, "opacity", "1");
+    setImportant(button, "filter", "none");
+  }
+
+  function applyButtonStyles(){
+    const light = isLightMode();
+
+    document.querySelectorAll("button").forEach(button => {
+      const shouldGreyRound = isClearButton(button);
+      const shouldGreyPill = isClearFormButton(button);
+      const shouldBlue = isBlueActionButton(button);
+
+      if(!light){
+        if(button.classList.contains("opplevelser-inline-grey-fixed") || button.classList.contains("opplevelser-clear-form-final")){
+          clearInlineButtonStyle(button);
+        }
+        return;
+      }
+
+      if(shouldGreyRound){
+        styleRoundGrey(button);
+        return;
+      }
+
+      if(shouldGreyPill){
+        stylePillGrey(button);
+        return;
+      }
+
+      if(shouldBlue){
+        styleBlueAction(button);
+      }
+    });
+  }
+
+  window.fixOpplevelserRegisterButtonBackgrounds = applyButtonStyles;
+
+  if(document.readyState === "loading"){
+    document.addEventListener("DOMContentLoaded", applyButtonStyles);
+  }else{
+    applyButtonStyles();
+  }
+
+  [50, 150, 400, 900, 1500].forEach(delay => setTimeout(applyButtonStyles, delay));
+
+  document.addEventListener("click", () => {
+    setTimeout(applyButtonStyles, 0);
+    setTimeout(applyButtonStyles, 100);
+  }, true);
+
+  const observer = new MutationObserver(() => applyButtonStyles());
+  if(document.body){
+    observer.observe(document.body, { childList:true, subtree:true, attributes:true, attributeFilter:["class"] });
+  }else{
+    document.addEventListener("DOMContentLoaded", () => {
+      observer.observe(document.body, { childList:true, subtree:true, attributes:true, attributeFilter:["class"] });
+    });
+  }
 })();
 </script>
 
