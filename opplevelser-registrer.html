@@ -521,8 +521,52 @@ body.light-mode .mic-button:hover{
   height:18px;
 }
 
+
+/* Opplevelser v25/v19 final field polish */
+.clear-voice-button{
+  background:rgba(255,255,255,.075) !important;
+  color:var(--opp-text, #eee) !important;
+  border:0 !important;
+  box-shadow:none !important;
+}
+.clear-voice-button:hover{
+  background:rgba(255,255,255,.13) !important;
+}
+body.light-mode .clear-voice-button{
+  background:rgba(0,0,0,.075) !important;
+  color:var(--opp-text, #333) !important;
+}
+body.light-mode .clear-voice-button:hover{
+  background:rgba(0,0,0,.13) !important;
+}
+
+.bible-click-frame{
+  cursor:pointer;
+  transition:background .15s ease, box-shadow .15s ease;
+}
+.bible-click-frame:hover{
+  background:rgba(255,255,255,.075) !important;
+}
+body.light-mode .bible-click-frame:hover{
+  background:rgba(0,0,0,.075) !important;
+}
+.bible-click-frame::after{
+  content:"Klikk for å endre bibelsted";
+  display:block;
+  margin-top:6px;
+  color:var(--opp-muted, #bbb);
+  font-size:.86em;
+  opacity:.85;
+}
+
+textarea.auto-grow-textarea{
+  overflow:hidden !important;
+  resize:none !important;
+  min-height:88px;
+}
+
 </style>
-<!-- version: REGISTER v24 final-icons-popup 2026-06-16 -->
+<!-- version: REGISTER v25 field-polish 2026-06-16 -->
 </head>
 <body class="dark-mode">
 <div class="login-widget">
@@ -1518,6 +1562,46 @@ body.light-mode .mic-button:hover{
 
     window.open("bibel-sok.html", "kvimarka92BibleSearch", features);
   };
+})();
+</script>
+
+
+<script>
+(function(){
+  function autoGrowTextarea(textarea){
+    if(!textarea){
+      return;
+    }
+
+    textarea.classList.add("auto-grow-textarea");
+    textarea.style.height = "auto";
+    textarea.style.height = Math.max(textarea.scrollHeight, 88) + "px";
+  }
+
+  function initAutoGrowTextareas(){
+    document
+      .querySelectorAll("textarea")
+      .forEach(textarea => {
+        autoGrowTextarea(textarea);
+
+        if(textarea.dataset.autoGrowReady === "1"){
+          return;
+        }
+
+        textarea.dataset.autoGrowReady = "1";
+        textarea.addEventListener("input", () => autoGrowTextarea(textarea));
+        textarea.addEventListener("change", () => autoGrowTextarea(textarea));
+      });
+  }
+
+  window.initOpplevelserAutoGrowTextareas = initAutoGrowTextareas;
+  window.autoGrowOpplevelserTextarea = autoGrowTextarea;
+
+  if(document.readyState === "loading"){
+    document.addEventListener("DOMContentLoaded", initAutoGrowTextareas);
+  }else{
+    initAutoGrowTextareas();
+  }
 })();
 </script>
 
