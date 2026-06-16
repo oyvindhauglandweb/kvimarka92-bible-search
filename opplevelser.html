@@ -1061,303 +1061,91 @@ body.light-mode .readonly-bible-display .bible{
 }
 
 
-/* List v27: Bible text is selectable via bible search, not directly editable */
+
+/* List v35: Bible text field is passive display only */
+.readonly-bible-display,
+.readonly-bible-display *,
+.bible-click-frame,
+.bible-click-frame *,
+#editBibleText,
+#bibleText{
+  cursor:default !important;
+}
+
 .readonly-bible-display,
 .bible-click-frame{
-  cursor:pointer;
-}
-.readonly-bible-display .bible,
-.bible-click-frame textarea,
-textarea#editBibleText,
-textarea#bibleText{
-  cursor:pointer !important;
-  user-select:text;
-}
-.bible-click-frame textarea,
-textarea#editBibleText,
-textarea#bibleText{
-  pointer-events:auto;
-}
-textarea#editBibleText[readonly],
-textarea#bibleText[readonly]{
-  caret-color:transparent;
-}
-.readonly-bible-display:hover .bible,
-.bible-click-frame:hover textarea{
-  background:rgba(255,255,255,.075) !important;
-}
-body.light-mode .readonly-bible-display:hover .bible,
-body.light-mode .bible-click-frame:hover textarea{
-  background:rgba(0,0,0,.075) !important;
-}
-
-
-/* List v29: Bible display click overlay */
-.readonly-bible-display,
-.bible-click-frame{
-  position:relative !important;
-  cursor:pointer !important;
-}
-
-.bible-search-click-overlay{
-  position:absolute;
-  inset:0;
-  z-index:20;
-  cursor:pointer;
-  background:transparent;
+  pointer-events:auto !important;
 }
 
 .readonly-bible-display .bible,
 .bible-click-frame textarea,
-textarea#editBibleText,
-textarea#bibleText{
-  cursor:pointer !important;
-  caret-color:transparent !important;
-}
-
-
-/* List v31: fix invisible Bible click overlay and date field */
-.bible-search-click-overlay,
-button.bible-search-click-overlay,
-html:not(.classic-design-root) .bible-search-click-overlay,
-html:not(.classic-design-root) button.bible-search-click-overlay,
-body.dark-mode .bible-search-click-overlay,
-body.dark-mode button.bible-search-click-overlay,
-body.light-mode .bible-search-click-overlay,
-body.light-mode button.bible-search-click-overlay{
-  position:absolute !important;
-  inset:0 !important;
-  z-index:20 !important;
-  display:block !important;
-  width:auto !important;
-  height:auto !important;
-  min-width:0 !important;
-  min-height:0 !important;
-  max-width:none !important;
-  max-height:none !important;
-  margin:0 !important;
-  padding:0 !important;
+#editBibleText,
+#bibleText{
+  background:rgba(0,0,0,.18) !important;
   border:0 !important;
-  border-radius:10px !important;
-  background:transparent !important;
-  color:transparent !important;
   box-shadow:none !important;
   outline:0 !important;
-  font-size:0 !important;
-  line-height:0 !important;
-  appearance:none !important;
-  -webkit-appearance:none !important;
-  cursor:pointer !important;
+  caret-color:transparent !important;
+  resize:none !important;
 }
 
-.bible-search-click-overlay:hover,
-button.bible-search-click-overlay:hover{
-  background:rgba(255,255,255,.035) !important;
-  color:transparent !important;
-}
-
-body.light-mode .bible-search-click-overlay:hover,
-body.light-mode button.bible-search-click-overlay:hover{
-  background:rgba(0,0,0,.035) !important;
-}
-
-#editExperienceDate,
-#experienceDate{
-  font-family:inherit !important;
-}
-
-
-/* List v32: Bible display opens search directly */
-.readonly-bible-display{
-  cursor:pointer !important;
-  position:relative !important;
-}
-
-.readonly-bible-display .bible{
-  cursor:pointer !important;
-}
-
-.readonly-bible-display:hover .bible{
-  background:rgba(255,255,255,.075) !important;
-}
-
-body.light-mode .readonly-bible-display:hover .bible{
-  background:rgba(0,0,0,.075) !important;
-}
-
-/* Remove failed overlay behavior completely */
-.bible-search-click-overlay,
-button.bible-search-click-overlay{
-  display:none !important;
-}
-
-
-/* List v33: robust standard Bible buttons */
-.readonly-bible-display{
-  cursor:default !important;
-}
-
-.readonly-bible-display .bible{
-  cursor:default !important;
-}
-
-.readonly-bible-display:hover .bible{
-  background:rgba(0,0,0,.18) !important;
-}
-
-body.light-mode .readonly-bible-display:hover .bible{
+body.light-mode .readonly-bible-display .bible,
+body.light-mode .bible-click-frame textarea,
+body.light-mode #editBibleText,
+body.light-mode #bibleText{
   background:rgba(0,0,0,.045) !important;
 }
 
-.bible-click-frame{
-  cursor:default !important;
-}
-
-.bible-click-frame textarea,
-textarea#editBibleText,
-textarea#bibleText{
-  cursor:default !important;
-  caret-color:transparent !important;
-}
-
-.bible-action-row{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  margin:10px 0 14px;
-  flex-wrap:wrap;
-}
-
-.bible-action-row .secondary,
-.bible-action-row button{
-  background:rgba(255,255,255,.075) !important;
-  color:var(--opp-text, #eee) !important;
+.readonly-bible-display:hover,
+.readonly-bible-display:hover .bible,
+.bible-click-frame:hover,
+.bible-click-frame:hover textarea,
+#editBibleText:hover,
+#bibleText:hover,
+#editBibleText:focus,
+#bibleText:focus{
+  background:rgba(0,0,0,.18) !important;
   border:0 !important;
-  border-radius:999px !important;
   box-shadow:none !important;
-  padding:9px 16px !important;
-  font-weight:800 !important;
+  outline:0 !important;
+}
+
+body.light-mode .readonly-bible-display:hover,
+body.light-mode .readonly-bible-display:hover .bible,
+body.light-mode .bible-click-frame:hover,
+body.light-mode .bible-click-frame:hover textarea,
+body.light-mode #editBibleText:hover,
+body.light-mode #bibleText:hover,
+body.light-mode #editBibleText:focus,
+body.light-mode #bibleText:focus{
+  background:rgba(0,0,0,.045) !important;
+  border:0 !important;
+  box-shadow:none !important;
+  outline:0 !important;
+}
+
+/* Only these buttons may be active in the Bible section */
+.bible-edit-actions,
+.bible-edit-actions *,
+.bible-icon-button{
+  pointer-events:auto !important;
   cursor:pointer !important;
 }
 
-.bible-action-row .secondary:hover,
-.bible-action-row button:hover{
-  background:rgba(255,255,255,.13) !important;
-}
-
-body.light-mode .bible-action-row .secondary,
-body.light-mode .bible-action-row button{
-  background:rgba(0,0,0,.075) !important;
-  color:var(--opp-text, #333) !important;
-}
-
-body.light-mode .bible-action-row .secondary:hover,
-body.light-mode .bible-action-row button:hover{
-  background:rgba(0,0,0,.13) !important;
-}
-
-.bible-search-click-overlay,
-button.bible-search-click-overlay{
-  display:none !important;
-}
-
-
-/* List v34: clean Bible action buttons, no overlays */
+/* No invisible active elements in the Bible section */
 .bible-search-click-overlay,
 button.bible-search-click-overlay{
   display:none !important;
   width:0 !important;
   height:0 !important;
+  min-width:0 !important;
+  min-height:0 !important;
+  opacity:0 !important;
   pointer-events:none !important;
 }
 
-.readonly-bible-display,
-.readonly-bible-display .bible,
-.bible-click-frame,
-.bible-click-frame textarea,
-textarea#editBibleText,
-textarea#bibleText{
-  cursor:default !important;
-  caret-color:transparent !important;
-}
-
-.bible-edit-header-row{
-  display:flex !important;
-  align-items:center !important;
-  justify-content:space-between !important;
-  gap:12px !important;
-  margin:18px 0 8px !important;
-}
-
-.bible-edit-title-source{
-  display:flex !important;
-  align-items:baseline !important;
-  justify-content:space-between !important;
-  gap:14px !important;
-  flex:1 1 auto !important;
-  min-width:0 !important;
-}
-
-.bible-edit-actions{
-  display:flex !important;
-  align-items:center !important;
-  justify-content:flex-end !important;
-  gap:8px !important;
-  flex:0 0 auto !important;
-  margin-left:auto !important;
-}
-
-.bible-icon-button{
-  display:inline-flex !important;
-  align-items:center !important;
-  justify-content:center !important;
-  width:36px !important;
-  height:32px !important;
-  min-width:36px !important;
-  min-height:32px !important;
-  padding:0 !important;
-  border:0 !important;
-  border-radius:999px !important;
-  background:rgba(255,255,255,.075) !important;
-  color:var(--opp-text, #eee) !important;
-  box-shadow:none !important;
-  font-size:17px !important;
-  font-weight:800 !important;
-  line-height:1 !important;
-  cursor:pointer !important;
-}
-
-.bible-icon-button:hover{
-  background:rgba(255,255,255,.13) !important;
-}
-
-body.light-mode .bible-icon-button{
-  background:rgba(0,0,0,.075) !important;
-  color:var(--opp-text, #333) !important;
-}
-
-body.light-mode .bible-icon-button:hover{
-  background:rgba(0,0,0,.13) !important;
-}
-
-.bible-icon-button svg{
-  width:18px !important;
-  height:18px !important;
-  display:block !important;
-  color:currentColor !important;
-}
-
-@media(max-width:700px){
-  .bible-edit-header-row{
-    align-items:flex-start !important;
-  }
-  .bible-edit-title-source{
-    display:block !important;
-  }
-}
-
 </style>
-  <!-- version: LIST v34 clean-bible-buttons 2026-06-16 -->
+  <!-- version: LIST v35 passive-bible-display 2026-06-16 -->
 </head>
 <body class="dark-mode">
 <div class="login-widget">
