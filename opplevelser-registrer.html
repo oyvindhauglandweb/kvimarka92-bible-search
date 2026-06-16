@@ -1040,8 +1040,48 @@ body.light-mode #bibleText:hover{
   background:rgba(0,0,0,.075) !important;
 }
 
+
+/* Register v35: make Bible text section full width */
+.register-bible-section,
+.full.register-bible-section{
+  grid-column:1 / -1 !important;
+  width:100% !important;
+  max-width:none !important;
+  display:block !important;
+  box-sizing:border-box !important;
+  clear:both !important;
+}
+
+.register-bible-header{
+  width:100% !important;
+  box-sizing:border-box !important;
+}
+
+.register-bible-text,
+#bibleText{
+  width:100% !important;
+  max-width:none !important;
+  min-width:0 !important;
+  box-sizing:border-box !important;
+  display:block !important;
+}
+
+.register-bible-section + label,
+.register-bible-section + .field,
+.register-bible-section + .full{
+  clear:both !important;
+}
+
+@media(max-width:700px){
+  .register-bible-section,
+  .full.register-bible-section{
+    grid-column:1 / -1 !important;
+    width:100% !important;
+  }
+}
+
 </style>
-<!-- version: REGISTER v34 bible-field-like-edit-page 2026-06-16 -->
+<!-- version: REGISTER v35 bible-text-full-width 2026-06-16 -->
 </head>
 <body class="dark-mode">
 <div class="login-widget">
