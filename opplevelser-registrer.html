@@ -909,12 +909,24 @@ button.mic-button.visible,
 }
 
 
-/* Register v34: Bible field same pattern as edit page */
+
+/* Register v36: Bible field uses same layout as other large text fields */
+.register-bible-section,
+.full.register-bible-section{
+  grid-column:1 / -1 !important;
+  width:100% !important;
+  max-width:none !important;
+  box-sizing:border-box !important;
+  display:block !important;
+  clear:both !important;
+}
+
 .register-bible-header{
   display:flex !important;
   align-items:center !important;
   justify-content:space-between !important;
   gap:12px !important;
+  width:100% !important;
   margin:18px 0 8px !important;
   padding:0 !important;
   background:transparent !important;
@@ -923,11 +935,17 @@ button.mic-button.visible,
 }
 
 .register-bible-title{
+  display:block !important;
   margin:0 !important;
+  padding:0 !important;
   flex:1 1 auto !important;
   min-width:0 !important;
+  background:transparent !important;
+  border:0 !important;
+  box-shadow:none !important;
   color:var(--opp-text, #eee) !important;
   font-weight:800 !important;
+  line-height:1.2 !important;
 }
 
 .register-bible-actions{
@@ -1004,6 +1022,8 @@ body.light-mode .register-bible-actions .bible-clear-button:hover{
 #bibleText{
   display:block !important;
   width:100% !important;
+  max-width:none !important;
+  min-width:0 !important;
   min-height:88px !important;
   box-sizing:border-box !important;
   margin:0 0 16px !important;
@@ -1040,48 +1060,8 @@ body.light-mode #bibleText:hover{
   background:rgba(0,0,0,.075) !important;
 }
 
-
-/* Register v35: make Bible text section full width */
-.register-bible-section,
-.full.register-bible-section{
-  grid-column:1 / -1 !important;
-  width:100% !important;
-  max-width:none !important;
-  display:block !important;
-  box-sizing:border-box !important;
-  clear:both !important;
-}
-
-.register-bible-header{
-  width:100% !important;
-  box-sizing:border-box !important;
-}
-
-.register-bible-text,
-#bibleText{
-  width:100% !important;
-  max-width:none !important;
-  min-width:0 !important;
-  box-sizing:border-box !important;
-  display:block !important;
-}
-
-.register-bible-section + label,
-.register-bible-section + .field,
-.register-bible-section + .full{
-  clear:both !important;
-}
-
-@media(max-width:700px){
-  .register-bible-section,
-  .full.register-bible-section{
-    grid-column:1 / -1 !important;
-    width:100% !important;
-  }
-}
-
 </style>
-<!-- version: REGISTER v35 bible-text-full-width 2026-06-16 -->
+<!-- version: REGISTER v36 bible-field-copied-textarea-pattern 2026-06-16 -->
 </head>
 <body class="dark-mode">
 <div class="login-widget">
@@ -2375,6 +2355,54 @@ body.light-mode #bibleText:hover{
 
 <script>
 (function(){
+  function applyRegisterBibleSelection(payload){
+    if(!payload){
+      return;
+    }
+
+    const reference = payload.reference || "";
+    const text = payload.text || "";
+    const source = payload.source || "Bibelen på Norsk (1930)";
+
+    const refEl = document.getElementById("bibleReference");
+    const textEl = document.getElementById("bibleText");
+    const sourceEl = document.getElementById("bibleSource");
+
+    if(refEl){ refEl.value = reference; }
+    if(textEl){ textEl.value = text; }
+    if(sourceEl){ sourceEl.value = source; }
+
+    if(window.updateRegisterBibleHeader){ window.updateRegisterBibleHeader(); }
+    if(window.ensureRegisterBibleTextLink){ window.ensureRegisterBibleTextLink(); }
+    if(window.initOpplevelserAutoGrowTextareas){ window.initOpplevelserAutoGrowTextareas(); }
+  }
+
+  window.applyRegisterBibleSelection = applyRegisterBibleSelection;
+
+  window.addEventListener("message", event => {
+    const data = event.data || {};
+    if(data.type !== "kvimarka92:bible-verse-selected"){
+      return;
+    }
+
+    applyRegisterBibleSelection(data.payload || data.verse || data);
+  });
+
+  window.addEventListener("storage", event => {
+    if(event.key !== "kvimarka92SelectedBibleVerse" || !event.newValue){
+      return;
+    }
+
+    try{
+      applyRegisterBibleSelection(JSON.parse(event.newValue));
+    }catch(error){}
+  });
+})();
+</script>
+
+
+<script>
+(function(){
   function formatBibleSourceRegister(source){
     const text = String(source || "Bibelen på Norsk (1930)").trim();
     return text.replace(/\s*\((\d{4})\)\s*$/, " $1");
@@ -2486,54 +2514,6 @@ body.light-mode #bibleText:hover{
   }else{
     initRegisterBibleField();
   }
-})();
-</script>
-
-
-<script>
-(function(){
-  function applyRegisterBibleSelection(payload){
-    if(!payload){
-      return;
-    }
-
-    const reference = payload.reference || "";
-    const text = payload.text || "";
-    const source = payload.source || "Bibelen på Norsk (1930)";
-
-    const refEl = document.getElementById("bibleReference");
-    const textEl = document.getElementById("bibleText");
-    const sourceEl = document.getElementById("bibleSource");
-
-    if(refEl){ refEl.value = reference; }
-    if(textEl){ textEl.value = text; }
-    if(sourceEl){ sourceEl.value = source; }
-
-    if(window.updateRegisterBibleHeader){ window.updateRegisterBibleHeader(); }
-    if(window.ensureRegisterBibleTextLink){ window.ensureRegisterBibleTextLink(); }
-    if(window.initOpplevelserAutoGrowTextareas){ window.initOpplevelserAutoGrowTextareas(); }
-  }
-
-  window.applyRegisterBibleSelection = applyRegisterBibleSelection;
-
-  window.addEventListener("message", event => {
-    const data = event.data || {};
-    if(data.type !== "kvimarka92:bible-verse-selected"){
-      return;
-    }
-
-    applyRegisterBibleSelection(data.payload || data.verse || data);
-  });
-
-  window.addEventListener("storage", event => {
-    if(event.key !== "kvimarka92SelectedBibleVerse" || !event.newValue){
-      return;
-    }
-
-    try{
-      applyRegisterBibleSelection(JSON.parse(event.newValue));
-    }catch(error){}
-  });
 })();
 </script>
 
