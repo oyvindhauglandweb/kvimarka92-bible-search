@@ -1564,7 +1564,7 @@ body.light-mode button[aria-label="Fjern bibelsted"]:hover{
 }
 
 </style>
-<!-- version: REGISTER v43c final-light-button-backgrounds 2026-06-17 -->
+<!-- version: REGISTER v43d final-clear-and-reset-button-backgrounds 2026-06-17 -->
 </head>
 <body class="dark-mode">
 <div class="login-widget">
@@ -3060,6 +3060,160 @@ body.light-mode button[aria-label="Fjern bibelsted"]:hover{
   }
 
   document.addEventListener("click", toggleThemeFromButton, true);
+})();
+</script>
+
+
+<style id="opplevelser-register-v43d-final-button-overrides">
+/* v43d: final button overrides, placed after all other CSS */
+
+/* Alle X-/sletteknapper i tekstfeltene */
+html body.light-mode button.clear-voice-button,
+html body.light-mode button.voice-clear-btn,
+html body.light-mode button.bible-clear-button,
+html body.light-mode button[title="Tøm felt"],
+html body.light-mode button[aria-label="Tøm felt"],
+html body.light-mode button[title="Fjern bibelsted"],
+html body.light-mode button[aria-label="Fjern bibelsted"]{
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  width:32px !important;
+  height:32px !important;
+  min-width:32px !important;
+  min-height:32px !important;
+  padding:0 !important;
+  border:0 !important;
+  border-radius:999px !important;
+  background:#e5e7eb !important;
+  color:#111827 !important;
+  font-weight:800 !important;
+  line-height:1 !important;
+  box-shadow:none !important;
+  opacity:1 !important;
+  filter:none !important;
+  appearance:none !important;
+  -webkit-appearance:none !important;
+}
+
+html body.light-mode button.clear-voice-button:hover,
+html body.light-mode button.voice-clear-btn:hover,
+html body.light-mode button.bible-clear-button:hover,
+html body.light-mode button[title="Tøm felt"]:hover,
+html body.light-mode button[aria-label="Tøm felt"]:hover,
+html body.light-mode button[title="Fjern bibelsted"]:hover,
+html body.light-mode button[aria-label="Fjern bibelsted"]:hover{
+  background:#d1d5db !important;
+  color:#111827 !important;
+}
+
+/* Tøm skjema-knappen */
+html body.light-mode #clearBtn,
+html body.light-mode #resetBtn,
+html body.light-mode button.clear-form-button,
+html body.light-mode button.reset-button,
+html body.light-mode button[title="Tøm skjema"],
+html body.light-mode button[aria-label="Tøm skjema"],
+html body.light-mode button[data-action="clear-form"]{
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  min-height:34px !important;
+  padding:8px 18px !important;
+  border:0 !important;
+  border-radius:999px !important;
+  background:#e5e7eb !important;
+  color:#111827 !important;
+  font-weight:800 !important;
+  box-shadow:none !important;
+  opacity:1 !important;
+  filter:none !important;
+  appearance:none !important;
+  -webkit-appearance:none !important;
+}
+
+html body.light-mode #clearBtn:hover,
+html body.light-mode #resetBtn:hover,
+html body.light-mode button.clear-form-button:hover,
+html body.light-mode button.reset-button:hover,
+html body.light-mode button[title="Tøm skjema"]:hover,
+html body.light-mode button[aria-label="Tøm skjema"]:hover,
+html body.light-mode button[data-action="clear-form"]:hover{
+  background:#d1d5db !important;
+  color:#111827 !important;
+}
+
+/* Fallback: knapp med nøyaktig teksten Tøm skjema får klasse via JS under */
+html body.light-mode button.opplevelser-clear-form-final{
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  min-height:34px !important;
+  padding:8px 18px !important;
+  border:0 !important;
+  border-radius:999px !important;
+  background:#e5e7eb !important;
+  color:#111827 !important;
+  font-weight:800 !important;
+  box-shadow:none !important;
+  opacity:1 !important;
+  filter:none !important;
+}
+
+html body.light-mode button.opplevelser-clear-form-final:hover{
+  background:#d1d5db !important;
+  color:#111827 !important;
+}
+
+/* Blå handlingsknapper skal fortsatt være blå */
+html body.light-mode button.mic-button,
+html body.light-mode button.voice-mic-btn,
+html body.light-mode button.bible-edit-button,
+html body.light-mode button.primary,
+html body.light-mode button.save-button,
+html body.light-mode button[type="submit"],
+html body.light-mode #saveBtn,
+html body.light-mode #saveButton{
+  background:#0ea5d4 !important;
+  color:#ffffff !important;
+  border:0 !important;
+  opacity:1 !important;
+  filter:none !important;
+}
+
+html body.light-mode button.mic-button *,
+html body.light-mode button.voice-mic-btn *,
+html body.light-mode button.bible-edit-button *,
+html body.light-mode button.primary *,
+html body.light-mode button.save-button *,
+html body.light-mode button[type="submit"] *{
+  color:#ffffff !important;
+  opacity:1 !important;
+  filter:none !important;
+}
+</style>
+
+
+<script>
+/* v43d: mark the exact "Tøm skjema" button for stable styling */
+(function(){
+  function markClearFormButton(){
+    document.querySelectorAll("button").forEach(button => {
+      const text = (button.textContent || "").trim();
+      if(text === "Tøm skjema"){
+        button.classList.add("opplevelser-clear-form-final");
+      }
+    });
+  }
+
+  if(document.readyState === "loading"){
+    document.addEventListener("DOMContentLoaded", markClearFormButton);
+  }else{
+    markClearFormButton();
+  }
+
+  setTimeout(markClearFormButton, 100);
+  setTimeout(markClearFormButton, 500);
 })();
 </script>
 
