@@ -909,7 +909,7 @@ button.mic-button.visible,
 }
 
 </style>
-<!-- version: REGISTER v32 force-norwegian-date-display 2026-06-16 -->
+<!-- version: REGISTER v33 blank-bible-search-on-new 2026-06-16 -->
 </head>
 <body class="dark-mode">
 <div class="login-widget">
@@ -994,7 +994,7 @@ button.mic-button.visible,
             <input id="bibleText" name="bibleText" type="hidden">
             <input id="bibleSource" class="bible-hidden-input" name="bibleSource" type="hidden" value="Bibelen på Norsk (1930)">
             <div class="buttons" style="margin-top:10px">
-              <button type="button" class="secondary" id="findBibleBtn">Finn bibelsted</button>
+              <button type="button" onclick="openRegisterBibleSearchBlankSafe()" type="button" class="secondary" id="findBibleBtn">Finn bibelsted</button>
               <button type="button" class="secondary" id="clearBibleBtn">Fjern bibelsted</button>
             </div>
           </div>
@@ -2107,6 +2107,97 @@ button.mic-button.visible,
   }
 
   window.addEventListener("pageshow", installRegisterDateGuards);
+})();
+</script>
+
+
+<script>
+(function(){
+  const SELECTED_KEY = "kvimarka92SelectedBibleVerse";
+  const INPUT_KEY = "kvimarka92BibleSearchInputVerse";
+
+  function readRegisterField(id){
+    const el = document.getElementById(id);
+    return el ? String(el.value || "").trim() : "";
+  }
+
+  function clearStoredBibleSelectionForNewExperience(){
+    try{
+      sessionStorage.removeItem(SELECTED_KEY);
+      sessionStorage.removeItem(INPUT_KEY);
+      localStorage.removeItem(SELECTED_KEY);
+      localStorage.removeItem(INPUT_KEY);
+    }catch(error){}
+  }
+
+  window.prepareRegisterBibleSearch = function(){
+    const reference = readRegisterField("bibleReference");
+    const text = readRegisterField("bibleText");
+    const source = readRegisterField("bibleSource") || "Bibelen på Norsk (1930)";
+
+    // Registrer ny skal ikke arve forrige valg fra en tidligere popup.
+    // Hvis siden ikke har et faktisk valgt bibelsted, starter bibelsøk blankt.
+    if(!reference && !text){
+      clearStoredBibleSelectionForNewExperience();
+      return null;
+    }
+
+    const payload = {
+      reference,
+      text,
+      source,
+      sourceId:"nb-1930",
+      selectedAt:new Date().toISOString()
+    };
+
+    try{
+      sessionStorage.setItem(INPUT_KEY, JSON.stringify(payload));
+      sessionStorage.setItem(SELECTED_KEY, JSON.stringify(payload));
+      localStorage.setItem(INPUT_KEY, JSON.stringify(payload));
+      localStorage.setItem(SELECTED_KEY, JSON.stringify(payload));
+    }catch(error){}
+
+    return payload;
+  };
+
+  window.openRegisterBibleSearchBlankSafe = function(){
+    if(typeof window.prepareRegisterBibleSearch === "function"){
+      window.prepareRegisterBibleSearch();
+    }
+
+    const width = Math.min(980, Math.max(360, Math.floor(window.screen.availWidth * 0.88)));
+    const height = Math.min(760, Math.max(520, Math.floor(window.screen.availHeight * 0.82)));
+    const left = Math.max(0, Math.round((window.screenX || window.screenLeft || 0) + ((window.outerWidth || width) - width) / 2));
+    const top = Math.max(0, Math.round((window.screenY || window.screenTop || 0) + ((window.outerHeight || height) - height) / 2));
+
+    window.open(
+      "bibel-sok.html",
+      "kvimarka92BibleSearch",
+      [
+        "popup=yes",
+        "width=" + width,
+        "height=" + height,
+        "left=" + left,
+        "top=" + top,
+        "resizable=yes",
+        "scrollbars=yes"
+      ].join(",")
+    );
+  };
+})();
+</script>
+
+
+<script>
+(function(){
+  window.openOpplevelserBibleSearch = function(){
+    if(typeof window.openRegisterBibleSearchBlankSafe === "function"){
+      window.openRegisterBibleSearchBlankSafe();
+      return;
+    }
+
+    window.open("bibel-sok.html", "kvimarka92BibleSearch", "popup=yes,width=980,height=760,resizable=yes,scrollbars=yes");
+  };
 })();
 </script>
 
