@@ -662,26 +662,7 @@ body.light-mode .clear-voice-button:hover{
   background:rgba(0,0,0,.13) !important;
 }
 
-.bible-click-frame{
-  cursor:pointer;
-  transition:background .15s ease, box-shadow .15s ease;
-}
-.bible-click-frame:hover{
-  background:rgba(255,255,255,.075) !important;
-}
-body.light-mode .bible-click-frame:hover{
-  background:rgba(0,0,0,.075) !important;
-}
-.bible-click-frame::after{
-  content:"";
-  display:block;
-  margin-top:6px;
-  color:var(--opp-muted, #bbb);
-  font-size:.86em;
-  opacity:.85;
-}
-
-textarea.auto-grow-textarea{
+body.light-mode textarea.auto-grow-textarea{
   overflow:hidden !important;
   resize:none !important;
   min-height:88px;
@@ -1206,8 +1187,144 @@ body.light-mode #bibleText:focus{
   }
 }
 
+
+/* List v39: remove active Bible field hover completely */
+.bible-click-frame,
+#editBibleClickFrame,
+.bible-search-click-overlay,
+button.bible-search-click-overlay{
+  display:none !important;
+  pointer-events:none !important;
+}
+
+.bible-top-actions{
+  position:fixed !important;
+  top:58px !important;
+  right:22px !important;
+  z-index:2147483000 !important;
+  display:none;
+  align-items:center !important;
+  gap:8px !important;
+}
+
+body.editing-experience .bible-top-actions{
+  display:flex !important;
+}
+
+.bible-icon-button{
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  width:36px !important;
+  height:32px !important;
+  min-width:36px !important;
+  min-height:32px !important;
+  padding:0 !important;
+  border:0 !important;
+  border-radius:999px !important;
+  background:rgba(255,255,255,.075) !important;
+  color:var(--opp-text, #eee) !important;
+  box-shadow:none !important;
+  font-size:19px !important;
+  font-weight:800 !important;
+  line-height:1 !important;
+  cursor:pointer !important;
+}
+
+.bible-icon-button:hover{
+  background:rgba(255,255,255,.13) !important;
+}
+
+.bible-icon-button svg{
+  width:18px !important;
+  height:18px !important;
+  display:block !important;
+  color:currentColor !important;
+}
+
+.bible-edit-block{
+  margin:18px 0 16px !important;
+}
+
+.bible-edit-header{
+  display:block !important;
+  margin:0 0 8px !important;
+}
+
+.bible-edit-title{
+  font-weight:800 !important;
+  color:var(--opp-text, #eee) !important;
+}
+
+.bible-edit-source{
+  display:none !important;
+}
+
+.bible-edit-text,
+#editBibleText,
+#bibleText{
+  display:block !important;
+  width:100% !important;
+  min-height:88px !important;
+  box-sizing:border-box !important;
+  padding:12px !important;
+  border:0 !important;
+  border-radius:10px !important;
+  background:rgba(0,0,0,.18) !important;
+  color:var(--opp-text, #eee) !important;
+  box-shadow:none !important;
+  outline:0 !important;
+  resize:none !important;
+  overflow:hidden !important;
+  cursor:default !important;
+  caret-color:transparent !important;
+  font:inherit !important;
+  line-height:1.4 !important;
+  pointer-events:none !important;
+}
+
+body.light-mode .bible-edit-text,
+body.light-mode #editBibleText,
+body.light-mode #bibleText{
+  background:rgba(0,0,0,.045) !important;
+  color:var(--opp-text, #333) !important;
+}
+
+.bible-edit-block:hover,
+.bible-edit-block:hover .bible-edit-text,
+.bible-edit-text:hover,
+.bible-edit-text:focus,
+#editBibleText:hover,
+#editBibleText:focus,
+#bibleText:hover,
+#bibleText:focus{
+  background:rgba(0,0,0,.18) !important;
+  border:0 !important;
+  outline:0 !important;
+  box-shadow:none !important;
+  cursor:default !important;
+}
+
+body.light-mode .bible-edit-block:hover,
+body.light-mode .bible-edit-block:hover .bible-edit-text,
+body.light-mode .bible-edit-text:hover,
+body.light-mode .bible-edit-text:focus,
+body.light-mode #editBibleText:hover,
+body.light-mode #editBibleText:focus,
+body.light-mode #bibleText:hover,
+body.light-mode #bibleText:focus{
+  background:rgba(0,0,0,.045) !important;
+}
+
+@media(max-width:700px){
+  .bible-top-actions{
+    top:60px !important;
+    right:18px !important;
+  }
+}
+
 </style>
-  <!-- version: LIST v38 bible-popup-opener-fixed 2026-06-16 -->
+  <!-- version: LIST v39 no-active-bible-field 2026-06-16 -->
 </head>
 <body class="dark-mode">
 
@@ -1507,14 +1624,13 @@ body.light-mode #bibleText:focus{
             <input id="editBibleSource" class="bible-hidden-input" type="hidden" value="${esc(formatBibleSource(item.bibleSource || "Bibelen på Norsk (1930)"))}">
 
             <div class="full">
-              <div id="editBibleClickFrame" class="bible-click-frame">
-<div class="bible-edit-block">
-              <div class="bible-edit-header">
-                <div class="bible-edit-title" id="editBibleDisplayTitle">Bibeltekst</div>
-                <div class="bible-edit-source" id="editBibleDisplaySource"></div>
+              <div class="bible-edit-block">
+                <div class="bible-edit-header">
+                  <div class="bible-edit-title" id="editBibleDisplayTitle">Bibeltekst</div>
+                  <div class="bible-edit-source" id="editBibleDisplaySource"></div>
+                </div>
+                <textarea id="editBibleText" class="bible-edit-text" readonly tabindex="-1">${esc(item.bibleText || "")}</textarea>
               </div>
-              <textarea id="editBibleText" class="bible-edit-text" readonly>${esc(item.bibleText || "")}</textarea>
-            </div>
             </div>
 
             <div class="full">
