@@ -1202,89 +1202,96 @@ body.light-mode .bible-icon-button:hover{
 }
 
 
-/* List v41: active Bible text and lowered top buttons */
+
+/* List v43: Bible buttons inline like microphone/delete buttons */
 .bible-top-actions{
-  top:92px !important;
-  right:22px !important;
+  display:none !important;
 }
 
-/* Sletteknapp skal være nøytral/grå */
-.bible-icon-button.bible-clear-button{
-  background:rgba(255,255,255,.075) !important;
-  color:var(--opp-text, #eee) !important;
+.plain-bible-header{
+  display:flex !important;
+  align-items:center !important;
+  justify-content:space-between !important;
+  gap:12px !important;
+  margin:18px 0 8px !important;
+  padding:0 !important;
+  background:transparent !important;
+  border:0 !important;
+  box-shadow:none !important;
 }
 
-.bible-icon-button.bible-clear-button:hover{
-  background:rgba(255,255,255,.13) !important;
-  color:var(--opp-text, #eee) !important;
+.plain-bible-header .plain-bible-title{
+  margin:0 !important;
+  flex:1 1 auto !important;
+  min-width:0 !important;
 }
 
-body.light-mode .bible-icon-button.bible-clear-button{
-  background:rgba(0,0,0,.075) !important;
-  color:var(--opp-text, #333) !important;
+.bible-inline-actions{
+  display:flex !important;
+  align-items:center !important;
+  justify-content:flex-end !important;
+  gap:8px !important;
+  flex:0 0 auto !important;
+  margin-left:auto !important;
 }
 
-body.light-mode .bible-icon-button.bible-clear-button:hover{
-  background:rgba(0,0,0,.13) !important;
-  color:var(--opp-text, #333) !important;
-}
-
-/* Bibeltekstfeltet er nå aktivt og åpner bibelsøk */
-.plain-bible-text,
-#editBibleText{
+.bible-inline-actions .bible-icon-button{
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  width:36px !important;
+  height:32px !important;
+  min-width:36px !important;
+  min-height:32px !important;
+  padding:0 !important;
+  border:0 !important;
+  border-radius:999px !important;
+  box-shadow:none !important;
+  font-size:19px !important;
+  font-weight:800 !important;
+  line-height:1 !important;
+  cursor:pointer !important;
   pointer-events:auto !important;
-  cursor:pointer !important;
 }
 
-.plain-bible-text:hover,
-#editBibleText:hover{
+.bible-inline-actions .bible-clear-button{
   background:rgba(255,255,255,.075) !important;
-  cursor:pointer !important;
+  color:var(--opp-text, #eee) !important;
 }
 
-body.light-mode .plain-bible-text:hover,
-body.light-mode #editBibleText:hover{
+.bible-inline-actions .bible-clear-button:hover{
+  background:rgba(255,255,255,.13) !important;
+}
+
+.bible-inline-actions .bible-edit-button{
+  background:var(--opp-link, #7cc7e8) !important;
+  color:#fff !important;
+}
+
+.bible-inline-actions .bible-edit-button:hover{
+  filter:brightness(1.08);
+}
+
+.bible-inline-actions .bible-icon-button svg{
+  width:18px !important;
+  height:18px !important;
+  display:block !important;
+  color:currentColor !important;
+}
+
+body.light-mode .bible-inline-actions .bible-clear-button{
   background:rgba(0,0,0,.075) !important;
+  color:var(--opp-text, #333) !important;
 }
 
-@media(max-width:700px){
-  .bible-top-actions{
-    top:94px !important;
-    right:18px !important;
-  }
-}
-
-
-/* List v42: move Bible buttons down to Bible text area */
-.bible-top-actions{
-  top:360px !important;
-  right:22px !important;
-}
-
-@media(max-width:900px){
-  .bible-top-actions{
-    top:330px !important;
-    right:18px !important;
-  }
-}
-
-@media(max-width:700px){
-  .bible-top-actions{
-    top:320px !important;
-    right:14px !important;
-  }
+body.light-mode .bible-inline-actions .bible-clear-button:hover{
+  background:rgba(0,0,0,.13) !important;
 }
 
 </style>
-  <!-- version: LIST v42 bible-buttons-moved-down 2026-06-16 -->
+  <!-- version: LIST v43 bible-buttons-inline 2026-06-16 -->
 </head>
 <body class="dark-mode">
-
-<div id="bibleTopActions" class="bible-top-actions" aria-label="Bibeltekst handlinger">
-  <button type="button" class="bible-icon-button bible-clear-button" onclick="clearOpplevelserBiblePlace()" title="Fjern bibelsted" aria-label="Fjern bibelsted">×</button>
-  <button type="button" class="bible-icon-button" onclick="openOpplevelserBibleSearch()" title="Finn eller endre bibelsted" aria-label="Finn eller endre bibelsted"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 17.25V20h2.75L17.8 8.95l-2.75-2.75L4 17.25Zm15.9-10.2a1 1 0 0 0 0-1.4l-1.55-1.55a1 1 0 0 0-1.4 0l-1.2 1.2 2.75 2.75 1.4-1Z" fill="currentColor"/></svg></button>
-</div>
-
 <div class="login-widget">
   <a id="loginStatus"
      class="login-status is-signin"
@@ -1576,7 +1583,13 @@ body.light-mode #editBibleText:hover{
             <input id="editBibleSource" class="bible-hidden-input" type="hidden" value="${esc(formatBibleSource(item.bibleSource || "Bibelen på Norsk (1930)"))}">
 
             <div class="full">
-              <label class="plain-bible-title" for="editBibleText" id="editBibleDisplayTitle">Bibeltekst</label>
+              <div class="plain-bible-header">
+                <label class="plain-bible-title" for="editBibleText" id="editBibleDisplayTitle">Bibeltekst</label>
+                <div class="bible-inline-actions">
+                  <button type="button" class="bible-icon-button bible-clear-button" onclick="clearOpplevelserBiblePlace()" title="Fjern bibelsted" aria-label="Fjern bibelsted">×</button>
+                  <button type="button" class="bible-icon-button bible-edit-button" onclick="openOpplevelserBibleSearch()" title="Finn eller endre bibelsted" aria-label="Finn eller endre bibelsted"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 17.25V20h2.75L17.8 8.95l-2.75-2.75L4 17.25Zm15.9-10.2a1 1 0 0 0 0-1.4l-1.55-1.55a1 1 0 0 0-1.4 0l-1.2 1.2 2.75 2.75 1.4-1Z" fill="currentColor"/></svg></button>
+                </div>
+              </div>
               <div id="editBibleDisplaySource" class="plain-bible-source"></div>
               <textarea id="editBibleText" class="plain-bible-text" readonly tabindex="0" role="button" title="Klikk for å endre bibelsted" onclick="openOpplevelserBibleSearch()">${esc(item.bibleText || "")}</textarea>
             </div>
