@@ -565,8 +565,59 @@ textarea.auto-grow-textarea{
   min-height:88px;
 }
 
+
+/* Register v26: remove outer frame and neutral delete buttons */
+body .wrap,
+body .container,
+body .card.main-card,
+body .main-card,
+body form.card,
+body #experienceForm.card{
+  border:0 !important;
+  background:transparent !important;
+  box-shadow:none !important;
+}
+
+body .card:first-of-type{
+  border:0 !important;
+  background:transparent !important;
+  box-shadow:none !important;
+}
+
+.clear-voice-button,
+body.dark-mode .clear-voice-button,
+body.light-mode .clear-voice-button,
+html:not(.classic-design-root) .clear-voice-button,
+body.dark-mode html:not(.classic-design-root) .clear-voice-button,
+body.light-mode html:not(.classic-design-root) .clear-voice-button{
+  background:rgba(255,255,255,.075) !important;
+  color:var(--opp-text, #eee) !important;
+  border:0 !important;
+  box-shadow:none !important;
+}
+
+.clear-voice-button:hover,
+body.dark-mode .clear-voice-button:hover,
+body.light-mode .clear-voice-button:hover,
+html:not(.classic-design-root) .clear-voice-button:hover{
+  background:rgba(255,255,255,.13) !important;
+  color:var(--opp-text, #eee) !important;
+}
+
+body.light-mode .clear-voice-button,
+body.light-mode html:not(.classic-design-root) .clear-voice-button{
+  background:rgba(0,0,0,.075) !important;
+  color:var(--opp-text, #333) !important;
+}
+
+body.light-mode .clear-voice-button:hover,
+body.light-mode html:not(.classic-design-root) .clear-voice-button:hover{
+  background:rgba(0,0,0,.13) !important;
+  color:var(--opp-text, #333) !important;
+}
+
 </style>
-<!-- version: REGISTER v25 field-polish 2026-06-16 -->
+<!-- version: REGISTER v26 register-cleanup 2026-06-16 -->
 </head>
 <body class="dark-mode">
 <div class="login-widget">
@@ -654,7 +705,6 @@ textarea.auto-grow-textarea{
               <button type="button" class="secondary" id="findBibleBtn">Finn bibelsted</button>
               <button type="button" class="secondary" id="clearBibleBtn">Fjern bibelsted</button>
             </div>
-            <p class="small">Bibelsted hentes fra <code>bibel-sok.html</code> via valgt vers i nettleseren.</p>
           </div>
 
           <div class="full">
