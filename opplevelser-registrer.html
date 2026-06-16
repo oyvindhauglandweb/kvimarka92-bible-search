@@ -1564,7 +1564,7 @@ body.light-mode button[aria-label="Fjern bibelsted"]:hover{
 }
 
 
-/* Opplevelser mobile polish v51/v44 */
+/* Opplevelser mobile polish v44b */
 .theme-button,
 button.theme-button{
   font-family: Arial, "Helvetica Neue", sans-serif !important;
@@ -1580,29 +1580,75 @@ button.theme-button{
   color:currentColor !important;
 }
 
-/* Tilbake til liste må være sentrert i mobilknapp */
-#backToListBtn,
-.back-to-list,
-button.back-to-list,
-button[title="Tilbake til liste"],
-button[aria-label="Tilbake til liste"]{
-  display:flex !important;
-  align-items:center !important;
-  justify-content:center !important;
-  text-align:center !important;
+/* Light mode: tydelig bakgrunn på sletteknapper og Tøm skjema */
+body.light-mode button.clear-voice-button,
+body.light-mode button.voice-clear-btn,
+body.light-mode button.bible-clear-button,
+body.light-mode button[title="Tøm felt"],
+body.light-mode button[aria-label="Tøm felt"],
+body.light-mode button[title="Fjern bibelsted"],
+body.light-mode button[aria-label="Fjern bibelsted"]{
+  background:#e5e7eb !important;
+  color:#111827 !important;
+  border:0 !important;
+  box-shadow:none !important;
+  opacity:1 !important;
+  filter:none !important;
+}
+
+body.light-mode button.clear-voice-button:hover,
+body.light-mode button.voice-clear-btn:hover,
+body.light-mode button.bible-clear-button:hover,
+body.light-mode button[title="Tøm felt"]:hover,
+body.light-mode button[aria-label="Tøm felt"]:hover,
+body.light-mode button[title="Fjern bibelsted"]:hover,
+body.light-mode button[aria-label="Fjern bibelsted"]:hover{
+  background:#d1d5db !important;
+  color:#111827 !important;
+}
+
+body.light-mode button.opplevelser-clear-form-final{
+  background:#e5e7eb !important;
+  color:#111827 !important;
+  border:0 !important;
+  border-radius:999px !important;
+  box-shadow:none !important;
+  opacity:1 !important;
+  filter:none !important;
+  font-weight:800 !important;
+}
+
+body.light-mode button.opplevelser-clear-form-final:hover{
+  background:#d1d5db !important;
+  color:#111827 !important;
+}
+
+/* Blå handlingsknapper beholdes blå */
+body.light-mode button.mic-button,
+body.light-mode button.voice-mic-btn,
+body.light-mode button.bible-edit-button,
+body.light-mode button.primary,
+body.light-mode button.save-button,
+body.light-mode button[type="submit"],
+body.light-mode #saveBtn,
+body.light-mode #saveButton{
+  background:#0ea5d4 !important;
+  color:#ffffff !important;
+  border:0 !important;
+  box-shadow:none !important;
+  opacity:1 !important;
+  filter:none !important;
 }
 
 /* På mobil må native date input være trykkbar */
 @media (max-width: 700px), (pointer: coarse){
-  #experienceDate,
-  #editExperienceDate{
+  #experienceDate{
     cursor:pointer !important;
     -webkit-user-select:none !important;
     user-select:none !important;
   }
 
-  #experienceDate[type="date"],
-  #editExperienceDate[type="date"]{
+  #experienceDate[type="date"]{
     min-height:44px !important;
     appearance:auto !important;
     -webkit-appearance:auto !important;
@@ -1610,7 +1656,7 @@ button[aria-label="Tilbake til liste"]{
 }
 
 </style>
-<!-- version: REGISTER v44 mobile-date-theme-icon-button-polish 2026-06-17 -->
+<!-- version: REGISTER v44b safe-mobile-polish-no-observer 2026-06-17 -->
 </head>
 <body class="dark-mode">
 <div class="login-widget">
@@ -3264,201 +3310,81 @@ html body.light-mode button[type="submit"] *{
 </script>
 
 
-<style id="opplevelser-register-v43f-button-baseline">
-/* v43f baseline only. Actual final button colors are applied inline by JS below. */
-body.light-mode button.clear-voice-button,
-body.light-mode button.voice-clear-btn,
-body.light-mode button.bible-clear-button,
-body.light-mode button.opplevelser-clear-form-final{
-  opacity:1 !important;
-  filter:none !important;
-}
-</style>
-
-
 <script>
-/* Register v43f: direct inline light button styling */
+/* Opplevelser v-theme-icon: show moon in light mode, sun in dark mode */
 (function(){
-  const INLINE_PROPS = [
-    "background", "color", "border", "box-shadow", "opacity", "filter",
-    "border-radius", "display", "align-items", "justify-content",
-    "width", "height", "min-width", "min-height", "padding", "font-weight"
-  ];
+  function isThemeButton(button){
+    if(!button){
+      return false;
+    }
 
-  function isLightMode(){
+    const text = (button.textContent || "").trim();
+    const title = (button.getAttribute("title") || button.getAttribute("aria-label") || "").toLowerCase();
+    const cls = button.className ? String(button.className).toLowerCase() : "";
+
     return (
-      document.body.classList.contains("light-mode") ||
-      document.body.classList.contains("light") ||
+      text === "☀" || text === "☾" || text === "🌙" || text === "☼" || text === "◐" ||
+      title.includes("light") || title.includes("dark") ||
+      title.includes("lys") || title.includes("mørk") ||
+      cls.includes("theme")
+    );
+  }
+
+  function pageIsLight(){
+    return (
       document.documentElement.classList.contains("light-mode") ||
-      document.documentElement.classList.contains("light")
+      document.documentElement.classList.contains("light") ||
+      document.body.classList.contains("light-mode") ||
+      document.body.classList.contains("light")
     );
   }
 
-  function setImportant(el, prop, value){
-    el.style.setProperty(prop, value, "important");
-  }
-
-  function clearInlineButtonStyle(button){
-    INLINE_PROPS.forEach(prop => button.style.removeProperty(prop));
-  }
-
-  function buttonText(button){
-    return (button.textContent || "").trim();
-  }
-
-  function isClearButton(button){
-    const txt = buttonText(button);
-    const title = (button.getAttribute("title") || "").trim().toLowerCase();
-    const aria = (button.getAttribute("aria-label") || "").trim().toLowerCase();
-    const cls = button.className ? String(button.className).toLowerCase() : "";
-
-    return (
-      txt === "×" || txt === "x" ||
-      cls.includes("clear-voice") ||
-      cls.includes("voice-clear") ||
-      cls.includes("bible-clear") ||
-      title === "tøm felt" ||
-      aria === "tøm felt" ||
-      title === "fjern bibelsted" ||
-      aria === "fjern bibelsted"
-    );
-  }
-
-  function isClearFormButton(button){
-    return buttonText(button) === "Tøm skjema";
-  }
-
-  function isBlueActionButton(button){
-    const txt = buttonText(button);
-    const title = (button.getAttribute("title") || "").toLowerCase();
-    const aria = (button.getAttribute("aria-label") || "").toLowerCase();
-    const cls = button.className ? String(button.className).toLowerCase() : "";
-    const id = (button.id || "").toLowerCase();
-
-    return (
-      txt === "Lagre opplevelse" ||
-      id === "savebtn" ||
-      id === "savebutton" ||
-      cls.includes("mic-button") ||
-      cls.includes("voice-mic") ||
-      cls.includes("bible-edit") ||
-      cls.includes("save-button") ||
-      cls.includes("primary") ||
-      title.includes("mikrofon") ||
-      aria.includes("mikrofon") ||
-      title.includes("endre bibelsted") ||
-      aria.includes("endre bibelsted")
-    );
-  }
-
-  function styleRoundGrey(button){
-    setImportant(button, "display", "inline-flex");
-    setImportant(button, "align-items", "center");
-    setImportant(button, "justify-content", "center");
-    setImportant(button, "width", "32px");
-    setImportant(button, "height", "32px");
-    setImportant(button, "min-width", "32px");
-    setImportant(button, "min-height", "32px");
-    setImportant(button, "padding", "0");
-    setImportant(button, "border", "0");
-    setImportant(button, "border-radius", "999px");
-    setImportant(button, "background", "#e5e7eb");
-    setImportant(button, "color", "#111827");
-    setImportant(button, "box-shadow", "none");
-    setImportant(button, "opacity", "1");
-    setImportant(button, "filter", "none");
-    setImportant(button, "font-weight", "800");
-    button.classList.add("opplevelser-inline-grey-fixed");
-  }
-
-  function stylePillGrey(button){
-    setImportant(button, "display", "inline-flex");
-    setImportant(button, "align-items", "center");
-    setImportant(button, "justify-content", "center");
-    setImportant(button, "min-height", "34px");
-    setImportant(button, "padding", "8px 18px");
-    setImportant(button, "border", "0");
-    setImportant(button, "border-radius", "999px");
-    setImportant(button, "background", "#e5e7eb");
-    setImportant(button, "color", "#111827");
-    setImportant(button, "box-shadow", "none");
-    setImportant(button, "opacity", "1");
-    setImportant(button, "filter", "none");
-    setImportant(button, "font-weight", "800");
-    button.classList.add("opplevelser-clear-form-final");
-  }
-
-  function styleBlueAction(button){
-    setImportant(button, "background", "#0ea5d4");
-    setImportant(button, "color", "#ffffff");
-    setImportant(button, "border", "0");
-    setImportant(button, "box-shadow", "none");
-    setImportant(button, "opacity", "1");
-    setImportant(button, "filter", "none");
-  }
-
-  function applyButtonStyles(){
-    const light = isLightMode();
+  function updateThemeIcon(){
+    const isLight = pageIsLight();
 
     document.querySelectorAll("button").forEach(button => {
-      const shouldGreyRound = isClearButton(button);
-      const shouldGreyPill = isClearFormButton(button);
-      const shouldBlue = isBlueActionButton(button);
-
-      if(!light){
-        if(button.classList.contains("opplevelser-inline-grey-fixed") || button.classList.contains("opplevelser-clear-form-final")){
-          clearInlineButtonStyle(button);
-        }
+      if(!isThemeButton(button)){
         return;
       }
 
-      if(shouldGreyRound){
-        styleRoundGrey(button);
-        return;
-      }
-
-      if(shouldGreyPill){
-        stylePillGrey(button);
-        return;
-      }
-
-      if(shouldBlue){
-        styleBlueAction(button);
-      }
+      button.textContent = isLight ? "☾" : "☀";
+      button.setAttribute("title", isLight ? "Bytt til mørk modus" : "Bytt til lys modus");
+      button.setAttribute("aria-label", isLight ? "Bytt til mørk modus" : "Bytt til lys modus");
+      button.classList.add("theme-button");
     });
   }
 
-  window.fixOpplevelserRegisterButtonBackgrounds = applyButtonStyles;
+  window.updateOpplevelserThemeIcon = updateThemeIcon;
 
   if(document.readyState === "loading"){
-    document.addEventListener("DOMContentLoaded", applyButtonStyles);
+    document.addEventListener("DOMContentLoaded", updateThemeIcon);
   }else{
-    applyButtonStyles();
+    updateThemeIcon();
   }
 
-  [50, 150, 400, 900, 1500].forEach(delay => setTimeout(applyButtonStyles, delay));
+  document.addEventListener("click", event => {
+    const button = event.target.closest("button");
+    if(!isThemeButton(button)){
+      return;
+    }
 
-  document.addEventListener("click", () => {
-    setTimeout(applyButtonStyles, 0);
-    setTimeout(applyButtonStyles, 100);
+    setTimeout(updateThemeIcon, 0);
+    setTimeout(updateThemeIcon, 80);
+    setTimeout(updateThemeIcon, 250);
   }, true);
 
-  const observer = new MutationObserver(() => applyButtonStyles());
-  if(document.body){
-    observer.observe(document.body, { childList:true, subtree:true, attributes:true, attributeFilter:["class"] });
-  }else{
-    document.addEventListener("DOMContentLoaded", () => {
-      observer.observe(document.body, { childList:true, subtree:true, attributes:true, attributeFilter:["class"] });
-    });
-  }
+  window.addEventListener("storage", updateThemeIcon);
+  window.addEventListener("pageshow", updateThemeIcon);
 })();
 </script>
 
 
 <script>
-/* Opplevelser mobile polish v51/v44:
-   - text-mode sun/moon icons
-   - native date input on mobile/iOS */
+/* Opplevelser mobile polish v44b:
+   Safe version without MutationObserver.
+   - text-mode sun/moon icon
+   - native date input on mobile/iOS
+   - mark Tøm skjema button for styling */
 (function(){
   function isThemeButton(button){
     if(!button){ return false; }
@@ -3537,13 +3463,11 @@ body.light-mode button.opplevelser-clear-form-final{
     );
   }
 
-  function patchOneDateInput(id){
-    const el = document.getElementById(id);
+  function patchMobileDate(){
+    const el = document.getElementById("experienceDate");
     if(!el){ return; }
 
-    const mobile = isMobileDateEnvironment();
-
-    if(mobile){
+    if(isMobileDateEnvironment()){
       const iso = noToIso(el.value);
       el.type = "date";
       if(/^\d{4}-\d{2}-\d{2}$/.test(iso)){
@@ -3554,25 +3478,28 @@ body.light-mode button.opplevelser-clear-form-final{
       return;
     }
 
-    // Desktop beholder norsk tekstvisning.
     el.type = "text";
     if(el.value){
       el.value = isoToNo(el.value);
     }
   }
 
-  function patchMobileDates(){
-    patchOneDateInput("experienceDate");
-    patchOneDateInput("editExperienceDate");
+  function markClearFormButton(){
+    document.querySelectorAll("button").forEach(button => {
+      if((button.textContent || "").trim() === "Tøm skjema"){
+        button.classList.add("opplevelser-clear-form-final");
+      }
+    });
   }
-
-  window.updateOpplevelserThemeIcon = updateThemeIcon;
-  window.patchOpplevelserMobileDates = patchMobileDates;
 
   function run(){
     updateThemeIcon();
-    patchMobileDates();
+    patchMobileDate();
+    markClearFormButton();
   }
+
+  window.updateOpplevelserThemeIcon = updateThemeIcon;
+  window.patchOpplevelserMobileDates = patchMobileDate;
 
   if(document.readyState === "loading"){
     document.addEventListener("DOMContentLoaded", run);
@@ -3584,40 +3511,16 @@ body.light-mode button.opplevelser-clear-form-final{
   window.addEventListener("resize", () => setTimeout(run, 100));
 
   document.addEventListener("click", event => {
-    const button = event.target.closest("button");
-    if(isThemeButton(button)){
+    if(isThemeButton(event.target.closest("button"))){
       setTimeout(updateThemeIcon, 0);
       setTimeout(updateThemeIcon, 80);
       setTimeout(updateThemeIcon, 250);
     }
-
-    setTimeout(patchMobileDates, 50);
+    setTimeout(markClearFormButton, 50);
+    setTimeout(patchMobileDate, 50);
   }, true);
 
-  [100, 400, 900, 1500].forEach(delay => setTimeout(run, delay));
-})();
-</script>
-
-
-<script>
-/* Opplevelser mobile polish: mark Tilbake til liste button */
-(function(){
-  function markBackToListButton(){
-    document.querySelectorAll("button").forEach(button => {
-      if((button.textContent || "").trim() === "Tilbake til liste"){
-        button.classList.add("back-to-list");
-        button.id = button.id || "backToListBtn";
-      }
-    });
-  }
-
-  if(document.readyState === "loading"){
-    document.addEventListener("DOMContentLoaded", markBackToListButton);
-  }else{
-    markBackToListButton();
-  }
-
-  [100, 400, 900, 1500].forEach(delay => setTimeout(markBackToListButton, delay));
+  [100, 400, 900].forEach(delay => setTimeout(run, delay));
 })();
 </script>
 
