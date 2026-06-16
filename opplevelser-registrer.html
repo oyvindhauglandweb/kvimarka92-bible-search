@@ -909,7 +909,7 @@ button.mic-button.visible,
 }
 
 </style>
-<!-- version: REGISTER v29 neutral-delete-buttons 2026-06-16 -->
+<!-- version: REGISTER v30 norwegian-date-format 2026-06-16 -->
 </head>
 <body class="dark-mode">
 <div class="login-widget">
@@ -951,7 +951,7 @@ button.mic-button.visible,
           </div>
           <div>
             <label for="experienceDate">Dato for opplevelse</label>
-            <input id="experienceDate" name="experienceDate" type="date" required>
+            <input id="experienceDate" name="experienceDate" type="text" required placeholder="dd.mm.åååå" inputmode="numeric">
           </div>
           <div>
             <label for="place">Sted</label>
@@ -1238,7 +1238,7 @@ button.mic-button.visible,
       setStatus("Lagrer ...");
 
       const payload = {
-        experienceDate:el("experienceDate").value,
+        experienceDate:parseOpplevelserDate(el("experienceDate").value),
         heading:el("heading").value,
         place:el("place").value,
         environment:el("environment").value,
@@ -1943,6 +1943,82 @@ button.mic-button.visible,
     document.addEventListener("DOMContentLoaded", initAutoGrowTextareas);
   }else{
     initAutoGrowTextareas();
+  }
+})();
+</script>
+
+
+<script>
+(function(){
+  function isoToNorwegianDate(value){
+    const text = String(value || "").trim();
+
+    const match = text.match(/^(\d{4})-(\d{2})-(\d{2})/);
+    if(match){
+      return `${match[3]}.${match[2]}.${match[1]}`;
+    }
+
+    const us = text.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+    if(us){
+      return `${String(us[2]).padStart(2, "0")}.${String(us[1]).padStart(2, "0")}.${us[3]}`;
+    }
+
+    return text;
+  }
+
+  function norwegianDateToIso(value){
+    const text = String(value || "").trim();
+
+    const no = text.match(/^(\d{1,2})\.(\d{1,2})\.(\d{4})$/);
+    if(no){
+      return `${no[3]}-${String(no[2]).padStart(2, "0")}-${String(no[1]).padStart(2, "0")}`;
+    }
+
+    const us = text.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+    if(us){
+      return `${us[3]}-${String(us[1]).padStart(2, "0")}-${String(us[2]).padStart(2, "0")}`;
+    }
+
+    return text;
+  }
+
+  window.formatOpplevelserDate = isoToNorwegianDate;
+  window.parseOpplevelserDate = norwegianDateToIso;
+
+  function patchDateInputs(){
+    document.querySelectorAll('input[type="date"]').forEach(input => {
+      if(input.dataset.noDatePatch === "1"){
+        return;
+      }
+
+      const text = document.createElement("input");
+      text.type = "text";
+      text.id = input.id;
+      text.name = input.name;
+      text.className = input.className;
+      text.placeholder = "dd.mm.åååå";
+      text.autocomplete = "off";
+      text.value = isoToNorwegianDate(input.value);
+      text.dataset.noDatePatch = "1";
+      text.setAttribute("inputmode", "numeric");
+
+      for(const attr of input.attributes){
+        if(["type", "value", "id", "name", "class", "placeholder"].includes(attr.name)){
+          continue;
+        }
+        text.setAttribute(attr.name, attr.value);
+      }
+
+      input.replaceWith(text);
+    });
+  }
+
+  window.patchOpplevelserDateInputs = patchDateInputs;
+
+  if(document.readyState === "loading"){
+    document.addEventListener("DOMContentLoaded", patchDateInputs);
+  }else{
+    patchDateInputs();
   }
 })();
 </script>

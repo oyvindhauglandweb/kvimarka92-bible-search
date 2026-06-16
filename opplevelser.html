@@ -1092,7 +1092,7 @@ body.light-mode .bible-click-frame:hover textarea{
 }
 
 </style>
-  <!-- version: LIST v27 bible-text-click-opens-search 2026-06-16 -->
+  <!-- version: LIST v28 norwegian-date-format 2026-06-16 -->
 </head>
 <body class="dark-mode">
 <div class="login-widget">
@@ -1280,7 +1280,7 @@ body.light-mode .bible-click-frame:hover textarea{
         <button type="button" class="item ${selectedId === item.id ? "active" : ""}" onclick="selectItem(${Number(item.id)})">
           <div class="item-title">${esc(bestTitle(item))}</div>
           <div class="item-meta">
-            ${esc(item.experienceDate || "")}
+            ${esc(formatOpplevelserDate(item.experienceDate || ""))}
             ${item.place ? " · " + esc(item.place) : ""}
             <span class="desktop-extra">
               ${item.environment ? " · " + esc(item.environment) : ""}
@@ -1331,7 +1331,7 @@ body.light-mode .bible-click-frame:hover textarea{
           <div>
             <div class="detail-title">${esc(bestTitle(item))}</div>
             <div class="detail-meta">
-              ${esc(item.experienceDate || "")}
+              ${esc(formatOpplevelserDate(item.experienceDate || ""))}
               ${item.place ? " · " + esc(item.place) : ""}
               ${item.environment ? " · " + esc(item.environment) : ""}
             </div>
@@ -1370,7 +1370,7 @@ body.light-mode .bible-click-frame:hover textarea{
 
             <div>
               <label for="editDate">Dato</label>
-              <input id="editDate" type="date" value="${esc(item.experienceDate || "")}">
+              <input id="editDate" type="date" value="${esc(formatOpplevelserDate(item.experienceDate || ""))}">
             </div>
 
             <div>
@@ -1448,6 +1448,7 @@ body.light-mode .bible-click-frame:hover textarea{
       el("editForm").addEventListener("submit", saveEdit);
       if(window.initBibleHeaderDisplay){ window.initBibleHeaderDisplay(); }
       if(window.bindBibleTextClickToSearch){ window.bindBibleTextClickToSearch(); }
+      if(window.patchOpplevelserDateInputs){ window.patchOpplevelserDateInputs(); }
       if(window.initOpplevelserMicButtons){ window.initOpplevelserMicButtons(); }
       if(window.initOpplevelserAutoGrowTextareas){ window.initOpplevelserAutoGrowTextareas(); }
       if(window.initBibleHeaderDisplay){ window.initBibleHeaderDisplay(); }
@@ -2222,6 +2223,82 @@ body.light-mode .bible-click-frame:hover textarea{
     document.addEventListener("DOMContentLoaded", bindBibleTextClickToSearch);
   }else{
     bindBibleTextClickToSearch();
+  }
+})();
+</script>
+
+
+<script>
+(function(){
+  function isoToNorwegianDate(value){
+    const text = String(value || "").trim();
+
+    const match = text.match(/^(\d{4})-(\d{2})-(\d{2})/);
+    if(match){
+      return `${match[3]}.${match[2]}.${match[1]}`;
+    }
+
+    const us = text.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+    if(us){
+      return `${String(us[2]).padStart(2, "0")}.${String(us[1]).padStart(2, "0")}.${us[3]}`;
+    }
+
+    return text;
+  }
+
+  function norwegianDateToIso(value){
+    const text = String(value || "").trim();
+
+    const no = text.match(/^(\d{1,2})\.(\d{1,2})\.(\d{4})$/);
+    if(no){
+      return `${no[3]}-${String(no[2]).padStart(2, "0")}-${String(no[1]).padStart(2, "0")}`;
+    }
+
+    const us = text.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+    if(us){
+      return `${us[3]}-${String(us[1]).padStart(2, "0")}-${String(us[2]).padStart(2, "0")}`;
+    }
+
+    return text;
+  }
+
+  window.formatOpplevelserDate = isoToNorwegianDate;
+  window.parseOpplevelserDate = norwegianDateToIso;
+
+  function patchDateInputs(){
+    document.querySelectorAll('input[type="date"]').forEach(input => {
+      if(input.dataset.noDatePatch === "1"){
+        return;
+      }
+
+      const text = document.createElement("input");
+      text.type = "text";
+      text.id = input.id;
+      text.name = input.name;
+      text.className = input.className;
+      text.placeholder = "dd.mm.åååå";
+      text.autocomplete = "off";
+      text.value = isoToNorwegianDate(input.value);
+      text.dataset.noDatePatch = "1";
+      text.setAttribute("inputmode", "numeric");
+
+      for(const attr of input.attributes){
+        if(["type", "value", "id", "name", "class", "placeholder"].includes(attr.name)){
+          continue;
+        }
+        text.setAttribute(attr.name, attr.value);
+      }
+
+      input.replaceWith(text);
+    });
+  }
+
+  window.patchOpplevelserDateInputs = patchDateInputs;
+
+  if(document.readyState === "loading"){
+    document.addEventListener("DOMContentLoaded", patchDateInputs);
+  }else{
+    patchDateInputs();
   }
 })();
 </script>
