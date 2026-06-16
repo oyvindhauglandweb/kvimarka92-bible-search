@@ -1052,17 +1052,34 @@ body.light-mode #registerBibleField #bibleText:hover{
 }
 
 
-/* Register v38: Norwegian date field with calendar picker */
-.date-picker-wrap{display:flex!important;align-items:center!important;gap:8px!important;width:100%!important}
-.date-picker-wrap #experienceDate{flex:1 1 auto!important;min-width:0!important;width:100%!important}
-.date-picker-button{display:inline-flex!important;align-items:center!important;justify-content:center!important;width:42px!important;height:42px!important;min-width:42px!important;padding:0!important;border:0!important;border-radius:10px!important;background:rgba(255,255,255,.075)!important;color:var(--opp-text,#eee)!important;box-shadow:none!important;cursor:pointer!important;font-size:20px!important;line-height:1!important}
-.date-picker-button:hover{background:rgba(255,255,255,.13)!important}
-body.light-mode .date-picker-button{background:rgba(0,0,0,.075)!important;color:var(--opp-text,#333)!important}
-body.light-mode .date-picker-button:hover{background:rgba(0,0,0,.13)!important}
-#experienceDatePicker{position:absolute!important;width:1px!important;height:1px!important;opacity:0!important;pointer-events:none!important}
+
+/* Register v39: date field opens picker directly */
+.date-picker-wrap{
+  position:relative !important;
+  display:block !important;
+  width:100% !important;
+}
+
+.date-picker-wrap #experienceDate{
+  width:100% !important;
+  cursor:pointer !important;
+  padding-right:12px !important;
+}
+
+.date-picker-button{
+  display:none !important;
+}
+
+#experienceDatePicker{
+  position:absolute !important;
+  width:1px !important;
+  height:1px !important;
+  opacity:0 !important;
+  pointer-events:none !important;
+}
 
 </style>
-<!-- version: REGISTER v38 restore-date-picker-default-today 2026-06-16 -->
+<!-- version: REGISTER v39 date-field-click-picker 2026-06-16 -->
 </head>
 <body class="dark-mode">
 <div class="login-widget">
@@ -1104,7 +1121,7 @@ body.light-mode .date-picker-button:hover{background:rgba(0,0,0,.13)!important}
           </div>
           <div>
             <label for="experienceDate">Dato for opplevelse</label>
-            <div class="date-picker-wrap"><input id="experienceDate" name="experienceDate" type="text" placeholder="dd.mm.åååå" inputmode="numeric" autocomplete="off"><button type="button" class="date-picker-button" onclick="openExperienceDatePicker()" title="Velg dato" aria-label="Velg dato">📅</button><input id="experienceDatePicker" type="date" tabindex="-1" aria-hidden="true"></div>
+            <div class="date-picker-wrap"><input id="experienceDate" name="experienceDate" type="text" placeholder="dd.mm.åååå" inputmode="numeric" autocomplete="off" onclick="openExperienceDatePicker()" readonly><input id="experienceDatePicker" type="date" tabindex="-1" aria-hidden="true"></div>
           </div>
           <div>
             <label for="place">Sted</label>
@@ -2426,6 +2443,14 @@ body.light-mode .date-picker-button:hover{background:rgba(0,0,0,.13)!important}
     const text=document.getElementById("experienceDate");
     const picker=document.getElementById("experienceDatePicker");
     if(!text){return;}
+
+    text.setAttribute("readonly", "readonly");
+    text.onclick = function(){
+      if(typeof window.openExperienceDatePicker === "function"){
+        window.openExperienceDatePicker();
+      }
+    };
+
     setRegisterTodayIfBlank();
     if(text.dataset.datePickerReady!=="1"){
       text.dataset.datePickerReady="1";
