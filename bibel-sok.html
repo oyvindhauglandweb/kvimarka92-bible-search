@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Bibelsøk 1930</title>
-  <!-- version: BIBLE v13 visible-version 2026-06-15 -->
+  <!-- version: BIBLE v14 standard-design-range 2026-06-16 -->
   <style>
     :root{
       color-scheme:dark;
@@ -103,30 +103,122 @@
     }
 
   
-/* Temporary visible file version marker */
-.file-version-marker{
-  position:fixed;
-  top:4px;
-  left:4px;
-  z-index:2147483647;
-  padding:4px 7px;
-  border-radius:6px;
-  background:#ffcc00;
-  color:#000;
-  border:1px solid rgba(0,0,0,.45);
-  font:700 11px/1.2 Arial,sans-serif;
-  box-shadow:0 2px 8px rgba(0,0,0,.35);
-  pointer-events:none;
+/* Bible search v14 standard design + range polish */
+html.bible-size-small{--bible-font-scale:1;}
+html.bible-size-medium{--bible-font-scale:1.12;}
+html.bible-size-large{--bible-font-scale:1.25;}
+
+:root{
+  --bible-bg:#f2f2f2;
+  --bible-card:#fff;
+  --bible-field:#fff;
+  --bible-text:#333;
+  --bible-muted:#667;
+  --bible-border:#ccc;
+  --bible-link:#1f789d;
+  --bible-ok:#2d8a43;
+  --bible-soft:rgba(0,0,0,.045);
+}
+body.dark-mode{
+  --bible-bg:#151515;
+  --bible-card:#242424;
+  --bible-field:#1a1a1a;
+  --bible-text:#eee;
+  --bible-muted:#bbb;
+  --bible-border:#555;
+  --bible-link:#7cc7e8;
+  --bible-ok:#8ee698;
+  --bible-soft:rgba(255,255,255,.04);
+}
+body.light-mode{
+  --bible-bg:#f2f2f2;
+  --bible-card:#fff;
+  --bible-field:#fff;
+  --bible-text:#333;
+  --bible-muted:#667;
+  --bible-border:#ccc;
+  --bible-link:#1f789d;
+  --bible-ok:#2d8a43;
+  --bible-soft:rgba(0,0,0,.045);
+}
+body{
+  background:var(--bible-bg) !important;
+  color:var(--bible-text) !important;
+  font-size:calc(16px * var(--bible-font-scale, 1)) !important;
+}
+.wrap{max-width:980px !important;margin:auto !important;}
+.header{text-align:center;margin-bottom:20px;}
+.site-title{margin:0;font-size:30px;font-weight:800;}
+.subtitle{margin-top:8px;color:var(--bible-muted);font-size:16px;}
+.top-buttons{display:flex;justify-content:center;align-items:center;gap:10px;margin:14px 0 0;flex-wrap:wrap;}
+.top-button{display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;padding:0;background:rgba(255,255,255,.055);border:0;border-radius:8px;color:var(--bible-text);text-decoration:none;font-size:24px;font-weight:bold;line-height:1;cursor:pointer;}
+.top-button:hover{background:rgba(255,255,255,.10);}
+body.light-mode .top-button{background:rgba(0,0,0,.055);}
+body.light-mode .top-button:hover{background:rgba(0,0,0,.10);}
+.font-size-button{font-size:18px;}
+.design-toggle-button{font-size:21px;}
+.home-button{font-size:30px;}
+.card,.selected-card,.result-card,.selected-text{color:var(--bible-text) !important;}
+.card{background:var(--bible-card) !important;border:1px solid var(--bible-border) !important;}
+input{background:var(--bible-field) !important;color:var(--bible-text) !important;border:1px solid var(--bible-border) !important;}
+.ref{color:var(--bible-link) !important;}
+.selected-reference{color:var(--bible-ok) !important;}
+.score,.selected-range,.selected-label,.copy-status,.sub{color:var(--bible-muted) !important;}
+html:not(.classic-design-root) .card{border:0 !important;background:var(--bible-soft) !important;box-shadow:none !important;}
+html:not(.classic-design-root) input,
+html:not(.classic-design-root) .selected-text{border:0 !important;background:rgba(0,0,0,.18) !important;box-shadow:none !important;}
+body.light-mode html:not(.classic-design-root) input,
+body.light-mode html:not(.classic-design-root) .selected-text{background:rgba(0,0,0,.045) !important;}
+html:not(.classic-design-root) .result-card{border-top:1px solid rgba(255,255,255,.09) !important;}
+body.light-mode html:not(.classic-design-root) .result-card{border-top:1px solid rgba(0,0,0,.10) !important;}
+html:not(.classic-design-root) .result-main:hover,
+html:not(.classic-design-root) .result-card.selected .result-main{background:rgba(255,255,255,.075) !important;}
+body.light-mode html:not(.classic-design-root) .result-main:hover,
+body.light-mode html:not(.classic-design-root) .result-card.selected .result-main{background:rgba(0,0,0,.075) !important;}
+.selected-header-row{margin-bottom:14px !important;}
+.selected-range-controls{margin-bottom:10px !important;}
+.selected-text{margin-top:12px !important;}
+.range-button{background:rgba(255,255,255,.07) !important;color:var(--bible-text) !important;border:0 !important;}
+.range-button:hover{background:rgba(255,255,255,.13) !important;}
+body.light-mode .range-button{background:rgba(0,0,0,.07) !important;}
+body.light-mode .range-button:hover{background:rgba(0,0,0,.13) !important;}
+.range-button.hidden-range-button{visibility:hidden !important;pointer-events:none !important;}
+.range-value{border:0 !important;background:rgba(255,255,255,.055) !important;color:var(--bible-text) !important;}
+body.light-mode .range-value{background:rgba(0,0,0,.055) !important;}
+.action-button{background:rgba(255,255,255,.055) !important;border:0 !important;color:var(--bible-text) !important;}
+.action-button:hover{background:rgba(255,255,255,.10) !important;}
+body.light-mode .action-button{background:rgba(0,0,0,.055) !important;}
+body.light-mode .action-button:hover{background:rgba(0,0,0,.10) !important;}
+.action-button.primary{background:var(--bible-link) !important;color:#fff !important;}
+.file-version-marker{position:fixed;top:4px;left:4px;z-index:2147483647;padding:4px 7px;border-radius:6px;background:#ffcc00;color:#000;border:1px solid rgba(0,0,0,.45);font:700 11px/1.2 Arial,sans-serif;box-shadow:0 2px 8px rgba(0,0,0,.35);pointer-events:none;}
+@media(max-width:700px){
+  .site-title{font-size:28px;}
+  .top-buttons{gap:8px;}
+  .top-button{width:40px;height:40px;font-size:22px;}
+  .home-button{font-size:28px;}
+  .selected-header-row{gap:12px !important;}
 }
 
 </style>
 </head>
-<body>
-<div class="file-version-marker">BIBLE v13 visible-version 2026-06-15</div>
+<body class="dark-mode">
+<div class="file-version-marker">BIBLE v14 standard-design-range 2026-06-16</div>
 
   <div class="wrap">
-    <h1>Bibelsøk 1930</h1>
-    <div class="sub">Finn bibelsted fra sitatfragment</div>
+
+    <div class="header">
+      <h1 class="site-title">Bibelsøk 1930</h1>
+      <div class="subtitle">Finn bibelsted fra sitatfragment</div>
+      <div class="top-buttons">
+        <a class="top-button" href="#" onclick="window.close(); return false;" title="Lukk bibelsøk" aria-label="Lukk bibelsøk">←</a>
+        <a class="top-button home-button" href="https://kvimarka92.carstereogarage.com/index.html" title="Hovedmeny" aria-label="Hovedmeny">⌂</a>
+        <a class="top-button" href="https://kvimarka92.carstereogarage.com/help.html?case=Opplevelser" title="Hjelp" aria-label="Hjelp">?</a>
+        <button type="button" class="top-button font-size-button" id="bibleFontToggle" onclick="toggleBibleFontSize()" title="Endre tekststørrelse" aria-label="Endre tekststørrelse">A</button>
+        <button type="button" class="top-button" id="bibleThemeToggle" onclick="toggleBibleTheme()" title="Bytt lys/mørk visning" aria-label="Bytt lys/mørk visning">☀</button>
+        <button type="button" class="top-button design-toggle-button" id="bibleDesignToggle" onclick="toggleBibleDesign()" title="Bytt design" aria-label="Bytt design">◫</button>
+      </div>
+    </div>
+
     <div class="card">
       <input id="query" type="text" placeholder="Skriv deler av et bibelsitat..." autocomplete="off">
     </div>
@@ -140,16 +232,16 @@
         <div class="selected-range-controls" id="selectedRangeControls" style="display:none;" aria-label="Utvid valgt bibelsted">
           <div class="selected-range-row">
             <div class="range-label">Fra vers</div>
-            <button class="range-button" type="button" onclick="changeSelectedRange(event, 'from', -1)">−</button>
+            <button class="range-button" type="button" id="selectedFromMinus" onclick="changeSelectedRange(event, 'from', -1)">−</button>
             <div class="range-value" id="selectedFromVerse">0</div>
-            <button class="range-button" type="button" onclick="changeSelectedRange(event, 'from', 1)">+</button>
+            <button class="range-button" type="button" id="selectedFromPlus" onclick="changeSelectedRange(event, 'from', 1)">+</button>
           </div>
 
           <div class="selected-range-row">
             <div class="range-label">Til vers</div>
-            <button class="range-button" type="button" onclick="changeSelectedRange(event, 'to', -1)">−</button>
+            <button class="range-button" type="button" id="selectedToMinus" onclick="changeSelectedRange(event, 'to', -1)">−</button>
             <div class="range-value" id="selectedToVerse">0</div>
-            <button class="range-button" type="button" onclick="changeSelectedRange(event, 'to', 1)">+</button>
+            <button class="range-button" type="button" id="selectedToPlus" onclick="changeSelectedRange(event, 'to', 1)">+</button>
           </div>
         </div>
       </div>
@@ -282,6 +374,22 @@ function getChapterLimits(book, chapter){
   return { min:Math.min(...numbers), max:Math.max(...numbers) };
 }
 
+
+function isFirstVerseInChapter(book, chapter, verseNo){
+  const limits = getChapterLimits(book, chapter);
+  return Number(verseNo) <= Number(limits.min);
+}
+
+function isLastVerseInChapter(book, chapter, verseNo){
+  const limits = getChapterLimits(book, chapter);
+  return Number(verseNo) >= Number(limits.max);
+}
+
+function rangeButtonClass(hidden){
+  return hidden ? "range-button hidden-range-button" : "range-button";
+}
+
+
 function normalizeVerseRow(row){
   const parsed = parseReference(row.reference);
   return {
@@ -390,6 +498,17 @@ function updateSelectedRangeControls(){
   selectedRangeControls.style.display = "";
   selectedFromVerse.textContent = String(selectedRange.from);
   selectedToVerse.textContent = String(selectedRange.to);
+
+  const fromMinus = document.getElementById("selectedFromMinus");
+  const fromPlus = document.getElementById("selectedFromPlus");
+  const toMinus = document.getElementById("selectedToMinus");
+  const toPlus = document.getElementById("selectedToPlus");
+  const limits = getChapterLimits(selectedRange.book, selectedRange.chapter);
+
+  if(fromMinus) fromMinus.classList.toggle("hidden-range-button", Number(selectedRange.from) <= Number(limits.min));
+  if(fromPlus) fromPlus.classList.toggle("hidden-range-button", Number(selectedRange.from) >= Number(selectedRange.to));
+  if(toMinus) toMinus.classList.toggle("hidden-range-button", Number(selectedRange.to) <= Number(selectedRange.from));
+  if(toPlus) toPlus.classList.toggle("hidden-range-button", Number(selectedRange.to) >= Number(limits.max));
 }
 
 function updateSelectedPayloadFromRange(){
@@ -550,6 +669,12 @@ function render(){
     const selectedClass = selectedIndex === index ? " selected" : "";
     const selectedRef = makeReference(range.book, range.chapter, range.from, range.to);
     const isExpanded = selectedRef !== result.reference;
+    const limits = getChapterLimits(range.book, range.chapter);
+    const hideFromMinus = Number(range.from) <= Number(limits.min);
+    const hideFromPlus = Number(range.from) >= Number(range.to);
+    const hideToMinus = Number(range.to) <= Number(range.from);
+    const hideToPlus = Number(range.to) >= Number(limits.max);
+
     return `
       <div class="result-card${selectedClass}" data-result-index="${index}">
         <button class="result-main" type="button" onclick="selectBibleResult(${index})" title="Velg ${esc(result.reference)}">
@@ -561,15 +686,15 @@ function render(){
         <div class="range-controls" aria-label="Velg versområde">
           <div class="range-row">
             <div class="range-label">Fra vers</div>
-            <button class="range-button" type="button" onclick="changeRange(event, ${index}, 'from', -1)">−</button>
+            <button class="${rangeButtonClass(hideFromMinus)}" type="button" onclick="changeRange(event, ${index}, 'from', -1)">−</button>
             <div class="range-value">${esc(range.from)}</div>
-            <button class="range-button" type="button" onclick="changeRange(event, ${index}, 'from', 1)">+</button>
+            <button class="${rangeButtonClass(hideFromPlus)}" type="button" onclick="changeRange(event, ${index}, 'from', 1)">+</button>
           </div>
           <div class="range-row">
             <div class="range-label">Til vers</div>
-            <button class="range-button" type="button" onclick="changeRange(event, ${index}, 'to', -1)">−</button>
+            <button class="${rangeButtonClass(hideToMinus)}" type="button" onclick="changeRange(event, ${index}, 'to', -1)">−</button>
             <div class="range-value">${esc(range.to)}</div>
-            <button class="range-button" type="button" onclick="changeRange(event, ${index}, 'to', 1)">+</button>
+            <button class="${rangeButtonClass(hideToPlus)}" type="button" onclick="changeRange(event, ${index}, 'to', 1)">+</button>
           </div>
         </div>
       </div>
