@@ -1116,7 +1116,7 @@ textarea#bibleText{
 }
 
 </style>
-  <!-- version: LIST v29 bible-click-overlay 2026-06-16 -->
+  <!-- version: LIST v30 robust-norwegian-date-format 2026-06-16 -->
 </head>
 <body class="dark-mode">
 <div class="login-widget">
@@ -2257,82 +2257,6 @@ textarea#bibleText{
 
 <script>
 (function(){
-  function isoToNorwegianDate(value){
-    const text = String(value || "").trim();
-
-    const match = text.match(/^(\d{4})-(\d{2})-(\d{2})/);
-    if(match){
-      return `${match[3]}.${match[2]}.${match[1]}`;
-    }
-
-    const us = text.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
-    if(us){
-      return `${String(us[2]).padStart(2, "0")}.${String(us[1]).padStart(2, "0")}.${us[3]}`;
-    }
-
-    return text;
-  }
-
-  function norwegianDateToIso(value){
-    const text = String(value || "").trim();
-
-    const no = text.match(/^(\d{1,2})\.(\d{1,2})\.(\d{4})$/);
-    if(no){
-      return `${no[3]}-${String(no[2]).padStart(2, "0")}-${String(no[1]).padStart(2, "0")}`;
-    }
-
-    const us = text.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
-    if(us){
-      return `${us[3]}-${String(us[1]).padStart(2, "0")}-${String(us[2]).padStart(2, "0")}`;
-    }
-
-    return text;
-  }
-
-  window.formatOpplevelserDate = isoToNorwegianDate;
-  window.parseOpplevelserDate = norwegianDateToIso;
-
-  function patchDateInputs(){
-    document.querySelectorAll('input[type="date"]').forEach(input => {
-      if(input.dataset.noDatePatch === "1"){
-        return;
-      }
-
-      const text = document.createElement("input");
-      text.type = "text";
-      text.id = input.id;
-      text.name = input.name;
-      text.className = input.className;
-      text.placeholder = "dd.mm.åååå";
-      text.autocomplete = "off";
-      text.value = isoToNorwegianDate(input.value);
-      text.dataset.noDatePatch = "1";
-      text.setAttribute("inputmode", "numeric");
-
-      for(const attr of input.attributes){
-        if(["type", "value", "id", "name", "class", "placeholder"].includes(attr.name)){
-          continue;
-        }
-        text.setAttribute(attr.name, attr.value);
-      }
-
-      input.replaceWith(text);
-    });
-  }
-
-  window.patchOpplevelserDateInputs = patchDateInputs;
-
-  if(document.readyState === "loading"){
-    document.addEventListener("DOMContentLoaded", patchDateInputs);
-  }else{
-    patchDateInputs();
-  }
-})();
-</script>
-
-
-<script>
-(function(){
   function bindBibleSearchClickAreas(){
     document
       .querySelectorAll(".readonly-bible-display, .bible-click-frame, #editBibleText, #bibleText")
@@ -2359,6 +2283,99 @@ textarea#bibleText{
     document.addEventListener("DOMContentLoaded", bindBibleSearchClickAreas);
   }else{
     bindBibleSearchClickAreas();
+  }
+})();
+</script>
+
+
+<script>
+(function(){
+  function isoToNoDate(value){
+    const text = String(value || "").trim();
+
+    const iso = text.match(/^(\d{4})-(\d{2})-(\d{2})/);
+    if(iso){
+      return iso[3] + "." + iso[2] + "." + iso[1];
+    }
+
+    const us = text.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+    if(us){
+      return String(us[2]).padStart(2, "0") + "." + String(us[1]).padStart(2, "0") + "." + us[3];
+    }
+
+    return text;
+  }
+
+  function noDateToIso(value){
+    const text = String(value || "").trim();
+
+    const no = text.match(/^(\d{1,2})\.(\d{1,2})\.(\d{4})$/);
+    if(no){
+      return no[3] + "-" + String(no[2]).padStart(2, "0") + "-" + String(no[1]).padStart(2, "0");
+    }
+
+    const iso = text.match(/^(\d{4})-(\d{2})-(\d{2})/);
+    if(iso){
+      return iso[1] + "-" + iso[2] + "-" + iso[3];
+    }
+
+    const us = text.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+    if(us){
+      return us[3] + "-" + String(us[1]).padStart(2, "0") + "-" + String(us[2]).padStart(2, "0");
+    }
+
+    return text;
+  }
+
+  window.formatOpplevelserDate = isoToNoDate;
+  window.parseOpplevelserDate = noDateToIso;
+
+  function patchDateInputById(id){
+    const el = document.getElementById(id);
+
+    if(!el){
+      return;
+    }
+
+    if(el.type === "date"){
+      const replacement = document.createElement("input");
+      replacement.type = "text";
+      replacement.id = el.id;
+      replacement.name = el.name || el.id;
+      replacement.className = el.className || "";
+      replacement.placeholder = "dd.mm.åååå";
+      replacement.inputMode = "numeric";
+      replacement.autocomplete = "off";
+      replacement.value = isoToNoDate(el.value);
+
+      for(const attr of el.attributes){
+        if(["type", "id", "name", "class", "value", "placeholder", "inputmode", "autocomplete"].includes(attr.name)){
+          continue;
+        }
+        replacement.setAttribute(attr.name, attr.value);
+      }
+
+      el.replaceWith(replacement);
+      return;
+    }
+
+    el.placeholder = "dd.mm.åååå";
+    el.inputMode = "numeric";
+    el.autocomplete = "off";
+    el.value = isoToNoDate(el.value);
+  }
+
+  function patchOpplevelserDateInputs(){
+    patchDateInputById("experienceDate");
+    patchDateInputById("editExperienceDate");
+  }
+
+  window.patchOpplevelserDateInputs = patchOpplevelserDateInputs;
+
+  if(document.readyState === "loading"){
+    document.addEventListener("DOMContentLoaded", patchOpplevelserDateInputs);
+  }else{
+    patchOpplevelserDateInputs();
   }
 })();
 </script>

@@ -909,7 +909,7 @@ button.mic-button.visible,
 }
 
 </style>
-<!-- version: REGISTER v30 norwegian-date-format 2026-06-16 -->
+<!-- version: REGISTER v31 robust-norwegian-date-format 2026-06-16 -->
 </head>
 <body class="dark-mode">
 <div class="login-widget">
@@ -951,7 +951,7 @@ button.mic-button.visible,
           </div>
           <div>
             <label for="experienceDate">Dato for opplevelse</label>
-            <input id="experienceDate" name="experienceDate" type="text" required placeholder="dd.mm.åååå" inputmode="numeric">
+            <input type="text" id="experienceDate" name="experienceDate" type="text" required placeholder="dd.mm.åååå" inputmode="numeric">
           </div>
           <div>
             <label for="place">Sted</label>
@@ -1948,77 +1948,95 @@ button.mic-button.visible,
 </script>
 
 
+
 <script>
 (function(){
-  function isoToNorwegianDate(value){
+  function isoToNoDate(value){
     const text = String(value || "").trim();
 
-    const match = text.match(/^(\d{4})-(\d{2})-(\d{2})/);
-    if(match){
-      return `${match[3]}.${match[2]}.${match[1]}`;
+    const iso = text.match(/^(\d{4})-(\d{2})-(\d{2})/);
+    if(iso){
+      return iso[3] + "." + iso[2] + "." + iso[1];
     }
 
     const us = text.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
     if(us){
-      return `${String(us[2]).padStart(2, "0")}.${String(us[1]).padStart(2, "0")}.${us[3]}`;
+      return String(us[2]).padStart(2, "0") + "." + String(us[1]).padStart(2, "0") + "." + us[3];
     }
 
     return text;
   }
 
-  function norwegianDateToIso(value){
+  function noDateToIso(value){
     const text = String(value || "").trim();
 
     const no = text.match(/^(\d{1,2})\.(\d{1,2})\.(\d{4})$/);
     if(no){
-      return `${no[3]}-${String(no[2]).padStart(2, "0")}-${String(no[1]).padStart(2, "0")}`;
+      return no[3] + "-" + String(no[2]).padStart(2, "0") + "-" + String(no[1]).padStart(2, "0");
+    }
+
+    const iso = text.match(/^(\d{4})-(\d{2})-(\d{2})/);
+    if(iso){
+      return iso[1] + "-" + iso[2] + "-" + iso[3];
     }
 
     const us = text.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
     if(us){
-      return `${us[3]}-${String(us[1]).padStart(2, "0")}-${String(us[2]).padStart(2, "0")}`;
+      return us[3] + "-" + String(us[1]).padStart(2, "0") + "-" + String(us[2]).padStart(2, "0");
     }
 
     return text;
   }
 
-  window.formatOpplevelserDate = isoToNorwegianDate;
-  window.parseOpplevelserDate = norwegianDateToIso;
+  window.formatOpplevelserDate = isoToNoDate;
+  window.parseOpplevelserDate = noDateToIso;
 
-  function patchDateInputs(){
-    document.querySelectorAll('input[type="date"]').forEach(input => {
-      if(input.dataset.noDatePatch === "1"){
-        return;
-      }
+  function patchDateInputById(id){
+    const el = document.getElementById(id);
 
-      const text = document.createElement("input");
-      text.type = "text";
-      text.id = input.id;
-      text.name = input.name;
-      text.className = input.className;
-      text.placeholder = "dd.mm.åååå";
-      text.autocomplete = "off";
-      text.value = isoToNorwegianDate(input.value);
-      text.dataset.noDatePatch = "1";
-      text.setAttribute("inputmode", "numeric");
+    if(!el){
+      return;
+    }
 
-      for(const attr of input.attributes){
-        if(["type", "value", "id", "name", "class", "placeholder"].includes(attr.name)){
+    if(el.type === "date"){
+      const replacement = document.createElement("input");
+      replacement.type = "text";
+      replacement.id = el.id;
+      replacement.name = el.name || el.id;
+      replacement.className = el.className || "";
+      replacement.placeholder = "dd.mm.åååå";
+      replacement.inputMode = "numeric";
+      replacement.autocomplete = "off";
+      replacement.value = isoToNoDate(el.value);
+
+      for(const attr of el.attributes){
+        if(["type", "id", "name", "class", "value", "placeholder", "inputmode", "autocomplete"].includes(attr.name)){
           continue;
         }
-        text.setAttribute(attr.name, attr.value);
+        replacement.setAttribute(attr.name, attr.value);
       }
 
-      input.replaceWith(text);
-    });
+      el.replaceWith(replacement);
+      return;
+    }
+
+    el.placeholder = "dd.mm.åååå";
+    el.inputMode = "numeric";
+    el.autocomplete = "off";
+    el.value = isoToNoDate(el.value);
   }
 
-  window.patchOpplevelserDateInputs = patchDateInputs;
+  function patchOpplevelserDateInputs(){
+    patchDateInputById("experienceDate");
+    patchDateInputById("editExperienceDate");
+  }
+
+  window.patchOpplevelserDateInputs = patchOpplevelserDateInputs;
 
   if(document.readyState === "loading"){
-    document.addEventListener("DOMContentLoaded", patchDateInputs);
+    document.addEventListener("DOMContentLoaded", patchOpplevelserDateInputs);
   }else{
-    patchDateInputs();
+    patchOpplevelserDateInputs();
   }
 })();
 </script>
