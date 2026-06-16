@@ -1016,8 +1016,51 @@ body > .wrap > .header{
   border:0 !important;
   box-shadow:none !important;
 }
+
+/* List v24: readonly Bible display matches edit display */
+.readonly-bible-display{
+  margin:14px 0 16px;
+}
+.readonly-bible-display .bible-display-header{
+  display:flex;
+  align-items:baseline;
+  justify-content:space-between;
+  gap:14px;
+  margin:0 0 8px;
+  flex-wrap:wrap;
+}
+.readonly-bible-display .bible-display-title{
+  font-weight:800;
+  color:var(--opp-text, #eee);
+}
+.readonly-bible-display .bible-display-source{
+  margin-left:auto;
+  color:var(--opp-muted, #bbb);
+  font-size:.92em;
+  white-space:nowrap;
+}
+.readonly-bible-display .bible{
+  border:0 !important;
+  background:rgba(0,0,0,.18) !important;
+  border-radius:10px !important;
+  padding:12px !important;
+  box-shadow:none !important;
+}
+body.light-mode .readonly-bible-display .bible{
+  background:rgba(0,0,0,.045) !important;
+}
+@media(max-width:700px){
+  .readonly-bible-display .bible-display-header{
+    display:block;
+  }
+  .readonly-bible-display .bible-display-source{
+    display:block;
+    margin:4px 0 0;
+  }
+}
+
 </style>
-  <!-- version: LIST v23 header-free-layout 2026-06-16 -->
+  <!-- version: LIST v24 readonly-bible-display 2026-06-16 -->
 </head>
 <body class="dark-mode">
 <div class="login-widget">
@@ -1133,6 +1176,15 @@ body > .wrap > .header{
         .replaceAll('"', "&quot;")
         .replaceAll("'", "&#039;");
     }
+
+    function formatBibleSource(source){
+      const text = String(source || "Bibelen på Norsk (1930)").trim();
+
+      // I visningen ønsker vi ikke ekstra parentes rundt årstall:
+      // "Bibelen på Norsk (1930)" -> "Bibelen på Norsk 1930"
+      return text.replace(/\s*\((\d{4})\)\s*$/, " $1");
+    }
+
 
     async function apiFetch(path, options){
       const safeOptions = options || {};
