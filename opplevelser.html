@@ -629,12 +629,24 @@ body.light-mode .mic-button:hover{
   }
 }
 
+
+/* Opplevelser final icon normalization */
+.top-button svg,
+.mic-button svg{
+  width:22px;
+  height:22px;
+  display:block;
+  color:currentColor;
+}
+.mic-button svg{
+  width:18px;
+  height:18px;
+}
+
 </style>
-  <!-- version: LIST v17 bible-header-display 2026-06-16 -->
+  <!-- version: LIST v18 final-icons-popup 2026-06-16 -->
 </head>
 <body class="dark-mode">
-<div class="file-version-marker">LIST v17 bible-header-display 2026-06-16</div>
-
 <div class="login-widget">
   <a id="loginStatus"
      class="login-status is-signin"
@@ -661,7 +673,7 @@ body.light-mode .mic-button:hover{
           <a class="top-button" href="https://kvimarka92.carstereogarage.com/help.html?case=Opplevelser" title="Hjelp" aria-label="Hjelp">?</a>
           
           <button type="button" class="top-button font-size-button" id="opplevelserFontToggle" onclick="toggleOpplevelserFontSize()" title="Endre tekststørrelse" aria-label="Endre tekststørrelse">A</button>
-          <button type="button" class="top-button" id="opplevelserThemeToggle" onclick="toggleOpplevelserTheme()" title="Bytt lys/mørk visning" aria-label="Bytt lys/mørk visning">☀</button>
+          <button type="button" class="top-button" id="opplevelserThemeToggle" onclick="toggleOpplevelserTheme()" title="Bytt lys/mørk visning" aria-label="Bytt lys/mørk visning"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10Zm0-5a1 1 0 0 1 1 1v1a1 1 0 1 1-2 0V3a1 1 0 0 1 1-1Zm0 17a1 1 0 0 1 1 1v1a1 1 0 1 1-2 0v-1a1 1 0 0 1 1-1ZM4.22 4.22a1 1 0 0 1 1.42 0l.7.71a1 1 0 1 1-1.41 1.41l-.71-.7a1 1 0 0 1 0-1.42Zm13.44 13.44a1 1 0 0 1 1.41 0l.71.7a1 1 0 0 1-1.42 1.42l-.7-.71a1 1 0 0 1 0-1.41ZM2 12a1 1 0 0 1 1-1h1a1 1 0 1 1 0 2H3a1 1 0 0 1-1-1Zm17 0a1 1 0 0 1 1-1h1a1 1 0 1 1 0 2h-1a1 1 0 0 1-1-1ZM4.22 19.78a1 1 0 0 1 0-1.42l.71-.7a1 1 0 0 1 1.41 1.41l-.7.71a1 1 0 0 1-1.42 0ZM17.66 6.34a1 1 0 0 1 0-1.41l.7-.71a1 1 0 0 1 1.42 1.42l-.71.7a1 1 0 0 1-1.41 0Z" fill="currentColor"/></svg></button>
           <button type="button" class="top-button design-toggle-button" id="opplevelserDesignToggle" onclick="toggleOpplevelserDesign()" title="Bytt design" aria-label="Bytt design">◫</button></div>
       </div>
       <p class="sub" id="userLine" style="display:none;"></p>
@@ -721,19 +733,7 @@ body.light-mode .mic-button:hover{
     }
 
     function openBibleSearchFromEdit(){
-      const currentVerse = {
-        reference:document.getElementById("editBibleReference")?.value || "",
-        text:document.getElementById("editBibleText")?.value || "",
-        source:document.getElementById("editBibleSource")?.value || "Bibelen på Norsk (1930)",
-        sourceId:"nb-1930",
-        selectedAt:new Date().toISOString()
-      };
-
-      localStorage.setItem(SELECTED_VERSE_KEY, JSON.stringify(currentVerse));
-      sessionStorage.setItem(SELECTED_VERSE_KEY, JSON.stringify(currentVerse));
-
-      prepareBibleSearchFromCurrentPage();
-      window.open("bibel-sok.html", "kvimarka92BibleSearch", "width=980,height=760");
+      openOpplevelserBibleSearch();
     }
 
     window.addEventListener("message", event => {
@@ -933,7 +933,7 @@ body.light-mode .mic-button:hover{
             <input id="editBibleSource" class="bible-hidden-input" type="hidden" value="${esc(item.bibleSource || "Bibelen på Norsk (1930)")}">
 
             <div class="full">
-              <button type="button" class="secondary" onclick="openBibleSearchFromEdit()">Endre bibelsted</button>
+              <button type="button" class="secondary" onclick="openOpplevelserBibleSearch()">Endre bibelsted</button>
             </div>
 
             <div class="full">
@@ -948,7 +948,7 @@ body.light-mode .mic-button:hover{
               <div class="voice-field-header">
               <label for="editOccasion">Foranledning</label>
               <div class="voice-actions">
-                <button type="button" class="clear-voice-button" onclick="clearOpplevelserVoiceField('editOccasion')" title="Tøm felt" aria-label="Tøm felt">×</button><button type="button" class="mic-button" data-dictate-target="editOccasion" title="Les inn tekst" aria-label="Les inn tekst">🎙</button>
+                <button type="button" class="clear-voice-button" onclick="clearOpplevelserVoiceField('editOccasion')" title="Tøm felt" aria-label="Tøm felt">×</button><button type="button" class="mic-button" data-dictate-target="editOccasion" title="Les inn tekst" aria-label="Les inn tekst"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 15a3 3 0 0 0 3-3V6a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3Zm5-3a1 1 0 1 0-2 0 3 3 0 0 1-6 0 1 1 0 1 0-2 0 5 5 0 0 0 4 4.9V19H9a1 1 0 1 0 0 2h6a1 1 0 1 0 0-2h-2v-2.1A5 5 0 0 0 17 12Z" fill="currentColor"/></svg></button>
               </div>
             </div>
               <textarea id="editOccasion">${esc(item.occasion || "")}</textarea>
@@ -958,7 +958,7 @@ body.light-mode .mic-button:hover{
               <div class="voice-field-header">
               <label for="editExperience">Opplevelse</label>
               <div class="voice-actions">
-                <button type="button" class="clear-voice-button" onclick="clearOpplevelserVoiceField('editExperience')" title="Tøm felt" aria-label="Tøm felt">×</button><button type="button" class="mic-button" data-dictate-target="editExperience" title="Les inn tekst" aria-label="Les inn tekst">🎙</button>
+                <button type="button" class="clear-voice-button" onclick="clearOpplevelserVoiceField('editExperience')" title="Tøm felt" aria-label="Tøm felt">×</button><button type="button" class="mic-button" data-dictate-target="editExperience" title="Les inn tekst" aria-label="Les inn tekst"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 15a3 3 0 0 0 3-3V6a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3Zm5-3a1 1 0 1 0-2 0 3 3 0 0 1-6 0 1 1 0 1 0-2 0 5 5 0 0 0 4 4.9V19H9a1 1 0 1 0 0 2h6a1 1 0 1 0 0-2h-2v-2.1A5 5 0 0 0 17 12Z" fill="currentColor"/></svg></button>
               </div>
             </div>
               <textarea id="editExperience">${esc(item.experience || "")}</textarea>
@@ -968,7 +968,7 @@ body.light-mode .mic-button:hover{
               <div class="voice-field-header">
               <label for="editConsequence">Konsekvens</label>
               <div class="voice-actions">
-                <button type="button" class="clear-voice-button" onclick="clearOpplevelserVoiceField('editConsequence')" title="Tøm felt" aria-label="Tøm felt">×</button><button type="button" class="mic-button" data-dictate-target="editConsequence" title="Les inn tekst" aria-label="Les inn tekst">🎙</button>
+                <button type="button" class="clear-voice-button" onclick="clearOpplevelserVoiceField('editConsequence')" title="Tøm felt" aria-label="Tøm felt">×</button><button type="button" class="mic-button" data-dictate-target="editConsequence" title="Les inn tekst" aria-label="Les inn tekst"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 15a3 3 0 0 0 3-3V6a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3Zm5-3a1 1 0 1 0-2 0 3 3 0 0 1-6 0 1 1 0 1 0-2 0 5 5 0 0 0 4 4.9V19H9a1 1 0 1 0 0 2h6a1 1 0 1 0 0-2h-2v-2.1A5 5 0 0 0 17 12Z" fill="currentColor"/></svg></button>
               </div>
             </div>
               <textarea id="editConsequence">${esc(item.consequence || "")}</textarea>
@@ -978,7 +978,7 @@ body.light-mode .mic-button:hover{
               <div class="voice-field-header">
               <label for="editNote">Notat</label>
               <div class="voice-actions">
-                <button type="button" class="clear-voice-button" onclick="clearOpplevelserVoiceField('editNote')" title="Tøm felt" aria-label="Tøm felt">×</button><button type="button" class="mic-button" data-dictate-target="editNote" title="Les inn tekst" aria-label="Les inn tekst">🎙</button>
+                <button type="button" class="clear-voice-button" onclick="clearOpplevelserVoiceField('editNote')" title="Tøm felt" aria-label="Tøm felt">×</button><button type="button" class="mic-button" data-dictate-target="editNote" title="Les inn tekst" aria-label="Les inn tekst"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 15a3 3 0 0 0 3-3V6a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3Zm5-3a1 1 0 1 0-2 0 3 3 0 0 1-6 0 1 1 0 1 0-2 0 5 5 0 0 0 4 4.9V19H9a1 1 0 1 0 0 2h6a1 1 0 1 0 0-2h-2v-2.1A5 5 0 0 0 17 12Z" fill="currentColor"/></svg></button>
               </div>
             </div>
               <textarea id="editNote">${esc(item.note || "")}</textarea>
@@ -1151,7 +1151,7 @@ body.light-mode .mic-button:hover{
 
     const btn = document.getElementById("opplevelserThemeToggle");
     if(btn){
-      btn.textContent = saved === "light" ? "☾" : "☀";
+      btn.innerHTML = saved === "light" ? `<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M21 14.6A8.5 8.5 0 0 1 9.4 3a1 1 0 0 0-1.1-1.6A10.5 10.5 0 1 0 22.6 15.7a1 1 0 0 0-1.6-1.1Z" fill="currentColor"/></svg>` : `<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10Zm0-5a1 1 0 0 1 1 1v1a1 1 0 1 1-2 0V3a1 1 0 0 1 1-1Zm0 17a1 1 0 0 1 1 1v1a1 1 0 1 1-2 0v-1a1 1 0 0 1 1-1ZM4.22 4.22a1 1 0 0 1 1.42 0l.7.71a1 1 0 1 1-1.41 1.41l-.71-.7a1 1 0 0 1 0-1.42Zm13.44 13.44a1 1 0 0 1 1.41 0l.71.7a1 1 0 0 1-1.42 1.42l-.7-.71a1 1 0 0 1 0-1.41ZM2 12a1 1 0 0 1 1-1h1a1 1 0 1 1 0 2H3a1 1 0 0 1-1-1Zm17 0a1 1 0 0 1 1-1h1a1 1 0 1 1 0 2h-1a1 1 0 0 1-1-1ZM4.22 19.78a1 1 0 0 1 0-1.42l.71-.7a1 1 0 0 1 1.41 1.41l-.7.71a1 1 0 0 1-1.42 0ZM17.66 6.34a1 1 0 0 1 0-1.41l.7-.71a1 1 0 0 1 1.42 1.42l-.71.7a1 1 0 0 1-1.41 0Z" fill="currentColor"/></svg>`;
       btn.title = saved === "light" ? "Bytt til mørk visning" : "Bytt til lys visning";
     }
   }

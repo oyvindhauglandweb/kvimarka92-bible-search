@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Bibelsøk 1930</title>
-  <!-- version: BIBLE v15 bible-search-sync 2026-06-16 -->
+  <!-- version: BIBLE v17 popup-final 2026-06-16 -->
   <style>
     :root{
       color-scheme:dark;
@@ -150,7 +150,7 @@ body{
 .header{text-align:center;margin-bottom:20px;}
 .site-title{margin:0;font-size:30px;font-weight:800;}
 .subtitle{margin-top:8px;color:var(--bible-muted);font-size:16px;}
-.top-buttons{display:flex;justify-content:center;align-items:center;gap:10px;margin:14px 0 0;flex-wrap:wrap;}
+.top-buttons{display:none;justify-content:center;align-items:center;gap:10px;margin:14px 0 0;flex-wrap:wrap;}
 .top-button{display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;padding:0;background:rgba(255,255,255,.055);border:0;border-radius:8px;color:var(--bible-text);text-decoration:none;font-size:24px;font-weight:bold;line-height:1;cursor:pointer;}
 .top-button:hover{background:rgba(255,255,255,.10);}
 body.light-mode .top-button{background:rgba(0,0,0,.055);}
@@ -190,7 +190,6 @@ body.light-mode .range-value{background:rgba(0,0,0,.055) !important;}
 body.light-mode .action-button{background:rgba(0,0,0,.055) !important;}
 body.light-mode .action-button:hover{background:rgba(0,0,0,.10) !important;}
 .action-button.primary{background:var(--bible-link) !important;color:#fff !important;}
-.file-version-marker{position:fixed;top:4px;left:4px;z-index:2147483647;padding:4px 7px;border-radius:6px;background:#ffcc00;color:#000;border:1px solid rgba(0,0,0,.45);font:700 11px/1.2 Arial,sans-serif;box-shadow:0 2px 8px rgba(0,0,0,.35);pointer-events:none;}
 @media(max-width:700px){
   .site-title{font-size:28px;}
   .top-buttons{gap:8px;}
@@ -202,21 +201,12 @@ body.light-mode .action-button:hover{background:rgba(0,0,0,.10) !important;}
 </style>
 </head>
 <body class="dark-mode">
-<div class="file-version-marker">BIBLE v15 bible-search-sync 2026-06-16</div>
-
 <div class="wrap">
 
     <div class="header">
-      <h1 class="site-title">Bibelsøk 1930</h1>
+      <h1 class="site-title">Bibelsøk</h1>
       <div class="subtitle">Finn bibelsted fra sitatfragment</div>
-      <div class="top-buttons">
-        <a class="top-button" href="#" onclick="window.close(); return false;" title="Lukk bibelsøk" aria-label="Lukk bibelsøk">←</a>
-        <a class="top-button home-button" href="https://kvimarka92.carstereogarage.com/index.html" title="Hovedmeny" aria-label="Hovedmeny">⌂</a>
-        <a class="top-button" href="https://kvimarka92.carstereogarage.com/help.html?case=Opplevelser" title="Hjelp" aria-label="Hjelp">?</a>
-        <button type="button" class="top-button font-size-button" id="bibleFontToggle" onclick="toggleBibleFontSize()" title="Endre tekststørrelse" aria-label="Endre tekststørrelse">A</button>
-        <button type="button" class="top-button" id="bibleThemeToggle" onclick="toggleBibleTheme()" title="Bytt lys/mørk visning" aria-label="Bytt lys/mørk visning">☀</button>
-        <button type="button" class="top-button design-toggle-button" id="bibleDesignToggle" onclick="toggleBibleDesign()" title="Bytt design" aria-label="Bytt design">◫</button>
-      </div>
+      <div class="top-buttons" style="display:none;"></div>
     </div>
 
     <div class="card">
@@ -398,6 +388,7 @@ function isLastVerseInChapter(book, chapter, verseNo){
   return Number(verseNo) >= Number(limits.max);
 }
 
+// Range buttons are hidden only at chapter boundaries. When from == to, +/- still moves the single selected verse.
 function rangeButtonClass(hidden){
   return hidden ? "range-button hidden-range-button" : "range-button";
 }
@@ -519,8 +510,8 @@ function updateSelectedRangeControls(){
   const limits = getChapterLimits(selectedRange.book, selectedRange.chapter);
 
   if(fromMinus) fromMinus.classList.toggle("hidden-range-button", Number(selectedRange.from) <= Number(limits.min));
-  if(fromPlus) fromPlus.classList.toggle("hidden-range-button", Number(selectedRange.from) >= Number(selectedRange.to));
-  if(toMinus) toMinus.classList.toggle("hidden-range-button", Number(selectedRange.to) <= Number(selectedRange.from));
+  if(fromPlus) fromPlus.classList.toggle("hidden-range-button", Number(selectedRange.from) >= Number(limits.max));
+  if(toMinus) toMinus.classList.toggle("hidden-range-button", Number(selectedRange.to) <= Number(limits.min));
   if(toPlus) toPlus.classList.toggle("hidden-range-button", Number(selectedRange.to) >= Number(limits.max));
 }
 
@@ -686,8 +677,8 @@ function render(){
     const isExpanded = selectedRef !== result.reference;
     const limits = getChapterLimits(range.book, range.chapter);
     const hideFromMinus = Number(range.from) <= Number(limits.min);
-    const hideFromPlus = Number(range.from) >= Number(range.to);
-    const hideToMinus = Number(range.to) <= Number(range.from);
+    const hideFromPlus = Number(range.from) >= Number(limits.max);
+    const hideToMinus = Number(range.to) <= Number(limits.min);
     const hideToPlus = Number(range.to) >= Number(limits.max);
 
     return `

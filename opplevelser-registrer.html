@@ -474,12 +474,57 @@ body.light-mode .mic-button:hover{
   background:rgba(0,0,0,.13) !important;
 }
 
+
+/* Opplevelser v23/v17 Bible header display */
+.bible-display-header{
+  display:flex;
+  align-items:baseline;
+  justify-content:space-between;
+  gap:14px;
+  margin:18px 0 8px;
+  flex-wrap:wrap;
+}
+.bible-display-title{
+  font-weight:800;
+  color:var(--opp-text, #eee);
+}
+.bible-display-source{
+  margin-left:auto;
+  color:var(--opp-muted, #bbb);
+  font-size:.92em;
+  white-space:nowrap;
+}
+.bible-hidden-input{
+  display:none !important;
+}
+@media(max-width:700px){
+  .bible-display-header{
+    display:block;
+  }
+  .bible-display-source{
+    display:block;
+    margin:4px 0 0;
+  }
+}
+
+
+/* Opplevelser final icon normalization */
+.top-button svg,
+.mic-button svg{
+  width:22px;
+  height:22px;
+  display:block;
+  color:currentColor;
+}
+.mic-button svg{
+  width:18px;
+  height:18px;
+}
+
 </style>
-<!-- version: REGISTER v22 bible-search-sync 2026-06-16 -->
+<!-- version: REGISTER v24 final-icons-popup 2026-06-16 -->
 </head>
 <body class="dark-mode">
-<div class="file-version-marker">REGISTER v22 bible-search-sync 2026-06-16</div>
-
 <div class="login-widget">
   <a id="loginStatus"
      class="login-status is-signin"
@@ -506,7 +551,7 @@ body.light-mode .mic-button:hover{
           <a class="top-button" href="https://kvimarka92.carstereogarage.com/help.html?case=Opplevelser" title="Hjelp" aria-label="Hjelp">?</a>
           
           <button type="button" class="top-button font-size-button" id="opplevelserFontToggle" onclick="toggleOpplevelserFontSize()" title="Endre tekststørrelse" aria-label="Endre tekststørrelse">A</button>
-          <button type="button" class="top-button" id="opplevelserThemeToggle" onclick="toggleOpplevelserTheme()" title="Bytt lys/mørk visning" aria-label="Bytt lys/mørk visning">☀</button>
+          <button type="button" class="top-button" id="opplevelserThemeToggle" onclick="toggleOpplevelserTheme()" title="Bytt lys/mørk visning" aria-label="Bytt lys/mørk visning"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10Zm0-5a1 1 0 0 1 1 1v1a1 1 0 1 1-2 0V3a1 1 0 0 1 1-1Zm0 17a1 1 0 0 1 1 1v1a1 1 0 1 1-2 0v-1a1 1 0 0 1 1-1ZM4.22 4.22a1 1 0 0 1 1.42 0l.7.71a1 1 0 1 1-1.41 1.41l-.71-.7a1 1 0 0 1 0-1.42Zm13.44 13.44a1 1 0 0 1 1.41 0l.71.7a1 1 0 0 1-1.42 1.42l-.7-.71a1 1 0 0 1 0-1.41ZM2 12a1 1 0 0 1 1-1h1a1 1 0 1 1 0 2H3a1 1 0 0 1-1-1Zm17 0a1 1 0 0 1 1-1h1a1 1 0 1 1 0 2h-1a1 1 0 0 1-1-1ZM4.22 19.78a1 1 0 0 1 0-1.42l.71-.7a1 1 0 0 1 1.41 1.41l-.7.71a1 1 0 0 1-1.42 0ZM17.66 6.34a1 1 0 0 1 0-1.41l.7-.71a1 1 0 0 1 1.42 1.42l-.71.7a1 1 0 0 1-1.41 0Z" fill="currentColor"/></svg></button>
           <button type="button" class="top-button design-toggle-button" id="opplevelserDesignToggle" onclick="toggleOpplevelserDesign()" title="Bytt design" aria-label="Bytt design">◫</button></div>
       </div>
       <p class="sub" id="userLine" style="display:none;"></p>
@@ -537,7 +582,7 @@ body.light-mode .mic-button:hover{
             <div class="voice-field-header">
               <label for="occasion">Foranledning</label>
               <div class="voice-actions">
-                <button type="button" class="clear-voice-button" onclick="clearOpplevelserVoiceField('occasion')" title="Tøm felt" aria-label="Tøm felt">×</button><button type="button" class="mic-button" data-dictate-target="occasion" title="Les inn tekst" aria-label="Les inn tekst">🎙</button>
+                <button type="button" class="clear-voice-button" onclick="clearOpplevelserVoiceField('occasion')" title="Tøm felt" aria-label="Tøm felt">×</button><button type="button" class="mic-button" data-dictate-target="occasion" title="Les inn tekst" aria-label="Les inn tekst"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 15a3 3 0 0 0 3-3V6a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3Zm5-3a1 1 0 1 0-2 0 3 3 0 0 1-6 0 1 1 0 1 0-2 0 5 5 0 0 0 4 4.9V19H9a1 1 0 1 0 0 2h6a1 1 0 1 0 0-2h-2v-2.1A5 5 0 0 0 17 12Z" fill="currentColor"/></svg></button>
               </div>
             </div>
           <textarea id="occasion" name="occasion"></textarea>
@@ -547,7 +592,7 @@ body.light-mode .mic-button:hover{
             <div class="voice-field-header">
               <label for="experience">Opplevelse</label>
               <div class="voice-actions">
-                <button type="button" class="clear-voice-button" onclick="clearOpplevelserVoiceField('experience')" title="Tøm felt" aria-label="Tøm felt">×</button><button type="button" class="mic-button" data-dictate-target="experience" title="Les inn tekst" aria-label="Les inn tekst">🎙</button>
+                <button type="button" class="clear-voice-button" onclick="clearOpplevelserVoiceField('experience')" title="Tøm felt" aria-label="Tøm felt">×</button><button type="button" class="mic-button" data-dictate-target="experience" title="Les inn tekst" aria-label="Les inn tekst"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 15a3 3 0 0 0 3-3V6a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3Zm5-3a1 1 0 1 0-2 0 3 3 0 0 1-6 0 1 1 0 1 0-2 0 5 5 0 0 0 4 4.9V19H9a1 1 0 1 0 0 2h6a1 1 0 1 0 0-2h-2v-2.1A5 5 0 0 0 17 12Z" fill="currentColor"/></svg></button>
               </div>
             </div>
           <textarea id="experience" name="experience"></textarea>
@@ -558,9 +603,9 @@ body.light-mode .mic-button:hover{
             <div class="bible-card" id="bibleCard">
               Ingen bibelreferanse valgt ennå.
             </div>
-            <input id="bibleReference" name="bibleReference" type="hidden">
+            <input id="bibleReference" class="bible-hidden-input" name="bibleReference" type="hidden">
             <input id="bibleText" name="bibleText" type="hidden">
-            <input id="bibleSource" name="bibleSource" type="hidden" value="Bibelen på Norsk (1930)">
+            <input id="bibleSource" class="bible-hidden-input" name="bibleSource" type="hidden" value="Bibelen på Norsk (1930)">
             <div class="buttons" style="margin-top:10px">
               <button type="button" class="secondary" id="findBibleBtn">Finn bibelsted</button>
               <button type="button" class="secondary" id="clearBibleBtn">Fjern bibelsted</button>
@@ -572,7 +617,7 @@ body.light-mode .mic-button:hover{
             <div class="voice-field-header">
               <label for="consequence">Konsekvens</label>
               <div class="voice-actions">
-                <button type="button" class="clear-voice-button" onclick="clearOpplevelserVoiceField('consequence')" title="Tøm felt" aria-label="Tøm felt">×</button><button type="button" class="mic-button" data-dictate-target="consequence" title="Les inn tekst" aria-label="Les inn tekst">🎙</button>
+                <button type="button" class="clear-voice-button" onclick="clearOpplevelserVoiceField('consequence')" title="Tøm felt" aria-label="Tøm felt">×</button><button type="button" class="mic-button" data-dictate-target="consequence" title="Les inn tekst" aria-label="Les inn tekst"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 15a3 3 0 0 0 3-3V6a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3Zm5-3a1 1 0 1 0-2 0 3 3 0 0 1-6 0 1 1 0 1 0-2 0 5 5 0 0 0 4 4.9V19H9a1 1 0 1 0 0 2h6a1 1 0 1 0 0-2h-2v-2.1A5 5 0 0 0 17 12Z" fill="currentColor"/></svg></button>
               </div>
             </div>
           <textarea id="consequence" name="consequence"></textarea>
@@ -582,7 +627,7 @@ body.light-mode .mic-button:hover{
             <div class="voice-field-header">
               <label for="note">Notat</label>
               <div class="voice-actions">
-                <button type="button" class="clear-voice-button" onclick="clearOpplevelserVoiceField('note')" title="Tøm felt" aria-label="Tøm felt">×</button><button type="button" class="mic-button" data-dictate-target="note" title="Les inn tekst" aria-label="Les inn tekst">🎙</button>
+                <button type="button" class="clear-voice-button" onclick="clearOpplevelserVoiceField('note')" title="Tøm felt" aria-label="Tøm felt">×</button><button type="button" class="mic-button" data-dictate-target="note" title="Les inn tekst" aria-label="Les inn tekst"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 15a3 3 0 0 0 3-3V6a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3Zm5-3a1 1 0 1 0-2 0 3 3 0 0 1-6 0 1 1 0 1 0-2 0 5 5 0 0 0 4 4.9V19H9a1 1 0 1 0 0 2h6a1 1 0 1 0 0-2h-2v-2.1A5 5 0 0 0 17 12Z" fill="currentColor"/></svg></button>
               </div>
             </div>
           <textarea id="note" name="note"></textarea>
@@ -866,7 +911,7 @@ body.light-mode .mic-button:hover{
 
     const btn = document.getElementById("opplevelserThemeToggle");
     if(btn){
-      btn.textContent = saved === "light" ? "☾" : "☀";
+      btn.innerHTML = saved === "light" ? `<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M21 14.6A8.5 8.5 0 0 1 9.4 3a1 1 0 0 0-1.1-1.6A10.5 10.5 0 1 0 22.6 15.7a1 1 0 0 0-1.6-1.1Z" fill="currentColor"/></svg>` : `<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10Zm0-5a1 1 0 0 1 1 1v1a1 1 0 1 1-2 0V3a1 1 0 0 1 1-1Zm0 17a1 1 0 0 1 1 1v1a1 1 0 1 1-2 0v-1a1 1 0 0 1 1-1ZM4.22 4.22a1 1 0 0 1 1.42 0l.7.71a1 1 0 1 1-1.41 1.41l-.71-.7a1 1 0 0 1 0-1.42Zm13.44 13.44a1 1 0 0 1 1.41 0l.71.7a1 1 0 0 1-1.42 1.42l-.7-.71a1 1 0 0 1 0-1.41ZM2 12a1 1 0 0 1 1-1h1a1 1 0 1 1 0 2H3a1 1 0 0 1-1-1Zm17 0a1 1 0 0 1 1-1h1a1 1 0 1 1 0 2h-1a1 1 0 0 1-1-1ZM4.22 19.78a1 1 0 0 1 0-1.42l.71-.7a1 1 0 0 1 1.41 1.41l-.7.71a1 1 0 0 1-1.42 0ZM17.66 6.34a1 1 0 0 1 0-1.41l.7-.71a1 1 0 0 1 1.42 1.42l-.71.7a1 1 0 0 1-1.41 0Z" fill="currentColor"/></svg>`;
       btn.title = saved === "light" ? "Bytt til mørk visning" : "Bytt til lys visning";
     }
   }
@@ -1347,6 +1392,7 @@ body.light-mode .mic-button:hover{
 
     if(typeof window.updateBiblePreview === "function"){
       window.updateBiblePreview();
+      if(window.updateBibleHeaderDisplay){ window.updateBibleHeaderDisplay(); }
     }
 
     for(const id of ["bibleReference","bibleText","bibleSource","editBibleReference","editBibleText","editBibleSource"]){
@@ -1375,6 +1421,103 @@ body.light-mode .mic-button:hover{
 
     applySelectedBibleVerseToPage(event.data.payload);
   });
+})();
+</script>
+
+
+<script>
+(function(){
+  function updateBibleHeaderDisplay(){
+    const pairs = [
+      {
+        ref:"bibleReference",
+        source:"bibleSource",
+        title:"bibleDisplayTitle",
+        sourceOut:"bibleDisplaySource"
+      },
+      {
+        ref:"editBibleReference",
+        source:"editBibleSource",
+        title:"editBibleDisplayTitle",
+        sourceOut:"editBibleDisplaySource"
+      }
+    ];
+
+    pairs.forEach(pair => {
+      const ref = document.getElementById(pair.ref);
+      const source = document.getElementById(pair.source);
+      const title = document.getElementById(pair.title);
+      const sourceOut = document.getElementById(pair.sourceOut);
+
+      if(!title && !sourceOut){
+        return;
+      }
+
+      const refText = ref ? String(ref.value || "").trim() : "";
+      const sourceText = source ? String(source.value || "Bibelen på Norsk (1930)").trim() : "Bibelen på Norsk (1930)";
+
+      if(title){
+        title.textContent = refText ? "Bibeltekst: " + refText : "Bibeltekst";
+      }
+
+      if(sourceOut){
+        sourceOut.textContent = sourceText ? "(" + sourceText + ")" : "";
+      }
+    });
+  }
+
+  window.updateBibleHeaderDisplay = updateBibleHeaderDisplay;
+
+  function initBibleHeaderDisplay(){
+    updateBibleHeaderDisplay();
+
+    ["bibleReference","bibleSource","editBibleReference","editBibleSource"].forEach(id => {
+      const field = document.getElementById(id);
+
+      if(field && field.dataset.bibleHeaderListener !== "1"){
+        field.dataset.bibleHeaderListener = "1";
+        field.addEventListener("input", updateBibleHeaderDisplay);
+        field.addEventListener("change", updateBibleHeaderDisplay);
+      }
+    });
+  }
+
+  window.initBibleHeaderDisplay = initBibleHeaderDisplay;
+
+  if(document.readyState === "loading"){
+    document.addEventListener("DOMContentLoaded", initBibleHeaderDisplay);
+  }else{
+    initBibleHeaderDisplay();
+  }
+})();
+</script>
+
+
+<script>
+(function(){
+  window.openOpplevelserBibleSearch = function(){
+    if(typeof window.prepareBibleSearchFromCurrentPage === "function"){
+      window.prepareBibleSearchFromCurrentPage();
+    }
+
+    const width = Math.min(980, Math.max(360, Math.floor(window.screen.availWidth * 0.88)));
+    const height = Math.min(760, Math.max(520, Math.floor(window.screen.availHeight * 0.82)));
+
+    const left = Math.max(0, Math.round((window.screenX || window.screenLeft || 0) + ((window.outerWidth || width) - width) / 2));
+    const top = Math.max(0, Math.round((window.screenY || window.screenTop || 0) + ((window.outerHeight || height) - height) / 2));
+
+    const features = [
+      "popup=yes",
+      "width=" + width,
+      "height=" + height,
+      "left=" + left,
+      "top=" + top,
+      "resizable=yes",
+      "scrollbars=yes"
+    ].join(",");
+
+    window.open("bibel-sok.html", "kvimarka92BibleSearch", features);
+  };
 })();
 </script>
 
