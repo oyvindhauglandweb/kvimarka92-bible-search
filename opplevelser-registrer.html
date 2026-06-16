@@ -859,8 +859,57 @@ body > .wrap > .header{
   border:0 !important;
   box-shadow:none !important;
 }
+
+/* Register v29: delete buttons must be neutral grey */
+button.clear-voice-button,
+.clear-voice-button,
+html:not(.classic-design-root) button.clear-voice-button,
+html:not(.classic-design-root) .clear-voice-button,
+body.dark-mode button.clear-voice-button,
+body.dark-mode .clear-voice-button,
+body.light-mode button.clear-voice-button,
+body.light-mode .clear-voice-button{
+  background:rgba(255,255,255,.075) !important;
+  color:var(--opp-text, #eee) !important;
+  border:0 !important;
+  box-shadow:none !important;
+}
+
+button.clear-voice-button:hover,
+.clear-voice-button:hover,
+html:not(.classic-design-root) button.clear-voice-button:hover,
+html:not(.classic-design-root) .clear-voice-button:hover,
+body.dark-mode button.clear-voice-button:hover,
+body.dark-mode .clear-voice-button:hover{
+  background:rgba(255,255,255,.13) !important;
+  color:var(--opp-text, #eee) !important;
+}
+
+body.light-mode button.clear-voice-button,
+body.light-mode .clear-voice-button,
+body.light-mode html:not(.classic-design-root) button.clear-voice-button,
+body.light-mode html:not(.classic-design-root) .clear-voice-button{
+  background:rgba(0,0,0,.075) !important;
+  color:var(--opp-text, #333) !important;
+}
+
+body.light-mode button.clear-voice-button:hover,
+body.light-mode .clear-voice-button:hover,
+body.light-mode html:not(.classic-design-root) button.clear-voice-button:hover,
+body.light-mode html:not(.classic-design-root) .clear-voice-button:hover{
+  background:rgba(0,0,0,.13) !important;
+  color:var(--opp-text, #333) !important;
+}
+
+/* Accent applies only to microphone, not delete */
+button.mic-button.visible,
+.mic-button.visible{
+  background:var(--opp-link, #7cc7e8) !important;
+  color:#fff !important;
+}
+
 </style>
-<!-- version: REGISTER v28 header-free-layout 2026-06-16 -->
+<!-- version: REGISTER v29 neutral-delete-buttons 2026-06-16 -->
 </head>
 <body class="dark-mode">
 <div class="login-widget">
