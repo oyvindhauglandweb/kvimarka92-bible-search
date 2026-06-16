@@ -596,11 +596,44 @@ body.light-mode .mic-button:hover{
   background:rgba(0,0,0,.13) !important;
 }
 
+
+/* Opplevelser v23/v17 Bible header display */
+.bible-display-header{
+  display:flex;
+  align-items:baseline;
+  justify-content:space-between;
+  gap:14px;
+  margin:18px 0 8px;
+  flex-wrap:wrap;
+}
+.bible-display-title{
+  font-weight:800;
+  color:var(--opp-text, #eee);
+}
+.bible-display-source{
+  margin-left:auto;
+  color:var(--opp-muted, #bbb);
+  font-size:.92em;
+  white-space:nowrap;
+}
+.bible-hidden-input{
+  display:none !important;
+}
+@media(max-width:700px){
+  .bible-display-header{
+    display:block;
+  }
+  .bible-display-source{
+    display:block;
+    margin:4px 0 0;
+  }
+}
+
 </style>
-  <!-- version: LIST v16 bible-search-sync 2026-06-16 -->
+  <!-- version: LIST v17 bible-header-display 2026-06-16 -->
 </head>
 <body class="dark-mode">
-<div class="file-version-marker">LIST v16 bible-search-sync 2026-06-16</div>
+<div class="file-version-marker">LIST v17 bible-header-display 2026-06-16</div>
 
 <div class="login-widget">
   <a id="loginStatus"
@@ -895,22 +928,19 @@ body.light-mode .mic-button:hover{
               <input id="editEnvironment" value="${esc(item.environment || "")}">
             </div>
 
-            <div>
-              <label for="editBibleReference">Bibelreferanse</label>
-              <input id="editBibleReference" value="${esc(item.bibleReference || "")}">
-            </div>
+            <input id="editBibleReference" class="bible-hidden-input" type="hidden" value="${esc(item.bibleReference || "")}">
 
-            <div>
-              <label for="editBibleSource">Bibelkilde</label>
-              <input id="editBibleSource" value="${esc(item.bibleSource || "Bibelen på Norsk (1930)")}" >
-            </div>
+            <input id="editBibleSource" class="bible-hidden-input" type="hidden" value="${esc(item.bibleSource || "Bibelen på Norsk (1930)")}">
 
             <div class="full">
               <button type="button" class="secondary" onclick="openBibleSearchFromEdit()">Endre bibelsted</button>
             </div>
 
             <div class="full">
-              <label for="editBibleText">Bibeltekst</label>
+              <div class="bible-display-header">
+              <div class="bible-display-title" id="editBibleDisplayTitle">Bibeltekst</div>
+              <div class="bible-display-source" id="editBibleDisplaySource"></div>
+            </div>
               <textarea id="editBibleText">${esc(item.bibleText || "")}</textarea>
             </div>
 
@@ -963,7 +993,9 @@ body.light-mode .mic-button:hover{
       `;
 
       el("editForm").addEventListener("submit", saveEdit);
+      if(window.initBibleHeaderDisplay){ window.initBibleHeaderDisplay(); }
       if(window.initOpplevelserMicButtons){ window.initOpplevelserMicButtons(); }
+      if(window.initBibleHeaderDisplay){ window.initBibleHeaderDisplay(); }
     }
 
     window.selectItem = function(id){
@@ -1561,6 +1593,7 @@ body.light-mode .mic-button:hover{
     if(typeof window.updateBiblePreview === "function"){
       window.updateBiblePreview();
     }
+    if(window.updateBibleHeaderDisplay){ window.updateBibleHeaderDisplay(); }
 
     for(const id of ["bibleReference","bibleText","bibleSource","editBibleReference","editBibleText","editBibleSource"]){
       const field = document.getElementById(id);
@@ -1588,6 +1621,74 @@ body.light-mode .mic-button:hover{
 
     applySelectedBibleVerseToPage(event.data.payload);
   });
+})();
+</script>
+
+
+<script>
+(function(){
+  function updateBibleHeaderDisplay(){
+    const pairs = [
+      {
+        ref:"bibleReference",
+        source:"bibleSource",
+        title:"bibleDisplayTitle",
+        sourceOut:"bibleDisplaySource"
+      },
+      {
+        ref:"editBibleReference",
+        source:"editBibleSource",
+        title:"editBibleDisplayTitle",
+        sourceOut:"editBibleDisplaySource"
+      }
+    ];
+
+    pairs.forEach(pair => {
+      const ref = document.getElementById(pair.ref);
+      const source = document.getElementById(pair.source);
+      const title = document.getElementById(pair.title);
+      const sourceOut = document.getElementById(pair.sourceOut);
+
+      if(!title && !sourceOut){
+        return;
+      }
+
+      const refText = ref ? String(ref.value || "").trim() : "";
+      const sourceText = source ? String(source.value || "Bibelen på Norsk (1930)").trim() : "Bibelen på Norsk (1930)";
+
+      if(title){
+        title.textContent = refText ? "Bibeltekst: " + refText : "Bibeltekst";
+      }
+
+      if(sourceOut){
+        sourceOut.textContent = sourceText ? "(" + sourceText + ")" : "";
+      }
+    });
+  }
+
+  window.updateBibleHeaderDisplay = updateBibleHeaderDisplay;
+
+  function initBibleHeaderDisplay(){
+    updateBibleHeaderDisplay();
+
+    ["bibleReference","bibleSource","editBibleReference","editBibleSource"].forEach(id => {
+      const field = document.getElementById(id);
+
+      if(field && field.dataset.bibleHeaderListener !== "1"){
+        field.dataset.bibleHeaderListener = "1";
+        field.addEventListener("input", updateBibleHeaderDisplay);
+        field.addEventListener("change", updateBibleHeaderDisplay);
+      }
+    });
+  }
+
+  window.initBibleHeaderDisplay = initBibleHeaderDisplay;
+
+  if(document.readyState === "loading"){
+    document.addEventListener("DOMContentLoaded", initBibleHeaderDisplay);
+  }else{
+    initBibleHeaderDisplay();
+  }
 })();
 </script>
 
