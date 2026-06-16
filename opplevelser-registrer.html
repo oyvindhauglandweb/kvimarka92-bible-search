@@ -1564,7 +1564,7 @@ body.light-mode button[aria-label="Fjern bibelsted"]:hover{
 }
 
 </style>
-<!-- version: REGISTER v43d final-clear-and-reset-button-backgrounds 2026-06-17 -->
+<!-- version: REGISTER v43e theme-icon-moon-in-light-mode 2026-06-17 -->
 </head>
 <body class="dark-mode">
 <div class="login-widget">
@@ -3214,6 +3214,75 @@ html body.light-mode button[type="submit"] *{
 
   setTimeout(markClearFormButton, 100);
   setTimeout(markClearFormButton, 500);
+})();
+</script>
+
+
+<script>
+/* Opplevelser v-theme-icon: show moon in light mode, sun in dark mode */
+(function(){
+  function isThemeButton(button){
+    if(!button){
+      return false;
+    }
+
+    const text = (button.textContent || "").trim();
+    const title = (button.getAttribute("title") || button.getAttribute("aria-label") || "").toLowerCase();
+    const cls = button.className ? String(button.className).toLowerCase() : "";
+
+    return (
+      text === "☀" || text === "☾" || text === "🌙" || text === "☼" || text === "◐" ||
+      title.includes("light") || title.includes("dark") ||
+      title.includes("lys") || title.includes("mørk") ||
+      cls.includes("theme")
+    );
+  }
+
+  function pageIsLight(){
+    return (
+      document.documentElement.classList.contains("light-mode") ||
+      document.documentElement.classList.contains("light") ||
+      document.body.classList.contains("light-mode") ||
+      document.body.classList.contains("light")
+    );
+  }
+
+  function updateThemeIcon(){
+    const isLight = pageIsLight();
+
+    document.querySelectorAll("button").forEach(button => {
+      if(!isThemeButton(button)){
+        return;
+      }
+
+      button.textContent = isLight ? "☾" : "☀";
+      button.setAttribute("title", isLight ? "Bytt til mørk modus" : "Bytt til lys modus");
+      button.setAttribute("aria-label", isLight ? "Bytt til mørk modus" : "Bytt til lys modus");
+      button.classList.add("theme-button");
+    });
+  }
+
+  window.updateOpplevelserThemeIcon = updateThemeIcon;
+
+  if(document.readyState === "loading"){
+    document.addEventListener("DOMContentLoaded", updateThemeIcon);
+  }else{
+    updateThemeIcon();
+  }
+
+  document.addEventListener("click", event => {
+    const button = event.target.closest("button");
+    if(!isThemeButton(button)){
+      return;
+    }
+
+    setTimeout(updateThemeIcon, 0);
+    setTimeout(updateThemeIcon, 80);
+    setTimeout(updateThemeIcon, 250);
+  }, true);
+
+  window.addEventListener("storage", updateThemeIcon);
+  window.addEventListener("pageshow", updateThemeIcon);
 })();
 </script>
 
