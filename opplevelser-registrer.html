@@ -1471,8 +1471,100 @@ body.light-mode button.bible-edit-button{
   filter:none !important;
 }
 
+
+/* Register v43c: final light-mode button backgrounds */
+body.light-mode button{
+  background:#e5e7eb !important;
+  color:#111827 !important;
+  border:0 !important;
+  box-shadow:none !important;
+  opacity:1 !important;
+  filter:none !important;
+}
+
+body.light-mode button:hover{
+  background:#d1d5db !important;
+  color:#111827 !important;
+  opacity:1 !important;
+  filter:none !important;
+}
+
+/* Ikoner/tekst inni vanlige knapper må være synlige */
+body.light-mode button *,
+body.light-mode button svg,
+body.light-mode button path{
+  color:#111827 !important;
+  opacity:1 !important;
+  filter:none !important;
+}
+
+/* Blå handlingsknapper */
+body.light-mode button.mic-button,
+body.light-mode button.voice-mic-btn,
+body.light-mode button.bible-edit-button,
+body.light-mode button.primary,
+body.light-mode button.save-button,
+body.light-mode button[type="submit"],
+body.light-mode #saveBtn,
+body.light-mode #saveButton{
+  background:#0ea5d4 !important;
+  color:#ffffff !important;
+  border:0 !important;
+  box-shadow:none !important;
+  opacity:1 !important;
+  filter:none !important;
+}
+
+body.light-mode button.mic-button:hover,
+body.light-mode button.voice-mic-btn:hover,
+body.light-mode button.bible-edit-button:hover,
+body.light-mode button.primary:hover,
+body.light-mode button.save-button:hover,
+body.light-mode button[type="submit"]:hover,
+body.light-mode #saveBtn:hover,
+body.light-mode #saveButton:hover{
+  background:#0284c7 !important;
+  color:#ffffff !important;
+}
+
+body.light-mode button.mic-button *,
+body.light-mode button.voice-mic-btn *,
+body.light-mode button.bible-edit-button *,
+body.light-mode button.primary *,
+body.light-mode button.save-button *,
+body.light-mode button[type="submit"] *,
+body.light-mode #saveBtn *,
+body.light-mode #saveButton *{
+  color:#ffffff !important;
+  opacity:1 !important;
+  filter:none !important;
+}
+
+/* X-/sletteknapper skal være grå, ikke blå */
+body.light-mode button.clear-voice-button,
+body.light-mode button.voice-clear-btn,
+body.light-mode button.bible-clear-button,
+body.light-mode button[title="Tøm felt"],
+body.light-mode button[aria-label="Tøm felt"],
+body.light-mode button[title="Fjern bibelsted"],
+body.light-mode button[aria-label="Fjern bibelsted"]{
+  background:#e5e7eb !important;
+  color:#111827 !important;
+}
+
+body.light-mode button.clear-voice-button:hover,
+body.light-mode button.voice-clear-btn:hover,
+body.light-mode button.bible-clear-button:hover,
+body.light-mode button[title="Tøm felt"]:hover,
+body.light-mode button[aria-label="Tøm felt"]:hover,
+body.light-mode button[title="Fjern bibelsted"]:hover,
+body.light-mode button[aria-label="Fjern bibelsted"]:hover{
+  background:#d1d5db !important;
+  color:#111827 !important;
+}
+
 </style>
-<!-- version: REGISTER v43b rollback-minimal-button-fix 2026-06-16 -->
+<!-- version: REGISTER v43c final-light-button-backgrounds 2026-06-17 -->
 </head>
 <body class="dark-mode">
 <div class="login-widget">
