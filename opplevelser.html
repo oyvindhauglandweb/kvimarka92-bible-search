@@ -1728,8 +1728,170 @@ body.light-mode .list-item:not(.selected):not(.active):hover{
   background:#e5e7eb !important;
 }
 
+
+/* List v49: visible clear buttons and selected experience in light mode */
+
+/* Alle X-/sletteknapper i light mode skal ha tydelig lysegrå bakgrunn */
+body.light-mode button[aria-label*="Slett"],
+body.light-mode button[aria-label*="slett"],
+body.light-mode button[aria-label*="Fjern"],
+body.light-mode button[aria-label*="fjern"],
+body.light-mode button[aria-label*="Tøm"],
+body.light-mode button[aria-label*="tøm"],
+body.light-mode button[title*="Slett"],
+body.light-mode button[title*="slett"],
+body.light-mode button[title*="Fjern"],
+body.light-mode button[title*="fjern"],
+body.light-mode button[title*="Tøm"],
+body.light-mode button[title*="tøm"],
+body.light-mode button.clear-btn,
+body.light-mode button.clear-button,
+body.light-mode button.voice-clear,
+body.light-mode button.voice-clear-btn,
+body.light-mode button.clear-voice,
+body.light-mode button.clear-voice-button,
+body.light-mode button.bible-clear-button,
+body.light-mode .voice-actions button:first-child,
+body.light-mode .text-actions button:first-child,
+body.light-mode .field-actions button:first-child,
+body.light-mode .textarea-actions button:first-child,
+body.light-mode .bible-inline-actions button:first-child{
+  background:#e5e7eb !important;
+  color:#111827 !important;
+  border:0 !important;
+  box-shadow:none !important;
+  opacity:1 !important;
+  filter:none !important;
+}
+
+body.light-mode button[aria-label*="Slett"]:hover,
+body.light-mode button[aria-label*="slett"]:hover,
+body.light-mode button[aria-label*="Fjern"]:hover,
+body.light-mode button[aria-label*="fjern"]:hover,
+body.light-mode button[aria-label*="Tøm"]:hover,
+body.light-mode button[aria-label*="tøm"]:hover,
+body.light-mode button[title*="Slett"]:hover,
+body.light-mode button[title*="slett"]:hover,
+body.light-mode button[title*="Fjern"]:hover,
+body.light-mode button[title*="fjern"]:hover,
+body.light-mode button[title*="Tøm"]:hover,
+body.light-mode button[title*="tøm"]:hover,
+body.light-mode button.clear-btn:hover,
+body.light-mode button.clear-button:hover,
+body.light-mode button.voice-clear:hover,
+body.light-mode button.voice-clear-btn:hover,
+body.light-mode button.clear-voice:hover,
+body.light-mode button.clear-voice-button:hover,
+body.light-mode button.bible-clear-button:hover,
+body.light-mode .voice-actions button:first-child:hover,
+body.light-mode .text-actions button:first-child:hover,
+body.light-mode .field-actions button:first-child:hover,
+body.light-mode .textarea-actions button:first-child:hover,
+body.light-mode .bible-inline-actions button:first-child:hover{
+  background:#d1d5db !important;
+  color:#111827 !important;
+  opacity:1 !important;
+  filter:none !important;
+}
+
+body.light-mode button[aria-label*="Slett"] *,
+body.light-mode button[aria-label*="slett"] *,
+body.light-mode button[aria-label*="Fjern"] *,
+body.light-mode button[aria-label*="fjern"] *,
+body.light-mode button[aria-label*="Tøm"] *,
+body.light-mode button[aria-label*="tøm"] *,
+body.light-mode button[title*="Slett"] *,
+body.light-mode button[title*="slett"] *,
+body.light-mode button[title*="Fjern"] *,
+body.light-mode button[title*="fjern"] *,
+body.light-mode button[title*="Tøm"] *,
+body.light-mode button[title*="tøm"] *,
+body.light-mode button.clear-btn *,
+body.light-mode button.clear-button *,
+body.light-mode button.voice-clear *,
+body.light-mode button.voice-clear-btn *,
+body.light-mode button.clear-voice *,
+body.light-mode button.clear-voice-button *,
+body.light-mode button.bible-clear-button *,
+body.light-mode .voice-actions button:first-child *,
+body.light-mode .text-actions button:first-child *,
+body.light-mode .field-actions button:first-child *,
+body.light-mode .textarea-actions button:first-child *,
+body.light-mode .bible-inline-actions button:first-child *{
+  color:#111827 !important;
+  opacity:1 !important;
+  filter:none !important;
+}
+
+/* Mikrofon/redigeringsknapper beholdes blå */
+body.light-mode .voice-actions button:last-child,
+body.light-mode .text-actions button:last-child,
+body.light-mode .field-actions button:last-child,
+body.light-mode .textarea-actions button:last-child,
+body.light-mode .bible-inline-actions button:last-child,
+body.light-mode button[aria-label*="mikrofon"],
+body.light-mode button[aria-label*="Mikrofon"],
+body.light-mode button[title*="mikrofon"],
+body.light-mode button[title*="Mikrofon"],
+body.light-mode button.bible-edit-button{
+  background:#0ea5d4 !important;
+  color:#ffffff !important;
+  border:0 !important;
+  opacity:1 !important;
+  filter:none !important;
+}
+
+/* Tydelig valgt opplevelse i listen */
+body.light-mode .experience-item.is-selected,
+body.light-mode .experience-item.selected,
+body.light-mode .experience-item.active,
+body.light-mode .result-item.is-selected,
+body.light-mode .result-item.selected,
+body.light-mode .result-item.active,
+body.light-mode .list-item.is-selected,
+body.light-mode .list-item.selected,
+body.light-mode .list-item.active,
+body.light-mode .selected-experience,
+body.light-mode [data-selected="true"],
+body.light-mode [aria-selected="true"]{
+  background:#bfdbfe !important;
+  color:#111827 !important;
+  border-left:5px solid #2563eb !important;
+  box-shadow:inset 0 0 0 1px rgba(37,99,235,.22) !important;
+}
+
+body.light-mode .experience-item.is-selected *,
+body.light-mode .experience-item.selected *,
+body.light-mode .experience-item.active *,
+body.light-mode .result-item.is-selected *,
+body.light-mode .result-item.selected *,
+body.light-mode .result-item.active *,
+body.light-mode .list-item.is-selected *,
+body.light-mode .list-item.selected *,
+body.light-mode .list-item.active *,
+body.light-mode .selected-experience *,
+body.light-mode [data-selected="true"] *,
+body.light-mode [aria-selected="true"] *{
+  color:#111827 !important;
+  opacity:1 !important;
+  filter:none !important;
+}
+
+body.light-mode .experience-item:not(.selected):not(.active):not(.is-selected):not([data-selected="true"]),
+body.light-mode .result-item:not(.selected):not(.active):not(.is-selected):not([data-selected="true"]),
+body.light-mode .list-item:not(.selected):not(.active):not(.is-selected):not([data-selected="true"]){
+  background:#f3f4f6 !important;
+  color:#111827 !important;
+}
+
+body.light-mode .experience-item:not(.selected):not(.active):not(.is-selected):not([data-selected="true"]):hover,
+body.light-mode .result-item:not(.selected):not(.active):not(.is-selected):not([data-selected="true"]):hover,
+body.light-mode .list-item:not(.selected):not(.active):not(.is-selected):not([data-selected="true"]):hover{
+  background:#e5e7eb !important;
+}
+
 </style>
-  <!-- version: LIST v48_two_way_light_dark_button_contrast_selected_item 2026-06-16 -->
+  <!-- version: LIST v49_clear_buttons_visible_and_selected_row 2026-06-16 -->
 </head>
 <body class="dark-mode">
 <div class="login-widget">
@@ -3485,27 +3647,86 @@ body.light-mode .list-item:not(.selected):not(.active):hover{
 </script>
 
 
+
 <script>
 (function(){
-  function markSelectedExperienceFromClick(event){
-    const row = event.target.closest(".experience-item, .result-item, .list-item, [data-experience-id], [data-id]");
+  function getExperienceRow(target){
+    if(!target || !target.closest){
+      return null;
+    }
+
+    return target.closest(
+      ".experience-item, .result-item, .list-item, .item, .row, [data-experience-id], [data-id], [role='option'], [role='listitem']"
+    );
+  }
+
+  function markSelectedExperience(row){
     if(!row){
       return;
     }
 
-    const container = row.parentElement;
+    const container =
+      row.closest("#results, #list, .results-panel, .list-panel, .experience-list, .result-list")
+      || row.parentElement;
+
     if(container){
-      container.querySelectorAll(".experience-item.selected, .result-item.selected, .list-item.selected, .selected-experience, [aria-selected='true']").forEach(el => {
-        el.classList.remove("selected", "active", "selected-experience");
+      container.querySelectorAll(
+        ".is-selected, .selected, .active, .selected-experience, [data-selected='true'], [aria-selected='true']"
+      ).forEach(el => {
+        if(el === row){
+          return;
+        }
+
+        el.classList.remove("is-selected", "selected", "active", "selected-experience");
+        el.removeAttribute("data-selected");
         el.removeAttribute("aria-selected");
       });
     }
 
-    row.classList.add("selected");
+    row.classList.add("is-selected", "selected");
+    row.setAttribute("data-selected", "true");
     row.setAttribute("aria-selected", "true");
   }
 
+  function markSelectedExperienceFromClick(event){
+    const row = getExperienceRow(event.target);
+    if(row){
+      markSelectedExperience(row);
+    }
+  }
+
+  function markInitialSelectedExperience(){
+    const existing = document.querySelector(
+      ".experience-item.selected, .experience-item.active, .result-item.selected, .result-item.active, .list-item.selected, .list-item.active, [data-selected='true'], [aria-selected='true']"
+    );
+
+    if(existing){
+      markSelectedExperience(existing);
+      return;
+    }
+
+    const first =
+      document.querySelector(".experience-item, .result-item, .list-item, [data-experience-id], [role='option'], [role='listitem']");
+
+    if(first){
+      markSelectedExperience(first);
+    }
+  }
+
+  window.markSelectedExperience = markSelectedExperience;
+  window.markInitialSelectedExperience = markInitialSelectedExperience;
+
   document.addEventListener("click", markSelectedExperienceFromClick, true);
+
+  if(document.readyState === "loading"){
+    document.addEventListener("DOMContentLoaded", () => {
+      setTimeout(markInitialSelectedExperience, 100);
+      setTimeout(markInitialSelectedExperience, 400);
+    });
+  }else{
+    setTimeout(markInitialSelectedExperience, 100);
+    setTimeout(markInitialSelectedExperience, 400);
+  }
 })();
 </script>
 
