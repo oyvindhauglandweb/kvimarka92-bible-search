@@ -1324,8 +1324,107 @@ body.light-mode .bible-clear-button *{
   filter:none !important;
 }
 
+
+/* Register v42: make all text-field clear buttons visible in light mode */
+body.light-mode button[aria-label*="Slett"],
+body.light-mode button[aria-label*="slett"],
+body.light-mode button[aria-label*="Fjern"],
+body.light-mode button[aria-label*="fjern"],
+body.light-mode button[title*="Slett"],
+body.light-mode button[title*="slett"],
+body.light-mode button[title*="Fjern"],
+body.light-mode button[title*="fjern"],
+body.light-mode button.clear-btn,
+body.light-mode button.clear-button,
+body.light-mode button.voice-clear,
+body.light-mode button.voice-clear-btn,
+body.light-mode button.clear-voice,
+body.light-mode button.clear-voice-button,
+body.light-mode button.bible-clear-button,
+body.light-mode .voice-actions button:first-child,
+body.light-mode .text-actions button:first-child,
+body.light-mode .field-actions button:first-child,
+body.light-mode .textarea-actions button:first-child,
+body.light-mode .register-bible-actions button:first-child{
+  background:#e5e7eb !important;
+  color:#111827 !important;
+  border:0 !important;
+  box-shadow:none !important;
+  opacity:1 !important;
+  filter:none !important;
+}
+
+body.light-mode button[aria-label*="Slett"]:hover,
+body.light-mode button[aria-label*="slett"]:hover,
+body.light-mode button[aria-label*="Fjern"]:hover,
+body.light-mode button[aria-label*="fjern"]:hover,
+body.light-mode button[title*="Slett"]:hover,
+body.light-mode button[title*="slett"]:hover,
+body.light-mode button[title*="Fjern"]:hover,
+body.light-mode button[title*="fjern"]:hover,
+body.light-mode button.clear-btn:hover,
+body.light-mode button.clear-button:hover,
+body.light-mode button.voice-clear:hover,
+body.light-mode button.voice-clear-btn:hover,
+body.light-mode button.clear-voice:hover,
+body.light-mode button.clear-voice-button:hover,
+body.light-mode button.bible-clear-button:hover,
+body.light-mode .voice-actions button:first-child:hover,
+body.light-mode .text-actions button:first-child:hover,
+body.light-mode .field-actions button:first-child:hover,
+body.light-mode .textarea-actions button:first-child:hover,
+body.light-mode .register-bible-actions button:first-child:hover{
+  background:#d1d5db !important;
+  color:#111827 !important;
+  opacity:1 !important;
+  filter:none !important;
+}
+
+body.light-mode button[aria-label*="Slett"] *,
+body.light-mode button[aria-label*="slett"] *,
+body.light-mode button[aria-label*="Fjern"] *,
+body.light-mode button[aria-label*="fjern"] *,
+body.light-mode button[title*="Slett"] *,
+body.light-mode button[title*="slett"] *,
+body.light-mode button[title*="Fjern"] *,
+body.light-mode button[title*="fjern"] *,
+body.light-mode button.clear-btn *,
+body.light-mode button.clear-button *,
+body.light-mode button.voice-clear *,
+body.light-mode button.voice-clear-btn *,
+body.light-mode button.clear-voice *,
+body.light-mode button.clear-voice-button *,
+body.light-mode button.bible-clear-button *,
+body.light-mode .voice-actions button:first-child *,
+body.light-mode .text-actions button:first-child *,
+body.light-mode .field-actions button:first-child *,
+body.light-mode .textarea-actions button:first-child *,
+body.light-mode .register-bible-actions button:first-child *{
+  color:#111827 !important;
+  opacity:1 !important;
+  filter:none !important;
+}
+
+/* Keep microphone/edit buttons blue */
+body.light-mode .voice-actions button:last-child,
+body.light-mode .text-actions button:last-child,
+body.light-mode .field-actions button:last-child,
+body.light-mode .textarea-actions button:last-child,
+body.light-mode .register-bible-actions button:last-child,
+body.light-mode button[aria-label*="mikrofon"],
+body.light-mode button[aria-label*="Mikrofon"],
+body.light-mode button[title*="mikrofon"],
+body.light-mode button[title*="Mikrofon"],
+body.light-mode button.bible-edit-button{
+  background:#0ea5d4 !important;
+  color:#ffffff !important;
+  border:0 !important;
+  opacity:1 !important;
+  filter:none !important;
+}
+
 </style>
-<!-- version: REGISTER v41 two-way-light-dark-and-button-contrast 2026-06-16 -->
+<!-- version: REGISTER v42_light_mode_all_clear_buttons_visible 2026-06-16 -->
 </head>
 <body class="dark-mode">
 <div class="login-widget">
