@@ -1115,8 +1115,59 @@ textarea#bibleText{
   caret-color:transparent !important;
 }
 
+
+/* List v31: fix invisible Bible click overlay and date field */
+.bible-search-click-overlay,
+button.bible-search-click-overlay,
+html:not(.classic-design-root) .bible-search-click-overlay,
+html:not(.classic-design-root) button.bible-search-click-overlay,
+body.dark-mode .bible-search-click-overlay,
+body.dark-mode button.bible-search-click-overlay,
+body.light-mode .bible-search-click-overlay,
+body.light-mode button.bible-search-click-overlay{
+  position:absolute !important;
+  inset:0 !important;
+  z-index:20 !important;
+  display:block !important;
+  width:auto !important;
+  height:auto !important;
+  min-width:0 !important;
+  min-height:0 !important;
+  max-width:none !important;
+  max-height:none !important;
+  margin:0 !important;
+  padding:0 !important;
+  border:0 !important;
+  border-radius:10px !important;
+  background:transparent !important;
+  color:transparent !important;
+  box-shadow:none !important;
+  outline:0 !important;
+  font-size:0 !important;
+  line-height:0 !important;
+  appearance:none !important;
+  -webkit-appearance:none !important;
+  cursor:pointer !important;
+}
+
+.bible-search-click-overlay:hover,
+button.bible-search-click-overlay:hover{
+  background:rgba(255,255,255,.035) !important;
+  color:transparent !important;
+}
+
+body.light-mode .bible-search-click-overlay:hover,
+body.light-mode button.bible-search-click-overlay:hover{
+  background:rgba(0,0,0,.035) !important;
+}
+
+#editExperienceDate,
+#experienceDate{
+  font-family:inherit !important;
+}
+
 </style>
-  <!-- version: LIST v30 robust-norwegian-date-format 2026-06-16 -->
+  <!-- version: LIST v31 overlay-date-fix 2026-06-16 -->
 </head>
 <body class="dark-mode">
 <div class="login-widget">
@@ -2330,12 +2381,15 @@ textarea#bibleText{
   window.formatOpplevelserDate = isoToNoDate;
   window.parseOpplevelserDate = noDateToIso;
 
+
   function patchDateInputById(id){
     const el = document.getElementById(id);
 
     if(!el){
       return;
     }
+
+    const currentValue = isoToNoDate(el.value || el.getAttribute("value") || "");
 
     if(el.type === "date"){
       const replacement = document.createElement("input");
@@ -2346,7 +2400,7 @@ textarea#bibleText{
       replacement.placeholder = "dd.mm.åååå";
       replacement.inputMode = "numeric";
       replacement.autocomplete = "off";
-      replacement.value = isoToNoDate(el.value);
+      replacement.value = currentValue;
 
       for(const attr of el.attributes){
         if(["type", "id", "name", "class", "value", "placeholder", "inputmode", "autocomplete"].includes(attr.name)){
@@ -2359,16 +2413,32 @@ textarea#bibleText{
       return;
     }
 
+    el.type = "text";
     el.placeholder = "dd.mm.åååå";
     el.inputMode = "numeric";
     el.autocomplete = "off";
-    el.value = isoToNoDate(el.value);
+
+    if(currentValue){
+      el.value = currentValue;
+    }
   }
 
   function patchOpplevelserDateInputs(){
     patchDateInputById("experienceDate");
     patchDateInputById("editExperienceDate");
+
+    document.querySelectorAll('input[type="date"]').forEach(input => {
+      if(input.id === "experienceDate" || input.id === "editExperienceDate"){
+        return;
+      }
+
+      input.type = "text";
+      input.placeholder = "dd.mm.åååå";
+      input.inputMode = "numeric";
+      input.value = isoToNoDate(input.value || input.getAttribute("value") || "");
+    });
   }
+
 
   window.patchOpplevelserDateInputs = patchOpplevelserDateInputs;
 
