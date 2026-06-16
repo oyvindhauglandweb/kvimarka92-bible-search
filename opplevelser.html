@@ -1017,7 +1017,7 @@ body > .wrap > .header{
   box-shadow:none !important;
 }
 
-/* List v24: readonly Bible display matches edit display */
+/* List v25: readonly Bible display exactly like edit display */
 .readonly-bible-display{
   margin:14px 0 16px;
 }
@@ -1045,6 +1045,7 @@ body > .wrap > .header{
   border-radius:10px !important;
   padding:12px !important;
   box-shadow:none !important;
+  white-space:pre-wrap;
 }
 body.light-mode .readonly-bible-display .bible{
   background:rgba(0,0,0,.045) !important;
@@ -1060,7 +1061,7 @@ body.light-mode .readonly-bible-display .bible{
 }
 
 </style>
-  <!-- version: LIST v24 readonly-bible-display 2026-06-16 -->
+  <!-- version: LIST v25 readonly-bible-display-fixed 2026-06-16 -->
 </head>
 <body class="dark-mode">
 <div class="login-widget">
@@ -1179,9 +1180,6 @@ body.light-mode .readonly-bible-display .bible{
 
     function formatBibleSource(source){
       const text = String(source || "Bibelen på Norsk (1930)").trim();
-
-      // I visningen ønsker vi ikke ekstra parentes rundt årstall:
-      // "Bibelen på Norsk (1930)" -> "Bibelen på Norsk 1930"
       return text.replace(/\s*\((\d{4})\)\s*$/, " $1");
     }
 
@@ -1312,13 +1310,12 @@ body.light-mode .readonly-bible-display .bible{
         </div>
 
         ${item.bibleReference || item.bibleText ? `
-          <div class="section">
-            <h3>Bibelsted</h3>
-            <div class="bible">
-              <strong>${esc(item.bibleReference || "")}</strong>
-              ${item.bibleText ? `<p>${esc(item.bibleText)}</p>` : ""}
-              ${item.bibleSource ? `<div class="item-meta">${esc(item.bibleSource)}</div>` : ""}
+          <div class="readonly-bible-display">
+            <div class="bible-display-header">
+              <div class="bible-display-title">Bibeltekst: ${esc(item.bibleReference || "")}</div>
+              <div class="bible-display-source">(${esc(formatBibleSource(item.bibleSource || "Bibelen på Norsk (1930)"))})</div>
             </div>
+            <div class="bible">${esc(item.bibleText || "")}</div>
           </div>
         ` : ""}
 
