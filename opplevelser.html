@@ -2030,8 +2030,54 @@ body.light-mode .items .item:not(.selected):not(.active):not(.is-selected):not([
   background:#e5e7eb !important;
 }
 
+
+/* Opplevelser mobile polish v51/v44 */
+.theme-button,
+button.theme-button{
+  font-family: Arial, "Helvetica Neue", sans-serif !important;
+  font-variant-emoji: text !important;
+  line-height:1 !important;
+}
+
+.theme-button .theme-symbol{
+  font-family: Arial, "Helvetica Neue", sans-serif !important;
+  font-size:1.15em !important;
+  line-height:1 !important;
+  display:inline-block !important;
+  color:currentColor !important;
+}
+
+/* Tilbake til liste må være sentrert i mobilknapp */
+#backToListBtn,
+.back-to-list,
+button.back-to-list,
+button[title="Tilbake til liste"],
+button[aria-label="Tilbake til liste"]{
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  text-align:center !important;
+}
+
+/* På mobil må native date input være trykkbar */
+@media (max-width: 700px), (pointer: coarse){
+  #experienceDate,
+  #editExperienceDate{
+    cursor:pointer !important;
+    -webkit-user-select:none !important;
+    user-select:none !important;
+  }
+
+  #experienceDate[type="date"],
+  #editExperienceDate[type="date"]{
+    min-height:44px !important;
+    appearance:auto !important;
+    -webkit-appearance:auto !important;
+  }
+}
+
 </style>
-  <!-- version: LIST v50e theme-icon-moon-in-light-mode 2026-06-17 -->
+  <!-- version: LIST v51 mobile-date-theme-icon-button-polish 2026-06-17 -->
 </head>
 <body class="dark-mode">
 <div class="login-widget">
@@ -4104,20 +4150,21 @@ html body.light-mode .items .item:not(.selected):not(.active):not(.is-selected):
 </script>
 
 
+
 <script>
-/* Opplevelser v-theme-icon: show moon in light mode, sun in dark mode */
+/* Opplevelser mobile polish v51/v44:
+   - text-mode sun/moon icons
+   - native date input on mobile/iOS */
 (function(){
   function isThemeButton(button){
-    if(!button){
-      return false;
-    }
+    if(!button){ return false; }
 
     const text = (button.textContent || "").trim();
     const title = (button.getAttribute("title") || button.getAttribute("aria-label") || "").toLowerCase();
     const cls = button.className ? String(button.className).toLowerCase() : "";
 
     return (
-      text === "☀" || text === "☾" || text === "🌙" || text === "☼" || text === "◐" ||
+      text === "☀" || text === "☀︎" || text === "☾" || text === "🌙" || text === "☼" || text === "◐" ||
       title.includes("light") || title.includes("dark") ||
       title.includes("lys") || title.includes("mørk") ||
       cls.includes("theme")
@@ -4137,38 +4184,136 @@ html body.light-mode .items .item:not(.selected):not(.active):not(.is-selected):
     const isLight = pageIsLight();
 
     document.querySelectorAll("button").forEach(button => {
-      if(!isThemeButton(button)){
-        return;
-      }
+      if(!isThemeButton(button)){ return; }
 
-      button.textContent = isLight ? "☾" : "☀";
+      const symbol = isLight ? "☾" : "☀︎";
+      button.innerHTML = '<span class="theme-symbol">' + symbol + '</span>';
       button.setAttribute("title", isLight ? "Bytt til mørk modus" : "Bytt til lys modus");
       button.setAttribute("aria-label", isLight ? "Bytt til mørk modus" : "Bytt til lys modus");
       button.classList.add("theme-button");
     });
   }
 
-  window.updateOpplevelserThemeIcon = updateThemeIcon;
-
-  if(document.readyState === "loading"){
-    document.addEventListener("DOMContentLoaded", updateThemeIcon);
-  }else{
-    updateThemeIcon();
+  function pad2(value){
+    return String(value).padStart(2, "0");
   }
 
-  document.addEventListener("click", event => {
-    const button = event.target.closest("button");
-    if(!isThemeButton(button)){
+  function noToIso(value){
+    const text = String(value || "").trim();
+
+    const no = text.match(/^(\d{1,2})\.(\d{1,2})\.(\d{4})$/);
+    if(no){
+      return no[3] + "-" + pad2(no[2]) + "-" + pad2(no[1]);
+    }
+
+    const iso = text.match(/^(\d{4})-(\d{2})-(\d{2})/);
+    if(iso){
+      return iso[1] + "-" + iso[2] + "-" + iso[3];
+    }
+
+    return text;
+  }
+
+  function isoToNo(value){
+    const text = String(value || "").trim();
+
+    const iso = text.match(/^(\d{4})-(\d{2})-(\d{2})/);
+    if(iso){
+      return iso[3] + "." + iso[2] + "." + iso[1];
+    }
+
+    return text;
+  }
+
+  function isMobileDateEnvironment(){
+    return (
+      window.matchMedia("(pointer: coarse)").matches ||
+      window.matchMedia("(max-width: 700px)").matches ||
+      /iPad|iPhone|iPod|Android/i.test(navigator.userAgent)
+    );
+  }
+
+  function patchOneDateInput(id){
+    const el = document.getElementById(id);
+    if(!el){ return; }
+
+    const mobile = isMobileDateEnvironment();
+
+    if(mobile){
+      const iso = noToIso(el.value);
+      el.type = "date";
+      if(/^\d{4}-\d{2}-\d{2}$/.test(iso)){
+        el.value = iso;
+      }
+      el.removeAttribute("readonly");
+      el.onclick = null;
       return;
     }
 
-    setTimeout(updateThemeIcon, 0);
-    setTimeout(updateThemeIcon, 80);
-    setTimeout(updateThemeIcon, 250);
+    // Desktop beholder norsk tekstvisning.
+    el.type = "text";
+    if(el.value){
+      el.value = isoToNo(el.value);
+    }
+  }
+
+  function patchMobileDates(){
+    patchOneDateInput("experienceDate");
+    patchOneDateInput("editExperienceDate");
+  }
+
+  window.updateOpplevelserThemeIcon = updateThemeIcon;
+  window.patchOpplevelserMobileDates = patchMobileDates;
+
+  function run(){
+    updateThemeIcon();
+    patchMobileDates();
+  }
+
+  if(document.readyState === "loading"){
+    document.addEventListener("DOMContentLoaded", run);
+  }else{
+    run();
+  }
+
+  window.addEventListener("pageshow", run);
+  window.addEventListener("resize", () => setTimeout(run, 100));
+
+  document.addEventListener("click", event => {
+    const button = event.target.closest("button");
+    if(isThemeButton(button)){
+      setTimeout(updateThemeIcon, 0);
+      setTimeout(updateThemeIcon, 80);
+      setTimeout(updateThemeIcon, 250);
+    }
+
+    setTimeout(patchMobileDates, 50);
   }, true);
 
-  window.addEventListener("storage", updateThemeIcon);
-  window.addEventListener("pageshow", updateThemeIcon);
+  [100, 400, 900, 1500].forEach(delay => setTimeout(run, delay));
+})();
+</script>
+
+
+<script>
+/* Opplevelser mobile polish: mark Tilbake til liste button */
+(function(){
+  function markBackToListButton(){
+    document.querySelectorAll("button").forEach(button => {
+      if((button.textContent || "").trim() === "Tilbake til liste"){
+        button.classList.add("back-to-list");
+        button.id = button.id || "backToListBtn";
+      }
+    });
+  }
+
+  if(document.readyState === "loading"){
+    document.addEventListener("DOMContentLoaded", markBackToListButton);
+  }else{
+    markBackToListButton();
+  }
+
+  [100, 400, 900, 1500].forEach(delay => setTimeout(markBackToListButton, delay));
 })();
 </script>
 
