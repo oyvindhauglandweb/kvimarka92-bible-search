@@ -1593,8 +1593,143 @@ body.light-mode [disabled]{
   opacity:.65 !important;
 }
 
+
+/* List v48: two-way light/dark, button contrast and selected item */
+body.light-mode .top-button,
+body.light-mode .nav-button,
+body.light-mode .toolbar button,
+body.light-mode .header-actions button,
+body.light-mode .icon-button,
+body.light-mode .theme-button,
+body.light-mode .font-button,
+body.light-mode .home-button,
+body.light-mode .help-button,
+body.light-mode .back-button,
+body.light-mode .design-button,
+body.light-mode button:not(.mic-button):not(.voice-mic-btn):not(.bible-edit-button):not(.primary):not(.save-button):not(.search-button){
+  background:#e5e7eb !important;
+  color:#111827 !important;
+  border:0 !important;
+  box-shadow:none !important;
+  opacity:1 !important;
+}
+
+body.light-mode .top-button:hover,
+body.light-mode .nav-button:hover,
+body.light-mode .toolbar button:hover,
+body.light-mode .header-actions button:hover,
+body.light-mode .icon-button:hover,
+body.light-mode .theme-button:hover,
+body.light-mode .font-button:hover,
+body.light-mode .home-button:hover,
+body.light-mode .help-button:hover,
+body.light-mode .back-button:hover,
+body.light-mode .design-button:hover,
+body.light-mode button:not(.mic-button):not(.voice-mic-btn):not(.bible-edit-button):not(.primary):not(.save-button):not(.search-button):hover{
+  background:#d1d5db !important;
+  color:#111827 !important;
+  opacity:1 !important;
+}
+
+body.light-mode .voice-clear-btn,
+body.light-mode .clear-voice-button,
+body.light-mode .bible-clear-button,
+body.light-mode button.voice-clear-btn,
+body.light-mode button.clear-voice-button,
+body.light-mode button.bible-clear-button{
+  background:#e5e7eb !important;
+  color:#111827 !important;
+  border:0 !important;
+  box-shadow:none !important;
+  opacity:1 !important;
+}
+
+body.light-mode .voice-clear-btn:hover,
+body.light-mode .clear-voice-button:hover,
+body.light-mode .bible-clear-button:hover,
+body.light-mode button.voice-clear-btn:hover,
+body.light-mode button.clear-voice-button:hover,
+body.light-mode button.bible-clear-button:hover{
+  background:#d1d5db !important;
+  color:#111827 !important;
+  opacity:1 !important;
+}
+
+body.light-mode .mic-button,
+body.light-mode .voice-mic-btn,
+body.light-mode .bible-edit-button,
+body.light-mode .primary,
+body.light-mode .save-button,
+body.light-mode .search-button{
+  background:#0ea5d4 !important;
+  color:#ffffff !important;
+  border:0 !important;
+  opacity:1 !important;
+}
+
+/* Ikonene inni lyse knapper må være synlige */
+body.light-mode .top-button *,
+body.light-mode .nav-button *,
+body.light-mode .toolbar button *,
+body.light-mode .header-actions button *,
+body.light-mode .icon-button *,
+body.light-mode .theme-button *,
+body.light-mode .font-button *,
+body.light-mode .home-button *,
+body.light-mode .help-button *,
+body.light-mode .back-button *,
+body.light-mode .design-button *,
+body.light-mode .voice-clear-btn *,
+body.light-mode .clear-voice-button *,
+body.light-mode .bible-clear-button *{
+  color:#111827 !important;
+  opacity:1 !important;
+  filter:none !important;
+}
+
+/* Valgt opplevelse i listen må være tydelig i light mode */
+body.light-mode .experience-item.selected,
+body.light-mode .experience-item.active,
+body.light-mode .result-item.selected,
+body.light-mode .result-item.active,
+body.light-mode .list-item.selected,
+body.light-mode .list-item.active,
+body.light-mode .selected-experience,
+body.light-mode [aria-selected="true"],
+body.light-mode .selected{
+  background:#bfdbfe !important;
+  color:#111827 !important;
+  border-left:4px solid #2563eb !important;
+}
+
+body.light-mode .experience-item.selected *,
+body.light-mode .experience-item.active *,
+body.light-mode .result-item.selected *,
+body.light-mode .result-item.active *,
+body.light-mode .list-item.selected *,
+body.light-mode .list-item.active *,
+body.light-mode .selected-experience *,
+body.light-mode [aria-selected="true"] *,
+body.light-mode .selected *{
+  color:#111827 !important;
+  opacity:1 !important;
+}
+
+body.light-mode .experience-item:not(.selected):not(.active),
+body.light-mode .result-item:not(.selected):not(.active),
+body.light-mode .list-item:not(.selected):not(.active){
+  background:#f3f4f6 !important;
+  color:#111827 !important;
+}
+
+body.light-mode .experience-item:not(.selected):not(.active):hover,
+body.light-mode .result-item:not(.selected):not(.active):hover,
+body.light-mode .list-item:not(.selected):not(.active):hover{
+  background:#e5e7eb !important;
+}
+
 </style>
-  <!-- version: LIST v47 real-light-mode 2026-06-16 -->
+  <!-- version: LIST v48_two_way_light_dark_button_contrast_selected_item 2026-06-16 -->
 </head>
 <body class="dark-mode">
 <div class="login-widget">
@@ -3241,66 +3376,136 @@ body.light-mode [disabled]{
 </script>
 
 
+
 <script>
 (function(){
-  function applyRealListTheme(){
-    let theme = "";
-    try{
-      theme = localStorage.getItem("kvimarka92Theme")
-        || localStorage.getItem("theme")
-        || localStorage.getItem("opplevelserTheme")
-        || "";
-    }catch(error){}
+  const THEME_KEYS = ["kvimarka92Theme", "opplevelserTheme", "theme"];
+
+  function readStoredTheme(){
+    for(const key of THEME_KEYS){
+      try{
+        const value = localStorage.getItem(key);
+        if(value === "light" || value === "dark"){
+          return value;
+        }
+      }catch(error){}
+    }
+
+    return "";
+  }
+
+  function storeTheme(theme){
+    THEME_KEYS.forEach(key => {
+      try{
+        localStorage.setItem(key, theme);
+      }catch(error){}
+    });
+  }
+
+  function setTheme(theme){
+    const isLight = theme === "light";
+
+    document.documentElement.classList.toggle("light-mode", isLight);
+    document.documentElement.classList.toggle("light", isLight);
+    document.documentElement.classList.toggle("dark-mode", !isLight);
+    document.documentElement.classList.toggle("dark", !isLight);
+
+    if(document.body){
+      document.body.classList.toggle("light-mode", isLight);
+      document.body.classList.toggle("light", isLight);
+      document.body.classList.toggle("dark-mode", !isLight);
+      document.body.classList.toggle("dark", !isLight);
+    }
+
+    storeTheme(theme);
+  }
+
+  function applySavedTheme(){
+    const stored = readStoredTheme();
+    if(stored === "light" || stored === "dark"){
+      setTheme(stored);
+      return;
+    }
 
     const body = document.body;
-    if(!body){
+    const currentlyLight =
+      document.documentElement.classList.contains("light-mode")
+      || document.documentElement.classList.contains("light")
+      || (body && (body.classList.contains("light-mode") || body.classList.contains("light")));
+
+    setTheme(currentlyLight ? "light" : "dark");
+  }
+
+  function isThemeButton(button){
+    if(!button){
+      return false;
+    }
+
+    const txt = (button.textContent || "").trim();
+    const title = (button.getAttribute("title") || button.getAttribute("aria-label") || "").toLowerCase();
+    const cls = button.className ? String(button.className).toLowerCase() : "";
+
+    return (
+      txt === "☀" || txt === "☾" || txt === "🌙" || txt === "☼" ||
+      title.includes("light") || title.includes("dark") ||
+      title.includes("lys") || title.includes("mørk") ||
+      cls.includes("theme")
+    );
+  }
+
+  function toggleThemeFromButton(event){
+    const button = event.target.closest("button");
+    if(!isThemeButton(button)){
       return;
     }
 
-    const hasLight =
-      body.classList.contains("light-mode")
-      || body.classList.contains("light")
-      || document.documentElement.classList.contains("light-mode")
-      || document.documentElement.classList.contains("light")
-      || theme === "light";
+    event.preventDefault();
+    event.stopPropagation();
 
-    if(hasLight){
-      body.classList.add("light-mode");
-      body.classList.remove("dark-mode");
-      document.documentElement.classList.add("light-mode");
-      document.documentElement.classList.remove("dark-mode");
-    }else{
-      body.classList.add("dark-mode");
-      body.classList.remove("light-mode");
-      document.documentElement.classList.add("dark-mode");
-      document.documentElement.classList.remove("light-mode");
-    }
+    const body = document.body;
+    const currentlyLight =
+      document.documentElement.classList.contains("light-mode")
+      || document.documentElement.classList.contains("light")
+      || (body && (body.classList.contains("light-mode") || body.classList.contains("light")));
+
+    setTheme(currentlyLight ? "dark" : "light");
   }
 
-  window.applyRealListTheme = applyRealListTheme;
+  window.applyRealListTheme = applySavedTheme;
+  window.setOpplevelserTheme = setTheme;
 
   if(document.readyState === "loading"){
-    document.addEventListener("DOMContentLoaded", applyRealListTheme);
+    document.addEventListener("DOMContentLoaded", applySavedTheme);
   }else{
-    applyRealListTheme();
+    applySavedTheme();
   }
 
-  window.addEventListener("storage", applyRealListTheme);
+  document.addEventListener("click", toggleThemeFromButton, true);
+})();
+</script>
 
-  document.addEventListener("click", event => {
-    const btn = event.target.closest("button");
-    if(!btn){
+
+<script>
+(function(){
+  function markSelectedExperienceFromClick(event){
+    const row = event.target.closest(".experience-item, .result-item, .list-item, [data-experience-id], [data-id]");
+    if(!row){
       return;
     }
 
-    const txt = (btn.textContent || "").trim();
-    const title = (btn.getAttribute("title") || btn.getAttribute("aria-label") || "").toLowerCase();
-
-    if(txt === "☀" || txt === "☾" || txt === "🌙" || title.includes("light") || title.includes("dark") || title.includes("lys") || title.includes("mørk")){
-      setTimeout(applyRealListTheme, 0);
-      setTimeout(applyRealListTheme, 80);
+    const container = row.parentElement;
+    if(container){
+      container.querySelectorAll(".experience-item.selected, .result-item.selected, .list-item.selected, .selected-experience, [aria-selected='true']").forEach(el => {
+        el.classList.remove("selected", "active", "selected-experience");
+        el.removeAttribute("aria-selected");
+      });
     }
-  }, true);
+
+    row.classList.add("selected");
+    row.setAttribute("aria-selected", "true");
+  }
+
+  document.addEventListener("click", markSelectedExperienceFromClick, true);
 })();
 </script>
 
