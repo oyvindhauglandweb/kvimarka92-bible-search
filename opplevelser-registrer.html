@@ -1051,8 +1051,18 @@ body.light-mode #registerBibleField #bibleText:hover{
   background:rgba(0,0,0,.075) !important;
 }
 
+
+/* Register v38: Norwegian date field with calendar picker */
+.date-picker-wrap{display:flex!important;align-items:center!important;gap:8px!important;width:100%!important}
+.date-picker-wrap #experienceDate{flex:1 1 auto!important;min-width:0!important;width:100%!important}
+.date-picker-button{display:inline-flex!important;align-items:center!important;justify-content:center!important;width:42px!important;height:42px!important;min-width:42px!important;padding:0!important;border:0!important;border-radius:10px!important;background:rgba(255,255,255,.075)!important;color:var(--opp-text,#eee)!important;box-shadow:none!important;cursor:pointer!important;font-size:20px!important;line-height:1!important}
+.date-picker-button:hover{background:rgba(255,255,255,.13)!important}
+body.light-mode .date-picker-button{background:rgba(0,0,0,.075)!important;color:var(--opp-text,#333)!important}
+body.light-mode .date-picker-button:hover{background:rgba(0,0,0,.13)!important}
+#experienceDatePicker{position:absolute!important;width:1px!important;height:1px!important;opacity:0!important;pointer-events:none!important}
+
 </style>
-<!-- version: REGISTER v37 real-full-width-bible-field 2026-06-16 -->
+<!-- version: REGISTER v38 restore-date-picker-default-today 2026-06-16 -->
 </head>
 <body class="dark-mode">
 <div class="login-widget">
@@ -1094,7 +1104,7 @@ body.light-mode #registerBibleField #bibleText:hover{
           </div>
           <div>
             <label for="experienceDate">Dato for opplevelse</label>
-            <input type="text" id="experienceDate" name="experienceDate" type="text" required placeholder="dd.mm.åååå" inputmode="numeric" onblur="forceNorwegianRegisterDate()">
+            <div class="date-picker-wrap"><input id="experienceDate" name="experienceDate" type="text" placeholder="dd.mm.åååå" inputmode="numeric" autocomplete="off"><button type="button" class="date-picker-button" onclick="openExperienceDatePicker()" title="Velg dato" aria-label="Velg dato">📅</button><input id="experienceDatePicker" type="date" tabindex="-1" aria-hidden="true"></div>
           </div>
           <div>
             <label for="place">Sted</label>
@@ -2095,168 +2105,6 @@ body.light-mode #registerBibleField #bibleText:hover{
 
 <script>
 (function(){
-  function isoToNoDate(value){
-    const text = String(value || "").trim();
-
-    const iso = text.match(/^(\d{4})-(\d{2})-(\d{2})/);
-    if(iso){
-      return iso[3] + "." + iso[2] + "." + iso[1];
-    }
-
-    const us = text.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
-    if(us){
-      return String(us[2]).padStart(2, "0") + "." + String(us[1]).padStart(2, "0") + "." + us[3];
-    }
-
-    return text;
-  }
-
-  function noDateToIso(value){
-    const text = String(value || "").trim();
-
-    const no = text.match(/^(\d{1,2})\.(\d{1,2})\.(\d{4})$/);
-    if(no){
-      return no[3] + "-" + String(no[2]).padStart(2, "0") + "-" + String(no[1]).padStart(2, "0");
-    }
-
-    const iso = text.match(/^(\d{4})-(\d{2})-(\d{2})/);
-    if(iso){
-      return iso[1] + "-" + iso[2] + "-" + iso[3];
-    }
-
-    const us = text.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
-    if(us){
-      return us[3] + "-" + String(us[1]).padStart(2, "0") + "-" + String(us[2]).padStart(2, "0");
-    }
-
-    return text;
-  }
-
-  window.formatOpplevelserDate = isoToNoDate;
-  window.parseOpplevelserDate = noDateToIso;
-
-  function patchDateInputById(id){
-    const el = document.getElementById(id);
-
-    if(!el){
-      return;
-    }
-
-    if(el.type === "date"){
-      const replacement = document.createElement("input");
-      replacement.type = "text";
-      replacement.id = el.id;
-      replacement.name = el.name || el.id;
-      replacement.className = el.className || "";
-      replacement.placeholder = "dd.mm.åååå";
-      replacement.inputMode = "numeric";
-      replacement.autocomplete = "off";
-      replacement.value = isoToNoDate(el.value);
-
-      for(const attr of el.attributes){
-        if(["type", "id", "name", "class", "value", "placeholder", "inputmode", "autocomplete"].includes(attr.name)){
-          continue;
-        }
-        replacement.setAttribute(attr.name, attr.value);
-      }
-
-      el.replaceWith(replacement);
-      return;
-    }
-
-    el.placeholder = "dd.mm.åååå";
-    el.inputMode = "numeric";
-    el.autocomplete = "off";
-    el.value = isoToNoDate(el.value);
-  }
-
-  function patchOpplevelserDateInputs(){
-    patchDateInputById("experienceDate");
-    patchDateInputById("editExperienceDate");
-  }
-
-  window.patchOpplevelserDateInputs = patchOpplevelserDateInputs;
-
-  if(document.readyState === "loading"){
-    document.addEventListener("DOMContentLoaded", patchOpplevelserDateInputs);
-  }else{
-    patchOpplevelserDateInputs();
-  }
-})();
-</script>
-
-
-<script>
-(function(){
-  function forceNorwegianRegisterDate(){
-    const el = document.getElementById("experienceDate");
-
-    if(!el){
-      return;
-    }
-
-    // Sørg for at nettleseren ikke bruker innebygd ISO-date-kontroll.
-    try{
-      if(el.type === "date"){
-        el.type = "text";
-      }
-    }catch(error){}
-
-    el.placeholder = "dd.mm.åååå";
-    el.inputMode = "numeric";
-    el.autocomplete = "off";
-
-    if(typeof window.formatOpplevelserDate === "function"){
-      const formatted = window.formatOpplevelserDate(el.value || el.getAttribute("value") || "");
-
-      if(formatted && formatted !== el.value){
-        el.value = formatted;
-      }
-    }else{
-      const match = String(el.value || "").match(/^(\d{4})-(\d{2})-(\d{2})$/);
-
-      if(match){
-        el.value = `${match[3]}.${match[2]}.${match[1]}`;
-      }
-    }
-  }
-
-  window.forceNorwegianRegisterDate = forceNorwegianRegisterDate;
-
-  function installRegisterDateGuards(){
-    forceNorwegianRegisterDate();
-
-    const el = document.getElementById("experienceDate");
-
-    if(el && el.dataset.noDateGuard !== "1"){
-      el.dataset.noDateGuard = "1";
-
-      ["focus", "blur", "change", "input"].forEach(eventName => {
-        el.addEventListener(eventName, () => {
-          window.setTimeout(forceNorwegianRegisterDate, 0);
-        });
-      });
-    }
-
-    // En del av koden setter dato etter API-kall/render. Kjør derfor noen kontroller etterpå.
-    [0, 50, 150, 400, 900, 1500].forEach(delay => {
-      window.setTimeout(forceNorwegianRegisterDate, delay);
-    });
-  }
-
-  if(document.readyState === "loading"){
-    document.addEventListener("DOMContentLoaded", installRegisterDateGuards);
-  }else{
-    installRegisterDateGuards();
-  }
-
-  window.addEventListener("pageshow", installRegisterDateGuards);
-})();
-</script>
-
-
-<script>
-(function(){
   const SELECTED_KEY = "kvimarka92SelectedBibleVerse";
   const INPUT_KEY = "kvimarka92BibleSearchInputVerse";
 
@@ -2508,6 +2356,91 @@ body.light-mode #registerBibleField #bibleText:hover{
   }else{
     initRegisterBibleField();
   }
+})();
+</script>
+
+
+<script>
+(function(){
+  function pad2(v){return String(v).padStart(2,"0");}
+  function isoToNorwegianDate(value){
+    const text=String(value||"").trim();
+    const iso=text.match(/^(\d{4})-(\d{2})-(\d{2})/);
+    if(iso){return iso[3]+"."+iso[2]+"."+iso[1];}
+    const no=text.match(/^(\d{1,2})\.(\d{1,2})\.(\d{4})$/);
+    if(no){return pad2(no[1])+"."+pad2(no[2])+"."+no[3];}
+    const us=text.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+    if(us){return pad2(us[2])+"."+pad2(us[1])+"."+us[3];}
+    return text;
+  }
+  function norwegianDateToIso(value){
+    const text=String(value||"").trim();
+    const no=text.match(/^(\d{1,2})\.(\d{1,2})\.(\d{4})$/);
+    if(no){return no[3]+"-"+pad2(no[2])+"-"+pad2(no[1]);}
+    const iso=text.match(/^(\d{4})-(\d{2})-(\d{2})/);
+    if(iso){return iso[1]+"-"+iso[2]+"-"+iso[3];}
+    const us=text.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+    if(us){return us[3]+"-"+pad2(us[1])+"-"+pad2(us[2]);}
+    return text;
+  }
+  function todayIso(){const d=new Date();return d.getFullYear()+"-"+pad2(d.getMonth()+1)+"-"+pad2(d.getDate());}
+  window.formatOpplevelserDate=isoToNorwegianDate;
+  window.parseOpplevelserDate=norwegianDateToIso;
+
+  function syncDatePickerFromText(){
+    const text=document.getElementById("experienceDate");
+    const picker=document.getElementById("experienceDatePicker");
+    if(!text||!picker){return;}
+    const iso=norwegianDateToIso(text.value);
+    if(/^\d{4}-\d{2}-\d{2}$/.test(iso)){picker.value=iso;}
+  }
+  function setRegisterTodayIfBlank(){
+    const text=document.getElementById("experienceDate");
+    const picker=document.getElementById("experienceDatePicker");
+    if(!text){return;}
+    if(!String(text.value||"").trim()){
+      const iso=todayIso();
+      text.value=isoToNorwegianDate(iso);
+      if(picker){picker.value=iso;}
+    }else{
+      text.value=isoToNorwegianDate(text.value);
+      syncDatePickerFromText();
+    }
+  }
+  window.forceNorwegianRegisterDate=function(){
+    const text=document.getElementById("experienceDate");
+    if(!text){return;}
+    text.type="text";
+    text.placeholder="dd.mm.åååå";
+    text.inputMode="numeric";
+    text.autocomplete="off";
+    setRegisterTodayIfBlank();
+  };
+  window.openExperienceDatePicker=function(){
+    const picker=document.getElementById("experienceDatePicker");
+    syncDatePickerFromText();
+    if(!picker){return;}
+    try{picker.showPicker();}catch(e){picker.focus();picker.click();}
+  };
+  function installDatePicker(){
+    const text=document.getElementById("experienceDate");
+    const picker=document.getElementById("experienceDatePicker");
+    if(!text){return;}
+    setRegisterTodayIfBlank();
+    if(text.dataset.datePickerReady!=="1"){
+      text.dataset.datePickerReady="1";
+      text.addEventListener("blur",()=>{text.value=isoToNorwegianDate(text.value);syncDatePickerFromText();});
+      text.addEventListener("change",syncDatePickerFromText);
+    }
+    if(picker&&picker.dataset.datePickerReady!=="1"){
+      picker.dataset.datePickerReady="1";
+      picker.addEventListener("change",()=>{if(picker.value){text.value=isoToNorwegianDate(picker.value);}});
+    }
+    [0,50,150,400,900].forEach(delay=>window.setTimeout(setRegisterTodayIfBlank,delay));
+  }
+  window.installExperienceDatePicker=installDatePicker;
+  if(document.readyState==="loading"){document.addEventListener("DOMContentLoaded",installDatePicker);}else{installDatePicker();}
+  window.addEventListener("pageshow",installDatePicker);
 })();
 </script>
 
