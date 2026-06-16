@@ -1091,8 +1091,32 @@ body.light-mode .bible-click-frame:hover textarea{
   background:rgba(0,0,0,.075) !important;
 }
 
+
+/* List v29: Bible display click overlay */
+.readonly-bible-display,
+.bible-click-frame{
+  position:relative !important;
+  cursor:pointer !important;
+}
+
+.bible-search-click-overlay{
+  position:absolute;
+  inset:0;
+  z-index:20;
+  cursor:pointer;
+  background:transparent;
+}
+
+.readonly-bible-display .bible,
+.bible-click-frame textarea,
+textarea#editBibleText,
+textarea#bibleText{
+  cursor:pointer !important;
+  caret-color:transparent !important;
+}
+
 </style>
-  <!-- version: LIST v28 norwegian-date-format 2026-06-16 -->
+  <!-- version: LIST v29 bible-click-overlay 2026-06-16 -->
 </head>
 <body class="dark-mode">
 <div class="login-widget">
@@ -1344,6 +1368,7 @@ body.light-mode .bible-click-frame:hover textarea{
 
         ${item.bibleReference || item.bibleText ? `
           <div class="readonly-bible-display" onclick="openOpplevelserBibleSearch()" title="Klikk for å endre bibelsted">
+            <button type="button" class="bible-search-click-overlay" onclick="openOpplevelserBibleSearch()" title="Klikk for å endre bibelsted" aria-label="Endre bibelsted"></button>
             <div class="bible-display-header">
               <div class="bible-display-title">Bibeltekst: ${esc(item.bibleReference || "")}</div>
               <div class="bible-display-source">(${esc(formatBibleSource(item.bibleSource || "Bibelen på Norsk (1930)"))})</div>
@@ -1389,6 +1414,7 @@ body.light-mode .bible-click-frame:hover textarea{
 
             <div class="full">
               <div id="editBibleClickFrame" class="bible-click-frame" onclick="openOpplevelserBibleSearch()">
+              <button type="button" class="bible-search-click-overlay" onclick="openOpplevelserBibleSearch()" title="Klikk for å endre bibelsted" aria-label="Endre bibelsted"></button>
 <div class="bible-display-header">
               <div class="bible-display-title" id="editBibleDisplayTitle">Bibeltekst</div>
               <div class="bible-display-source" id="editBibleDisplaySource"></div>
@@ -1449,6 +1475,7 @@ body.light-mode .bible-click-frame:hover textarea{
       if(window.initBibleHeaderDisplay){ window.initBibleHeaderDisplay(); }
       if(window.bindBibleTextClickToSearch){ window.bindBibleTextClickToSearch(); }
       if(window.patchOpplevelserDateInputs){ window.patchOpplevelserDateInputs(); }
+      if(window.bindBibleSearchClickAreas){ window.bindBibleSearchClickAreas(); }
       if(window.initOpplevelserMicButtons){ window.initOpplevelserMicButtons(); }
       if(window.initOpplevelserAutoGrowTextareas){ window.initOpplevelserAutoGrowTextareas(); }
       if(window.initBibleHeaderDisplay){ window.initBibleHeaderDisplay(); }
@@ -2299,6 +2326,39 @@ body.light-mode .bible-click-frame:hover textarea{
     document.addEventListener("DOMContentLoaded", patchDateInputs);
   }else{
     patchDateInputs();
+  }
+})();
+</script>
+
+
+<script>
+(function(){
+  function bindBibleSearchClickAreas(){
+    document
+      .querySelectorAll(".readonly-bible-display, .bible-click-frame, #editBibleText, #bibleText")
+      .forEach(el => {
+        if(el.dataset.bibleSearchClickReady === "1"){
+          return;
+        }
+
+        el.dataset.bibleSearchClickReady = "1";
+        el.addEventListener("click", event => {
+          event.preventDefault();
+          event.stopPropagation();
+
+          if(typeof window.openOpplevelserBibleSearch === "function"){
+            window.openOpplevelserBibleSearch();
+          }
+        });
+      });
+  }
+
+  window.bindBibleSearchClickAreas = bindBibleSearchClickAreas;
+
+  if(document.readyState === "loading"){
+    document.addEventListener("DOMContentLoaded", bindBibleSearchClickAreas);
+  }else{
+    bindBibleSearchClickAreas();
   }
 })();
 </script>
