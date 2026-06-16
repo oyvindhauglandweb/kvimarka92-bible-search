@@ -1288,8 +1288,58 @@ body.light-mode .bible-inline-actions .bible-clear-button:hover{
   background:rgba(0,0,0,.13) !important;
 }
 
+
+/* List v44: grey Bible clear button and persistent Bible text link */
+.bible-inline-actions .bible-clear-button,
+.bible-inline-actions button.bible-clear-button,
+button.bible-icon-button.bible-clear-button,
+html:not(.classic-design-root) .bible-inline-actions .bible-clear-button,
+html:not(.classic-design-root) button.bible-icon-button.bible-clear-button,
+body.dark-mode .bible-inline-actions .bible-clear-button,
+body.dark-mode button.bible-icon-button.bible-clear-button,
+body.light-mode .bible-inline-actions .bible-clear-button,
+body.light-mode button.bible-icon-button.bible-clear-button{
+  background:rgba(255,255,255,.075) !important;
+  color:var(--opp-text, #eee) !important;
+  border:0 !important;
+  box-shadow:none !important;
+  filter:none !important;
+}
+
+.bible-inline-actions .bible-clear-button:hover,
+.bible-inline-actions button.bible-clear-button:hover,
+button.bible-icon-button.bible-clear-button:hover,
+html:not(.classic-design-root) .bible-inline-actions .bible-clear-button:hover,
+html:not(.classic-design-root) button.bible-icon-button.bible-clear-button:hover,
+body.dark-mode .bible-inline-actions .bible-clear-button:hover,
+body.dark-mode button.bible-icon-button.bible-clear-button:hover{
+  background:rgba(255,255,255,.13) !important;
+  color:var(--opp-text, #eee) !important;
+  filter:none !important;
+}
+
+body.light-mode .bible-inline-actions .bible-clear-button,
+body.light-mode .bible-inline-actions button.bible-clear-button,
+body.light-mode button.bible-icon-button.bible-clear-button{
+  background:rgba(0,0,0,.075) !important;
+  color:var(--opp-text, #333) !important;
+}
+
+body.light-mode .bible-inline-actions .bible-clear-button:hover,
+body.light-mode .bible-inline-actions button.bible-clear-button:hover,
+body.light-mode button.bible-icon-button.bible-clear-button:hover{
+  background:rgba(0,0,0,.13) !important;
+  color:var(--opp-text, #333) !important;
+}
+
+#editBibleText,
+.plain-bible-text{
+  pointer-events:auto !important;
+  cursor:pointer !important;
+}
+
 </style>
-  <!-- version: LIST v43 bible-buttons-inline 2026-06-16 -->
+  <!-- version: LIST v44 grey-clear-persistent-bible-link 2026-06-16 -->
 </head>
 <body class="dark-mode">
 <div class="login-widget">
@@ -1647,6 +1697,7 @@ body.light-mode .bible-inline-actions .bible-clear-button:hover{
       if(window.autoGrowOpplevelserTextarea){ window.autoGrowOpplevelserTextarea(document.getElementById("editBibleText")); }
       
       if(window.patchOpplevelserDateInputs){ window.patchOpplevelserDateInputs(); }
+      if(window.ensureBibleTextLink){ window.ensureBibleTextLink(); }
       if(window.bindBibleTextOpenSearch){ window.bindBibleTextOpenSearch(); }
       
       
@@ -2539,44 +2590,6 @@ body.light-mode .bible-inline-actions .bible-clear-button:hover{
 
 <script>
 (function(){
-  window.clearOpplevelserBiblePlace = function(){
-    ["bibleReference", "bibleText", "bibleSource", "editBibleReference", "editBibleText", "editBibleSource"].forEach(id => {
-      const el = document.getElementById(id);
-      if(!el){
-        return;
-      }
-
-      if(id.toLowerCase().includes("source")){
-        el.value = "Bibelen på Norsk (1930)";
-      }else{
-        el.value = "";
-      }
-
-      el.dispatchEvent(new Event("input", { bubbles:true }));
-      el.dispatchEvent(new Event("change", { bubbles:true }));
-    });
-
-    if(window.updateBibleHeaderDisplay){
-      window.updateBibleHeaderDisplay();
-    }
-
-    if(window.initOpplevelserAutoGrowTextareas){
-      window.initOpplevelserAutoGrowTextareas();
-    }
-
-    try{
-      sessionStorage.removeItem("kvimarka92SelectedBibleVerse");
-      sessionStorage.removeItem("kvimarka92BibleSearchInputVerse");
-      localStorage.removeItem("kvimarka92SelectedBibleVerse");
-      localStorage.removeItem("kvimarka92BibleSearchInputVerse");
-    }catch(error){}
-  };
-})();
-</script>
-
-
-<script>
-(function(){
   function markExperienceEditing(){
     document.body.classList.toggle("editing-experience", !!document.getElementById("editForm"));
   }
@@ -2598,34 +2611,85 @@ body.light-mode .bible-inline-actions .bible-clear-button:hover{
 </script>
 
 
+
 <script>
 (function(){
-  function bindBibleTextOpenSearch(){
+  function ensureBibleTextLink(){
     const el = document.getElementById("editBibleText");
-    if(!el || el.dataset.bibleTextOpenReady === "1"){
+    if(!el){
       return;
     }
 
-    el.dataset.bibleTextOpenReady = "1";
-    el.addEventListener("keydown", event => {
-      if(event.key !== "Enter" && event.key !== " "){
-        return;
-      }
+    el.setAttribute("readonly", "readonly");
+    el.setAttribute("tabindex", "0");
+    el.setAttribute("role", "button");
+    el.setAttribute("title", "Klikk for å endre bibelsted");
 
-      event.preventDefault();
-
+    // onclick-attributtet beholdes selv når feltet er tømt.
+    el.onclick = function(){
       if(typeof window.openOpplevelserBibleSearch === "function"){
         window.openOpplevelserBibleSearch();
       }
-    });
+    };
+
+    if(el.dataset.bibleTextOpenKeyReady !== "1"){
+      el.dataset.bibleTextOpenKeyReady = "1";
+      el.addEventListener("keydown", event => {
+        if(event.key !== "Enter" && event.key !== " "){
+          return;
+        }
+
+        event.preventDefault();
+
+        if(typeof window.openOpplevelserBibleSearch === "function"){
+          window.openOpplevelserBibleSearch();
+        }
+      });
+    }
   }
 
-  window.bindBibleTextOpenSearch = bindBibleTextOpenSearch;
+  window.ensureBibleTextLink = ensureBibleTextLink;
+
+  window.clearOpplevelserBiblePlace = function(){
+    const fields = {
+      editBibleReference:"",
+      editBibleText:"",
+      editBibleSource:"Bibelen på Norsk (1930)"
+    };
+
+    Object.keys(fields).forEach(id => {
+      const el = document.getElementById(id);
+      if(!el){
+        return;
+      }
+
+      el.value = fields[id];
+      el.dispatchEvent(new Event("input", { bubbles:true }));
+      el.dispatchEvent(new Event("change", { bubbles:true }));
+    });
+
+    if(window.updateBibleHeaderDisplay){
+      window.updateBibleHeaderDisplay();
+    }
+
+    if(window.initOpplevelserAutoGrowTextareas){
+      window.initOpplevelserAutoGrowTextareas();
+    }
+
+    ensureBibleTextLink();
+
+    try{
+      sessionStorage.removeItem("kvimarka92SelectedBibleVerse");
+      sessionStorage.removeItem("kvimarka92BibleSearchInputVerse");
+      localStorage.removeItem("kvimarka92SelectedBibleVerse");
+      localStorage.removeItem("kvimarka92BibleSearchInputVerse");
+    }catch(error){}
+  };
 
   if(document.readyState === "loading"){
-    document.addEventListener("DOMContentLoaded", bindBibleTextOpenSearch);
+    document.addEventListener("DOMContentLoaded", ensureBibleTextLink);
   }else{
-    bindBibleTextOpenSearch();
+    ensureBibleTextLink();
   }
 })();
 </script>
