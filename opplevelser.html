@@ -2031,7 +2031,7 @@ body.light-mode .items .item:not(.selected):not(.active):not(.is-selected):not([
 }
 
 </style>
-  <!-- version: LIST v50c_search_button_selected_item_fix 2026-06-16 -->
+  <!-- version: LIST v50d_final_search_button_and_selected_override 2026-06-17 -->
 </head>
 <body class="dark-mode">
 <div class="login-widget">
@@ -3971,6 +3971,134 @@ body.light-mode .items .item:not(.selected):not(.active):not(.is-selected):not([
     document.addEventListener("DOMContentLoaded", install);
   }else{
     install();
+  }
+})();
+</script>
+
+
+<style id="opplevelser-v50d-final-overrides">
+/* v50d: final overrides placed after all other CSS so they win */
+
+/* Søk-knappen på opplevelser.html er faktisk id="refreshBtn" */
+html body.light-mode #refreshBtn,
+html body.light-mode button#refreshBtn,
+html body.light-mode .toolbar.search-section #refreshBtn,
+html body.light-mode .search-section button#refreshBtn{
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  min-width:58px !important;
+  height:42px !important;
+  padding:0 18px !important;
+  border:0 !important;
+  border-radius:999px !important;
+  background:#0ea5d4 !important;
+  color:#ffffff !important;
+  font-weight:800 !important;
+  box-shadow:none !important;
+  opacity:1 !important;
+  filter:none !important;
+  appearance:none !important;
+  -webkit-appearance:none !important;
+}
+
+html body.light-mode #refreshBtn:hover,
+html body.light-mode button#refreshBtn:hover,
+html body.light-mode .toolbar.search-section #refreshBtn:hover,
+html body.light-mode .search-section button#refreshBtn:hover{
+  background:#0284c7 !important;
+  color:#ffffff !important;
+}
+
+html body.light-mode #refreshBtn *,
+html body.light-mode button#refreshBtn *{
+  color:#ffffff !important;
+  opacity:1 !important;
+  filter:none !important;
+}
+
+/* Ekstra tydelig valgt opplevelse. Listen bruker .items .item */
+html body.light-mode .items .item.selected,
+html body.light-mode .items .item.active,
+html body.light-mode .items .item.is-selected,
+html body.light-mode .items .item[data-selected="true"],
+html body.light-mode .items .item[aria-selected="true"]{
+  background:#bfdbfe !important;
+  color:#111827 !important;
+  border-left:6px solid #1d4ed8 !important;
+  outline:2px solid rgba(29,78,216,.28) !important;
+  outline-offset:-2px !important;
+  box-shadow:inset 0 0 0 1px rgba(29,78,216,.32) !important;
+}
+
+html body.light-mode .items .item.selected *,
+html body.light-mode .items .item.active *,
+html body.light-mode .items .item.is-selected *,
+html body.light-mode .items .item[data-selected="true"] *,
+html body.light-mode .items .item[aria-selected="true"] *{
+  color:#111827 !important;
+  opacity:1 !important;
+  filter:none !important;
+}
+
+html body.light-mode .items .item:not(.selected):not(.active):not(.is-selected):not([data-selected="true"]):not([aria-selected="true"]){
+  background:#f3f4f6 !important;
+  color:#111827 !important;
+}
+
+html body.light-mode .items .item:not(.selected):not(.active):not(.is-selected):not([data-selected="true"]):not([aria-selected="true"]):hover{
+  background:#e5e7eb !important;
+}
+</style>
+
+
+<script>
+/* List v50d: final selected-row marker */
+(function(){
+  function markRow(row){
+    if(!row){ return; }
+
+    const list = row.closest(".items") || row.parentElement;
+    if(list){
+      list.querySelectorAll(".item.selected, .item.active, .item.is-selected, .item[data-selected='true'], .item[aria-selected='true']").forEach(el => {
+        if(el === row){ return; }
+        el.classList.remove("selected", "active", "is-selected");
+        el.removeAttribute("data-selected");
+        el.removeAttribute("aria-selected");
+      });
+    }
+
+    row.classList.add("selected", "is-selected");
+    row.setAttribute("data-selected", "true");
+    row.setAttribute("aria-selected", "true");
+  }
+
+  function markCurrentOrFirst(){
+    const explicit = document.querySelector(".items .item.selected, .items .item.active, .items .item.is-selected, .items .item[data-selected='true'], .items .item[aria-selected='true']");
+    if(explicit){
+      markRow(explicit);
+      return;
+    }
+
+    const first = document.querySelector(".items .item");
+    if(first){
+      markRow(first);
+    }
+  }
+
+  document.addEventListener("click", event => {
+    const row = event.target.closest(".items .item");
+    if(row){
+      markRow(row);
+    }
+  }, true);
+
+  if(document.readyState === "loading"){
+    document.addEventListener("DOMContentLoaded", () => {
+      [100, 300, 700, 1200, 2000].forEach(delay => setTimeout(markCurrentOrFirst, delay));
+    });
+  }else{
+    [100, 300, 700, 1200, 2000].forEach(delay => setTimeout(markCurrentOrFirst, delay));
   }
 })();
 </script>
