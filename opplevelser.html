@@ -1360,8 +1360,25 @@ body.light-mode button.bible-icon-button.bible-clear-button:hover{
   pointer-events:none !important;
 }
 
+
+/* List v46: preserve real hidden date picker for edit popup */
+#editExperienceDate{
+  cursor:pointer !important;
+}
+
+#editExperienceDatePicker{
+  position:absolute !important;
+  width:1px !important;
+  height:1px !important;
+  opacity:0 !important;
+  pointer-events:none !important;
+  border:0 !important;
+  padding:0 !important;
+  margin:0 !important;
+}
+
 </style>
-  <!-- version: LIST v45 edit-date-field-click-picker 2026-06-16 -->
+  <!-- version: LIST v46 edit-date-picker-not-converted 2026-06-16 -->
 </head>
 <body class="dark-mode">
 <div class="login-widget">
@@ -2587,7 +2604,7 @@ body.light-mode button.bible-icon-button.bible-clear-button:hover{
     patchDateInputById("editExperienceDate");
 
     document.querySelectorAll('input[type="date"]').forEach(input => {
-      if(input.id === "experienceDate" || input.id === "editExperienceDate"){
+      if(input.id === "experienceDate" || input.id === "editExperienceDate" || input.id === "experienceDatePicker" || input.id === "editExperienceDatePicker"){
         return;
       }
 
@@ -2817,6 +2834,192 @@ body.light-mode button.bible-icon-button.bible-clear-button:hover{
     document.addEventListener("DOMContentLoaded", normalizeEditDateField);
   }else{
     normalizeEditDateField();
+  }
+})();
+</script>
+
+
+<script>
+(function(){
+  function pad2(value){
+    return String(value).padStart(2, "0");
+  }
+
+  function isoToNorwegianDate(value){
+    const text = String(value || "").trim();
+
+    const iso = text.match(/^(\d{4})-(\d{2})-(\d{2})/);
+    if(iso){
+      return iso[3] + "." + iso[2] + "." + iso[1];
+    }
+
+    const no = text.match(/^(\d{1,2})\.(\d{1,2})\.(\d{4})$/);
+    if(no){
+      return pad2(no[1]) + "." + pad2(no[2]) + "." + no[3];
+    }
+
+    return text;
+  }
+
+  function norwegianDateToIso(value){
+    const text = String(value || "").trim();
+
+    const no = text.match(/^(\d{1,2})\.(\d{1,2})\.(\d{4})$/);
+    if(no){
+      return no[3] + "-" + pad2(no[2]) + "-" + pad2(no[1]);
+    }
+
+    const iso = text.match(/^(\d{4})-(\d{2})-(\d{2})/);
+    if(iso){
+      return iso[1] + "-" + iso[2] + "-" + iso[3];
+    }
+
+    return text;
+  }
+
+  window.formatOpplevelserDate = window.formatOpplevelserDate || isoToNorwegianDate;
+  window.parseOpplevelserDate = window.parseOpplevelserDate || norwegianDateToIso;
+
+  function getOrRecreateEditPicker(){
+    const text = document.getElementById("editExperienceDate");
+
+    if(!text){
+      return null;
+    }
+
+    let picker = document.getElementById("editExperienceDatePicker");
+
+    if(!picker || picker.type !== "date"){
+      if(picker){
+        picker.remove();
+      }
+
+      picker = document.createElement("input");
+      picker.id = "editExperienceDatePicker";
+      picker.type = "date";
+      picker.tabIndex = -1;
+      picker.setAttribute("aria-hidden", "true");
+      picker.style.position = "absolute";
+      picker.style.width = "1px";
+      picker.style.height = "1px";
+      picker.style.opacity = "0";
+      picker.style.pointerEvents = "none";
+
+      text.parentElement.appendChild(picker);
+    }
+
+    return picker;
+  }
+
+  function syncPickerFromVisibleEditDate(){
+    const text = document.getElementById("editExperienceDate");
+    const picker = getOrRecreateEditPicker();
+
+    if(!text || !picker){
+      return;
+    }
+
+    const iso = norwegianDateToIso(text.value);
+    if(/^\d{4}-\d{2}-\d{2}$/.test(iso)){
+      picker.value = iso;
+    }
+  }
+
+  function syncVisibleEditDateFromPicker(){
+    const text = document.getElementById("editExperienceDate");
+    const picker = getOrRecreateEditPicker();
+
+    if(!text || !picker || !picker.value){
+      return;
+    }
+
+    text.value = isoToNorwegianDate(picker.value);
+    text.dispatchEvent(new Event("input", { bubbles:true }));
+    text.dispatchEvent(new Event("change", { bubbles:true }));
+  }
+
+  window.installEditExperienceDatePicker = function(){
+    const text = document.getElementById("editExperienceDate");
+    const picker = getOrRecreateEditPicker();
+
+    if(!text || !picker){
+      return;
+    }
+
+    text.type = "text";
+    text.placeholder = "dd.mm.åååå";
+    text.inputMode = "numeric";
+    text.autocomplete = "off";
+    text.setAttribute("readonly", "readonly");
+
+    if(text.value){
+      text.value = isoToNorwegianDate(text.value);
+    }
+
+    syncPickerFromVisibleEditDate();
+
+    text.onclick = function(event){
+      event.preventDefault();
+      event.stopPropagation();
+      window.openEditExperienceDatePicker();
+    };
+
+    if(text.dataset.editDatePickerReadyV46 !== "1"){
+      text.dataset.editDatePickerReadyV46 = "1";
+
+      text.addEventListener("keydown", event => {
+        if(event.key !== "Enter" && event.key !== " "){
+          return;
+        }
+
+        event.preventDefault();
+        window.openEditExperienceDatePicker();
+      });
+    }
+
+    if(picker.dataset.editDatePickerReadyV46 !== "1"){
+      picker.dataset.editDatePickerReadyV46 = "1";
+      picker.addEventListener("change", syncVisibleEditDateFromPicker);
+    }
+  };
+
+  window.openEditExperienceDatePicker = function(){
+    window.installEditExperienceDatePicker();
+
+    const picker = getOrRecreateEditPicker();
+
+    if(!picker){
+      return;
+    }
+
+    syncPickerFromVisibleEditDate();
+
+    try{
+      picker.showPicker();
+      return;
+    }catch(error){}
+
+    try{
+      picker.click();
+      return;
+    }catch(error){}
+
+    picker.focus();
+  };
+
+  function installWhenReady(){
+    window.installEditExperienceDatePicker();
+
+    // Dynamic edit form may be rendered after this script.
+    [50, 150, 400, 900].forEach(delay => {
+      window.setTimeout(window.installEditExperienceDatePicker, delay);
+    });
+  }
+
+  if(document.readyState === "loading"){
+    document.addEventListener("DOMContentLoaded", installWhenReady);
+  }else{
+    installWhenReady();
   }
 })();
 </script>
