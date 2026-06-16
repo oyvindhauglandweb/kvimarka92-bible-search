@@ -1078,8 +1078,161 @@ body.light-mode #registerBibleField #bibleText:hover{
   pointer-events:none !important;
 }
 
+
+/* Register v40: real light mode palette */
+body.light-mode,
+body.light-mode html,
+html.light-mode body{
+  background:#f3f4f6 !important;
+  color:#111827 !important;
+}
+
+body.light-mode .page,
+body.light-mode .app,
+body.light-mode .shell,
+body.light-mode main,
+body.light-mode .content,
+body.light-mode .card,
+body.light-mode .panel,
+body.light-mode .section,
+body.light-mode form,
+body.light-mode .form-panel{
+  background:#ffffff !important;
+  color:#111827 !important;
+}
+
+body.light-mode .app-title,
+body.light-mode h1,
+body.light-mode h2,
+body.light-mode h3,
+body.light-mode label,
+body.light-mode .subtitle,
+body.light-mode .register-bible-title{
+  color:#111827 !important;
+}
+
+body.light-mode input,
+body.light-mode textarea,
+body.light-mode select,
+body.light-mode .register-bible-text,
+body.light-mode #bibleText,
+body.light-mode #experienceDate{
+  background:#f9fafb !important;
+  color:#111827 !important;
+  border:1px solid #d1d5db !important;
+  box-shadow:none !important;
+}
+
+body.light-mode input::placeholder,
+body.light-mode textarea::placeholder{
+  color:#6b7280 !important;
+  opacity:1 !important;
+}
+
+body.light-mode input:hover,
+body.light-mode textarea:hover,
+body.light-mode select:hover,
+body.light-mode .register-bible-text:hover,
+body.light-mode #bibleText:hover,
+body.light-mode #experienceDate:hover{
+  background:#ffffff !important;
+  border-color:#9ca3af !important;
+}
+
+body.light-mode input:focus,
+body.light-mode textarea:focus,
+body.light-mode select:focus,
+body.light-mode #experienceDate:focus,
+body.light-mode #bibleText:focus{
+  background:#ffffff !important;
+  color:#111827 !important;
+  border-color:#60a5fa !important;
+  outline:2px solid rgba(96,165,250,.35) !important;
+  outline-offset:0 !important;
+}
+
+body.light-mode .top-button,
+body.light-mode .nav-button,
+body.light-mode .toolbar button,
+body.light-mode .header-actions button,
+body.light-mode button:not(.mic-button):not(.voice-mic-btn):not(.bible-edit-button):not(.primary):not(.save-button){
+  background:#e5e7eb !important;
+  color:#111827 !important;
+  border:0 !important;
+  box-shadow:none !important;
+}
+
+body.light-mode .top-button:hover,
+body.light-mode .nav-button:hover,
+body.light-mode .toolbar button:hover,
+body.light-mode .header-actions button:hover,
+body.light-mode button:not(.mic-button):not(.voice-mic-btn):not(.bible-edit-button):not(.primary):not(.save-button):hover{
+  background:#d1d5db !important;
+  color:#111827 !important;
+}
+
+body.light-mode .mic-button,
+body.light-mode .voice-mic-btn,
+body.light-mode .bible-edit-button,
+body.light-mode .primary,
+body.light-mode .save-button{
+  background:#7cc7e8 !important;
+  color:#ffffff !important;
+  border:0 !important;
+}
+
+body.light-mode .clear-voice-button,
+body.light-mode .voice-clear-btn,
+body.light-mode .bible-clear-button{
+  background:#e5e7eb !important;
+  color:#111827 !important;
+  border:0 !important;
+}
+
+body.light-mode .clear-voice-button:hover,
+body.light-mode .voice-clear-btn:hover,
+body.light-mode .bible-clear-button:hover{
+  background:#d1d5db !important;
+  color:#111827 !important;
+}
+
+body.light-mode .status,
+body.light-mode .message,
+body.light-mode .notice,
+body.light-mode .info,
+body.light-mode .help-text{
+  background:#ffffff !important;
+  color:#374151 !important;
+  border:1px solid #d1d5db !important;
+}
+
+body.light-mode a{
+  color:#2563eb !important;
+}
+
+body.light-mode .login-chip,
+body.light-mode .login-button,
+body.light-mode #loginButton,
+body.light-mode #authButton{
+  background:#ffffff !important;
+  color:#111827 !important;
+  border:1px solid #9ca3af !important;
+}
+
+/* Some earlier theme code uses overlay/invert filters. Neutralize that in light mode. */
+body.light-mode,
+body.light-mode *{
+  text-shadow:none !important;
+}
+
+body.light-mode .dim,
+body.light-mode .disabled,
+body.light-mode [disabled]{
+  opacity:.65 !important;
+}
+
 </style>
-<!-- version: REGISTER v39 date-field-click-picker 2026-06-16 -->
+<!-- version: REGISTER v40 real-light-mode 2026-06-16 -->
 </head>
 <body class="dark-mode">
 <div class="login-widget">
@@ -2466,6 +2619,70 @@ body.light-mode #registerBibleField #bibleText:hover{
   window.installExperienceDatePicker=installDatePicker;
   if(document.readyState==="loading"){document.addEventListener("DOMContentLoaded",installDatePicker);}else{installDatePicker();}
   window.addEventListener("pageshow",installDatePicker);
+})();
+</script>
+
+
+<script>
+(function(){
+  function applyRealRegisterTheme(){
+    let theme = "";
+    try{
+      theme = localStorage.getItem("kvimarka92Theme")
+        || localStorage.getItem("theme")
+        || localStorage.getItem("opplevelserTheme")
+        || "";
+    }catch(error){}
+
+    const body = document.body;
+    if(!body){
+      return;
+    }
+
+    const hasLight =
+      body.classList.contains("light-mode")
+      || body.classList.contains("light")
+      || document.documentElement.classList.contains("light-mode")
+      || document.documentElement.classList.contains("light")
+      || theme === "light";
+
+    if(hasLight){
+      body.classList.add("light-mode");
+      body.classList.remove("dark-mode");
+      document.documentElement.classList.add("light-mode");
+      document.documentElement.classList.remove("dark-mode");
+    }else{
+      body.classList.add("dark-mode");
+      body.classList.remove("light-mode");
+      document.documentElement.classList.add("dark-mode");
+      document.documentElement.classList.remove("light-mode");
+    }
+  }
+
+  window.applyRealRegisterTheme = applyRealRegisterTheme;
+
+  if(document.readyState === "loading"){
+    document.addEventListener("DOMContentLoaded", applyRealRegisterTheme);
+  }else{
+    applyRealRegisterTheme();
+  }
+
+  window.addEventListener("storage", applyRealRegisterTheme);
+
+  document.addEventListener("click", event => {
+    const btn = event.target.closest("button");
+    if(!btn){
+      return;
+    }
+
+    const txt = (btn.textContent || "").trim();
+    const title = (btn.getAttribute("title") || btn.getAttribute("aria-label") || "").toLowerCase();
+
+    if(txt === "☀" || txt === "☾" || txt === "🌙" || title.includes("light") || title.includes("dark") || title.includes("lys") || title.includes("mørk")){
+      setTimeout(applyRealRegisterTheme, 0);
+      setTimeout(applyRealRegisterTheme, 80);
+    }
+  }, true);
 })();
 </script>
 
