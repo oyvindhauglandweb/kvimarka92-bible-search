@@ -773,8 +773,129 @@ body.light-mode html:not(.classic-design-root) button.clear-voice-button:hover{
   color:#fff !important;
 }
 
+
+/* Kvimarka92/Handleliste layout standard v27 */
+body{
+  background:#111 !important;
+}
+.header,
+.header.card,
+.header-panel,
+.top-panel{
+  border:0 !important;
+  background:transparent !important;
+  box-shadow:none !important;
+}
+
+.wrap,
+.container{
+  background:transparent !important;
+  border:0 !important;
+  box-shadow:none !important;
+}
+
+.site-title,
+.subtitle,
+.top-buttons{
+  background:transparent !important;
+  border:0 !important;
+  box-shadow:none !important;
+}
+
+/* Natural content sections start below the header */
+.content-section,
+.form-section,
+.search-section,
+.list-section,
+.detail-section,
+.status-section{
+  background:rgba(255,255,255,.045) !important;
+  border:0 !important;
+  border-radius:10px !important;
+  box-shadow:none !important;
+}
+
+/* If old card class is used for content, keep it section-like, but never around header */
+.card:not(.selected-card):not(.header){
+  background:rgba(255,255,255,.045) !important;
+  border:0 !important;
+  border-radius:10px !important;
+  box-shadow:none !important;
+}
+
+.status,
+#status{
+  background:rgba(255,255,255,.045) !important;
+  border:0 !important;
+  border-radius:10px !important;
+  box-shadow:none !important;
+}
+
+body.light-mode .content-section,
+body.light-mode .form-section,
+body.light-mode .search-section,
+body.light-mode .list-section,
+body.light-mode .detail-section,
+body.light-mode .status-section,
+body.light-mode .card:not(.selected-card):not(.header),
+body.light-mode .status,
+body.light-mode #status{
+  background:rgba(0,0,0,.045) !important;
+}
+
+.items,
+.details,
+#items,
+#details{
+  background:rgba(255,255,255,.045) !important;
+  border:0 !important;
+  border-radius:10px !important;
+  box-shadow:none !important;
+}
+
+body.light-mode .items,
+body.light-mode .details,
+body.light-mode #items,
+body.light-mode #details{
+  background:rgba(0,0,0,.045) !important;
+}
+
+.item{
+  background:rgba(0,0,0,.18) !important;
+  border:0 !important;
+  box-shadow:none !important;
+}
+
+.item.active{
+  background:rgba(255,255,255,.095) !important;
+}
+
+body.light-mode .item{
+  background:rgba(0,0,0,.035) !important;
+}
+
+body.light-mode .item.active{
+  background:rgba(0,0,0,.085) !important;
+}
+
+/* Top buttons follow Handleliste look */
+.top-button{
+  background:rgba(255,255,255,.055) !important;
+  border:0 !important;
+  box-shadow:none !important;
+}
+.top-button:hover{
+  background:rgba(255,255,255,.10) !important;
+}
+body.light-mode .top-button{
+  background:rgba(0,0,0,.055) !important;
+}
+body.light-mode .top-button:hover{
+  background:rgba(0,0,0,.10) !important;
+}
+
 </style>
-  <!-- version: LIST v21 edit-panel-cleanup 2026-06-16 -->
+  <!-- version: LIST v22 handleliste-layout-standard 2026-06-16 -->
 </head>
 <body class="dark-mode">
 <div class="login-widget">
@@ -808,7 +929,7 @@ body.light-mode html:not(.classic-design-root) button.clear-voice-button:hover{
       </div>
       <p class="sub" id="userLine" style="display:none;"></p>
 
-      <div class="toolbar">
+      <div class="toolbar search-section">
         <div>
           <label for="searchBox">Søk</label>
           <input id="searchBox" type="search" placeholder="Søk i overskrift, tekst, sted, miljø eller bibelsted" autocomplete="off">
@@ -822,7 +943,7 @@ body.light-mode html:not(.classic-design-root) button.clear-voice-button:hover{
         <div class="details" id="details"><div class="empty">Velg en opplevelse i listen.</div></div>
       </div>
 
-      <div id="status" class="status">Klar.</div>
+      <div id="status" class="status status-section">Klar.</div>
     </section>
   </main>
 

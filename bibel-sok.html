@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Bibelsøk 1930</title>
-  <!-- version: BIBLE v17 popup-final 2026-06-16 -->
+  <!-- version: BIBLE v18 handleliste-layout-standard 2026-06-16 -->
   <style>
     :root{
       color-scheme:dark;
@@ -196,6 +196,52 @@ body.light-mode .action-button:hover{background:rgba(0,0,0,.10) !important;}
   .top-button{width:40px;height:40px;font-size:22px;}
   .home-button{font-size:28px;}
   .selected-header-row{gap:12px !important;}
+}
+
+
+/* Bibel popup layout standard v18 */
+body{
+  background:#111 !important;
+}
+.header,
+.top-buttons{
+  border:0 !important;
+  background:transparent !important;
+  box-shadow:none !important;
+}
+.wrap{
+  background:transparent !important;
+  border:0 !important;
+  box-shadow:none !important;
+}
+.card,
+.selected-card,
+#results{
+  background:rgba(255,255,255,.045) !important;
+  border:0 !important;
+  border-radius:10px !important;
+  box-shadow:none !important;
+}
+body.light-mode .card,
+body.light-mode .selected-card,
+body.light-mode #results{
+  background:rgba(0,0,0,.045) !important;
+}
+.selected-text,
+input{
+  border:0 !important;
+  background:rgba(0,0,0,.18) !important;
+  box-shadow:none !important;
+}
+body.light-mode .selected-text,
+body.light-mode input{
+  background:rgba(0,0,0,.045) !important;
+}
+.result-card{
+  border-top:1px solid rgba(255,255,255,.09) !important;
+}
+body.light-mode .result-card{
+  border-top:1px solid rgba(0,0,0,.10) !important;
 }
 
 </style>
