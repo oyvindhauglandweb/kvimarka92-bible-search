@@ -737,8 +737,130 @@ body.light-mode .top-button:hover{
   background:rgba(0,0,0,.10) !important;
 }
 
+
+/* v28: header area must never have a background frame */
+body > .wrap,
+body > .container,
+.wrap,
+.container,
+main,
+.app,
+.page,
+.panel,
+.main,
+.shell{
+  background:transparent !important;
+  border:0 !important;
+  box-shadow:none !important;
+}
+
+/* If the first large wrapper/card contains the header, make it transparent */
+body > .card:first-child,
+body > .wrap > .card:first-child,
+body > .container > .card:first-child,
+.wrap > .card:first-child,
+.container > .card:first-child{
+  background:transparent !important;
+  border:0 !important;
+  box-shadow:none !important;
+}
+
+/* Header and all top controls stand freely */
+.header,
+.header *,
+.site-title,
+.subtitle,
+.top-buttons,
+.login-widget{
+  box-shadow:none !important;
+}
+.header,
+.site-title,
+.subtitle,
+.top-buttons{
+  background:transparent !important;
+  border:0 !important;
+}
+
+/* Natural content frames BELOW header only */
+form,
+#experienceForm,
+.search-section,
+.list-section,
+.detail-section,
+#items,
+#details,
+.status-section,
+#status,
+.results-section,
+#results,
+.selected-card{
+  background:rgba(255,255,255,.045) !important;
+  border:0 !important;
+  border-radius:10px !important;
+  box-shadow:none !important;
+}
+
+body.light-mode form,
+body.light-mode #experienceForm,
+body.light-mode .search-section,
+body.light-mode .list-section,
+body.light-mode .detail-section,
+body.light-mode #items,
+body.light-mode #details,
+body.light-mode .status-section,
+body.light-mode #status,
+body.light-mode .results-section,
+body.light-mode #results,
+body.light-mode .selected-card{
+  background:rgba(0,0,0,.045) !important;
+}
+
+/* Remove background from grid/layout wrappers, keep backgrounds on functional sections only */
+.grid,
+.edit-grid,
+.list,
+.toolbar{
+  background:transparent !important;
+  border:0 !important;
+  box-shadow:none !important;
+}
+
+/* Search toolbar should be a section only when explicitly search-section */
+.toolbar.search-section{
+  background:rgba(255,255,255,.045) !important;
+  border-radius:10px !important;
+  padding:10px !important;
+}
+body.light-mode .toolbar.search-section{
+  background:rgba(0,0,0,.045) !important;
+}
+
+/* In register page, the form itself is the content frame */
+#experienceForm{
+  padding:10px !important;
+}
+
+/* In list page, search area + list + details are the content frames */
+#items,
+#details{
+  padding:10px !important;
+}
+
+/* Bible popup: header free, cards are content sections */
+body > .wrap > .header{
+  background:transparent !important;
+  border:0 !important;
+}
+
+
+.header-shell{
+  background:transparent !important;
+  border:0 !important;
+  box-shadow:none !important;
+}
 </style>
-<!-- version: REGISTER v27 handleliste-layout-standard 2026-06-16 -->
+<!-- version: REGISTER v28 header-free-layout 2026-06-16 -->
 </head>
 <body class="dark-mode">
 <div class="login-widget">
