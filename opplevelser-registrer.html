@@ -910,45 +910,43 @@ button.mic-button.visible,
 
 
 
-/* Register v36: Bible field uses same layout as other large text fields */
-.register-bible-section,
-.full.register-bible-section{
+
+/* Register v37: Bible field uses exact full-width voice-field pattern */
+#registerBibleField.register-bible-section,
+.register-bible-section{
   grid-column:1 / -1 !important;
   width:100% !important;
   max-width:none !important;
+  min-width:0 !important;
   box-sizing:border-box !important;
   display:block !important;
   clear:both !important;
 }
 
-.register-bible-header{
+#registerBibleField .register-bible-header{
   display:flex !important;
   align-items:center !important;
   justify-content:space-between !important;
   gap:12px !important;
   width:100% !important;
-  margin:18px 0 8px !important;
+  margin:0 0 8px !important;
   padding:0 !important;
   background:transparent !important;
   border:0 !important;
   box-shadow:none !important;
 }
 
-.register-bible-title{
-  display:block !important;
+#registerBibleField .register-bible-title{
   margin:0 !important;
   padding:0 !important;
   flex:1 1 auto !important;
   min-width:0 !important;
-  background:transparent !important;
-  border:0 !important;
-  box-shadow:none !important;
-  color:var(--opp-text, #eee) !important;
   font-weight:800 !important;
   line-height:1.2 !important;
+  color:var(--opp-text, #eee) !important;
 }
 
-.register-bible-actions{
+#registerBibleField .register-bible-actions{
   display:flex !important;
   align-items:center !important;
   justify-content:flex-end !important;
@@ -957,7 +955,7 @@ button.mic-button.visible,
   margin-left:auto !important;
 }
 
-.register-bible-actions .bible-icon-button{
+#registerBibleField .bible-icon-button{
   display:inline-flex !important;
   align-items:center !important;
   justify-content:center !important;
@@ -976,50 +974,38 @@ button.mic-button.visible,
   pointer-events:auto !important;
 }
 
-.register-bible-actions .bible-clear-button{
+#registerBibleField .bible-clear-button{
   background:rgba(255,255,255,.075) !important;
   color:var(--opp-text, #eee) !important;
   filter:none !important;
 }
 
-.register-bible-actions .bible-clear-button:hover{
+#registerBibleField .bible-clear-button:hover{
   background:rgba(255,255,255,.13) !important;
-  color:var(--opp-text, #eee) !important;
-  filter:none !important;
 }
 
-.register-bible-actions .bible-edit-button{
+#registerBibleField .bible-edit-button{
   background:var(--opp-link, #7cc7e8) !important;
   color:#fff !important;
 }
 
-.register-bible-actions .bible-edit-button:hover{
+#registerBibleField .bible-edit-button:hover{
   filter:brightness(1.08);
 }
 
-.register-bible-actions .bible-icon-button svg{
+#registerBibleField .bible-icon-button svg{
   width:18px !important;
   height:18px !important;
   display:block !important;
   color:currentColor !important;
 }
 
-body.light-mode .register-bible-actions .bible-clear-button{
-  background:rgba(0,0,0,.075) !important;
-  color:var(--opp-text, #333) !important;
-}
-
-body.light-mode .register-bible-actions .bible-clear-button:hover{
-  background:rgba(0,0,0,.13) !important;
-  color:var(--opp-text, #333) !important;
-}
-
-.register-bible-source{
+#registerBibleField .register-bible-source{
   display:none !important;
 }
 
-.register-bible-text,
-#bibleText{
+#registerBibleField #bibleText,
+#registerBibleField .register-bible-text{
   display:block !important;
   width:100% !important;
   max-width:none !important;
@@ -1043,25 +1029,30 @@ body.light-mode .register-bible-actions .bible-clear-button:hover{
   pointer-events:auto !important;
 }
 
-.register-bible-text:hover,
-#bibleText:hover{
+#registerBibleField #bibleText:hover{
   background:rgba(255,255,255,.075) !important;
-  cursor:pointer !important;
 }
 
-body.light-mode .register-bible-text,
-body.light-mode #bibleText{
+body.light-mode #registerBibleField .bible-clear-button{
+  background:rgba(0,0,0,.075) !important;
+  color:var(--opp-text, #333) !important;
+}
+
+body.light-mode #registerBibleField .bible-clear-button:hover{
+  background:rgba(0,0,0,.13) !important;
+}
+
+body.light-mode #registerBibleField #bibleText{
   background:rgba(0,0,0,.045) !important;
   color:var(--opp-text, #333) !important;
 }
 
-body.light-mode .register-bible-text:hover,
-body.light-mode #bibleText:hover{
+body.light-mode #registerBibleField #bibleText:hover{
   background:rgba(0,0,0,.075) !important;
 }
 
 </style>
-<!-- version: REGISTER v36 bible-field-copied-textarea-pattern 2026-06-16 -->
+<!-- version: REGISTER v37 real-full-width-bible-field 2026-06-16 -->
 </head>
 <body class="dark-mode">
 <div class="login-widget">
@@ -1137,22 +1128,24 @@ body.light-mode #bibleText:hover{
           <textarea id="experience" name="experience"></textarea>
           </div></div>
 
-          <div class="full">
-            <div class="voice-field-header">
-              <input id="bibleReference" type="hidden" value="">
-            <input id="bibleSource" type="hidden" value="Bibelen på Norsk (1930)">
-            <div class="full register-bible-section">
-              <div class="register-bible-header">
+            <div id="registerBibleField" class="full field text-field voice-field register-bible-section">
+              <div class="textarea-head register-bible-header">
                 <label class="register-bible-title" for="bibleText" id="bibleDisplayTitle">Bibeltekst</label>
-                <div class="register-bible-actions">
-                  <button type="button" class="bible-icon-button bible-clear-button" onclick="clearRegisterBiblePlace()" title="Fjern bibelsted" aria-label="Fjern bibelsted">×</button>
-                  <button type="button" class="bible-icon-button bible-edit-button" onclick="openRegisterBibleSearchBlankSafe()" title="Finn eller endre bibelsted" aria-label="Finn eller endre bibelsted"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 17.25V20h2.75L17.8 8.95l-2.75-2.75L4 17.25Zm15.9-10.2a1 1 0 0 0 0-1.4l-1.55-1.55a1 1 0 0 0-1.4 0l-1.2 1.2 2.75 2.75 1.4-1Z" fill="currentColor"/></svg></button>
+                <div class="voice-actions register-bible-actions">
+                  <button type="button" class="voice-clear-btn bible-icon-button bible-clear-button" onclick="clearRegisterBiblePlace()" title="Fjern bibelsted" aria-label="Fjern bibelsted">×</button>
+                  <button type="button" class="voice-mic-btn bible-icon-button bible-edit-button" onclick="openRegisterBibleSearchBlankSafe()" title="Finn eller endre bibelsted" aria-label="Finn eller endre bibelsted"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 17.25V20h2.75L17.8 8.95l-2.75-2.75L4 17.25Zm15.9-10.2a1 1 0 0 0 0-1.4l-1.55-1.55a1 1 0 0 0-1.4 0l-1.2 1.2 2.75 2.75 1.4-1Z" fill="currentColor"/></svg></button>
                 </div>
               </div>
+              <input id="bibleReference" type="hidden" value="">
+              <input id="bibleSource" type="hidden" value="Bibelen på Norsk (1930)">
               <div id="bibleDisplaySource" class="register-bible-source"></div>
               <textarea id="bibleText" class="register-bible-text" readonly tabindex="0" role="button" title="Klikk for å endre bibelsted" onclick="openRegisterBibleSearchBlankSafe()"></textarea>
             </div>
-            <label for="consequence">Konsekvens</label>
+
+
+          <div class="full">
+            <div class="voice-field-header">
+<label for="consequence">Konsekvens</label>
               <div class="voice-actions">
                 <button type="button" class="clear-voice-button" onclick="clearOpplevelserVoiceField('consequence')" title="Tøm felt" aria-label="Tøm felt">×</button><button type="button" class="mic-button" data-dictate-target="consequence" title="Les inn tekst" aria-label="Les inn tekst"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 15a3 3 0 0 0 3-3V6a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3Zm5-3a1 1 0 1 0-2 0 3 3 0 0 1-6 0 1 1 0 1 0-2 0 5 5 0 0 0 4 4.9V19H9a1 1 0 1 0 0 2h6a1 1 0 1 0 0-2h-2v-2.1A5 5 0 0 0 17 12Z" fill="currentColor"/></svg></button>
               </div>
@@ -2399,6 +2392,7 @@ body.light-mode #bibleText:hover{
   });
 })();
 </script>
+
 
 
 <script>
