@@ -551,7 +551,7 @@ body.light-mode .bible-click-frame:hover{
   background:rgba(0,0,0,.075) !important;
 }
 .bible-click-frame::after{
-  content:"";
+  content:"Klikk for å endre bibelsted";
   display:block;
   margin-top:6px;
   color:var(--opp-muted, #bbb);
@@ -911,29 +911,180 @@ button.mic-button.visible,
 
 
 
-
-/* Opplevelser standard cleanup v50/v43
-   Én samlet stilblokk for tema, knapper og valgt rad.
-   Ikke legg nye parallelle theme-/button-blokker etter denne uten å fjerne denne først. */
-:root{
-  --opp-light-page:#f3f4f6;
-  --opp-light-panel:#ffffff;
-  --opp-light-panel2:#e5e7eb;
-  --opp-light-field:#f9fafb;
-  --opp-light-field-hover:#ffffff;
-  --opp-light-text:#111827;
-  --opp-light-muted:#4b5563;
-  --opp-light-border:#d1d5db;
-  --opp-light-border-strong:#9ca3af;
-  --opp-light-blue:#0ea5d4;
-  --opp-light-selected:#bfdbfe;
-  --opp-light-selected-border:#2563eb;
+/* Register v37: Bible field uses exact full-width voice-field pattern */
+#registerBibleField.register-bible-section,
+.register-bible-section{
+  grid-column:1 / -1 !important;
+  width:100% !important;
+  max-width:none !important;
+  min-width:0 !important;
+  box-sizing:border-box !important;
+  display:block !important;
+  clear:both !important;
 }
 
+#registerBibleField .register-bible-header{
+  display:flex !important;
+  align-items:center !important;
+  justify-content:space-between !important;
+  gap:12px !important;
+  width:100% !important;
+  margin:0 0 8px !important;
+  padding:0 !important;
+  background:transparent !important;
+  border:0 !important;
+  box-shadow:none !important;
+}
+
+#registerBibleField .register-bible-title{
+  margin:0 !important;
+  padding:0 !important;
+  flex:1 1 auto !important;
+  min-width:0 !important;
+  font-weight:800 !important;
+  line-height:1.2 !important;
+  color:var(--opp-text, #eee) !important;
+}
+
+#registerBibleField .register-bible-actions{
+  display:flex !important;
+  align-items:center !important;
+  justify-content:flex-end !important;
+  gap:8px !important;
+  flex:0 0 auto !important;
+  margin-left:auto !important;
+}
+
+#registerBibleField .bible-icon-button{
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  width:36px !important;
+  height:32px !important;
+  min-width:36px !important;
+  min-height:32px !important;
+  padding:0 !important;
+  border:0 !important;
+  border-radius:999px !important;
+  box-shadow:none !important;
+  font-size:19px !important;
+  font-weight:800 !important;
+  line-height:1 !important;
+  cursor:pointer !important;
+  pointer-events:auto !important;
+}
+
+#registerBibleField .bible-clear-button{
+  background:rgba(255,255,255,.075) !important;
+  color:var(--opp-text, #eee) !important;
+  filter:none !important;
+}
+
+#registerBibleField .bible-clear-button:hover{
+  background:rgba(255,255,255,.13) !important;
+}
+
+#registerBibleField .bible-edit-button{
+  background:var(--opp-link, #7cc7e8) !important;
+  color:#fff !important;
+}
+
+#registerBibleField .bible-edit-button:hover{
+  filter:brightness(1.08);
+}
+
+#registerBibleField .bible-icon-button svg{
+  width:18px !important;
+  height:18px !important;
+  display:block !important;
+  color:currentColor !important;
+}
+
+#registerBibleField .register-bible-source{
+  display:none !important;
+}
+
+#registerBibleField #bibleText,
+#registerBibleField .register-bible-text{
+  display:block !important;
+  width:100% !important;
+  max-width:none !important;
+  min-width:0 !important;
+  min-height:88px !important;
+  box-sizing:border-box !important;
+  margin:0 0 16px !important;
+  padding:12px !important;
+  border:0 !important;
+  border-radius:10px !important;
+  background:rgba(0,0,0,.18) !important;
+  color:var(--opp-text, #eee) !important;
+  box-shadow:none !important;
+  outline:0 !important;
+  resize:none !important;
+  overflow:hidden !important;
+  cursor:pointer !important;
+  caret-color:transparent !important;
+  font:inherit !important;
+  line-height:1.4 !important;
+  pointer-events:auto !important;
+}
+
+#registerBibleField #bibleText:hover{
+  background:rgba(255,255,255,.075) !important;
+}
+
+body.light-mode #registerBibleField .bible-clear-button{
+  background:rgba(0,0,0,.075) !important;
+  color:var(--opp-text, #333) !important;
+}
+
+body.light-mode #registerBibleField .bible-clear-button:hover{
+  background:rgba(0,0,0,.13) !important;
+}
+
+body.light-mode #registerBibleField #bibleText{
+  background:rgba(0,0,0,.045) !important;
+  color:var(--opp-text, #333) !important;
+}
+
+body.light-mode #registerBibleField #bibleText:hover{
+  background:rgba(0,0,0,.075) !important;
+}
+
+
+
+/* Register v39: date field opens picker directly */
+.date-picker-wrap{
+  position:relative !important;
+  display:block !important;
+  width:100% !important;
+}
+
+.date-picker-wrap #experienceDate{
+  width:100% !important;
+  cursor:pointer !important;
+  padding-right:12px !important;
+}
+
+.date-picker-button{
+  display:none !important;
+}
+
+#experienceDatePicker{
+  position:absolute !important;
+  width:1px !important;
+  height:1px !important;
+  opacity:0 !important;
+  pointer-events:none !important;
+}
+
+
+/* Register v40: real light mode palette */
 body.light-mode,
+body.light-mode html,
 html.light-mode body{
-  background:var(--opp-light-page) !important;
-  color:var(--opp-light-text) !important;
+  background:#f3f4f6 !important;
+  color:#111827 !important;
 }
 
 body.light-mode .page,
@@ -945,46 +1096,30 @@ body.light-mode .card,
 body.light-mode .panel,
 body.light-mode .section,
 body.light-mode form,
-body.light-mode .form-panel,
-body.light-mode .search-panel,
-body.light-mode .results-panel,
-body.light-mode .details-panel,
-body.light-mode .list-panel,
-body.light-mode #details,
-body.light-mode #results,
-body.light-mode #list{
-  background:var(--opp-light-panel) !important;
-  color:var(--opp-light-text) !important;
+body.light-mode .form-panel{
+  background:#ffffff !important;
+  color:#111827 !important;
 }
 
+body.light-mode .app-title,
 body.light-mode h1,
 body.light-mode h2,
 body.light-mode h3,
 body.light-mode label,
 body.light-mode .subtitle,
-body.light-mode .app-title,
-body.light-mode .detail-title,
-body.light-mode .result-title,
-body.light-mode .item-title,
-body.light-mode .register-bible-title,
-body.light-mode .plain-bible-title{
-  color:var(--opp-light-text) !important;
+body.light-mode .register-bible-title{
+  color:#111827 !important;
 }
 
 body.light-mode input,
 body.light-mode textarea,
 body.light-mode select,
-body.light-mode .search-input,
-body.light-mode #searchInput,
-body.light-mode #experienceDate,
-body.light-mode #editExperienceDate,
-body.light-mode #bibleText,
-body.light-mode #editBibleText,
 body.light-mode .register-bible-text,
-body.light-mode .plain-bible-text{
-  background:var(--opp-light-field) !important;
-  color:var(--opp-light-text) !important;
-  border:1px solid var(--opp-light-border) !important;
+body.light-mode #bibleText,
+body.light-mode #experienceDate{
+  background:#f9fafb !important;
+  color:#111827 !important;
+  border:1px solid #d1d5db !important;
   box-shadow:none !important;
 }
 
@@ -997,33 +1132,111 @@ body.light-mode textarea::placeholder{
 body.light-mode input:hover,
 body.light-mode textarea:hover,
 body.light-mode select:hover,
-body.light-mode #experienceDate:hover,
-body.light-mode #editExperienceDate:hover,
+body.light-mode .register-bible-text:hover,
 body.light-mode #bibleText:hover,
-body.light-mode #editBibleText:hover{
-  background:var(--opp-light-field-hover) !important;
-  border-color:var(--opp-light-border-strong) !important;
+body.light-mode #experienceDate:hover{
+  background:#ffffff !important;
+  border-color:#9ca3af !important;
 }
 
 body.light-mode input:focus,
 body.light-mode textarea:focus,
 body.light-mode select:focus,
 body.light-mode #experienceDate:focus,
-body.light-mode #editExperienceDate:focus,
-body.light-mode #bibleText:focus,
-body.light-mode #editBibleText:focus{
-  background:var(--opp-light-field-hover) !important;
-  color:var(--opp-light-text) !important;
+body.light-mode #bibleText:focus{
+  background:#ffffff !important;
+  color:#111827 !important;
   border-color:#60a5fa !important;
   outline:2px solid rgba(96,165,250,.35) !important;
   outline-offset:0 !important;
 }
 
-/* Toolbar / top buttons */
-body.light-mode .toolbar button,
-body.light-mode .header-actions button,
 body.light-mode .top-button,
 body.light-mode .nav-button,
+body.light-mode .toolbar button,
+body.light-mode .header-actions button,
+body.light-mode button:not(.mic-button):not(.voice-mic-btn):not(.bible-edit-button):not(.primary):not(.save-button){
+  background:#e5e7eb !important;
+  color:#111827 !important;
+  border:0 !important;
+  box-shadow:none !important;
+}
+
+body.light-mode .top-button:hover,
+body.light-mode .nav-button:hover,
+body.light-mode .toolbar button:hover,
+body.light-mode .header-actions button:hover,
+body.light-mode button:not(.mic-button):not(.voice-mic-btn):not(.bible-edit-button):not(.primary):not(.save-button):hover{
+  background:#d1d5db !important;
+  color:#111827 !important;
+}
+
+body.light-mode .mic-button,
+body.light-mode .voice-mic-btn,
+body.light-mode .bible-edit-button,
+body.light-mode .primary,
+body.light-mode .save-button{
+  background:#7cc7e8 !important;
+  color:#ffffff !important;
+  border:0 !important;
+}
+
+body.light-mode .clear-voice-button,
+body.light-mode .voice-clear-btn,
+body.light-mode .bible-clear-button{
+  background:#e5e7eb !important;
+  color:#111827 !important;
+  border:0 !important;
+}
+
+body.light-mode .clear-voice-button:hover,
+body.light-mode .voice-clear-btn:hover,
+body.light-mode .bible-clear-button:hover{
+  background:#d1d5db !important;
+  color:#111827 !important;
+}
+
+body.light-mode .status,
+body.light-mode .message,
+body.light-mode .notice,
+body.light-mode .info,
+body.light-mode .help-text{
+  background:#ffffff !important;
+  color:#374151 !important;
+  border:1px solid #d1d5db !important;
+}
+
+body.light-mode a{
+  color:#2563eb !important;
+}
+
+body.light-mode .login-chip,
+body.light-mode .login-button,
+body.light-mode #loginButton,
+body.light-mode #authButton{
+  background:#ffffff !important;
+  color:#111827 !important;
+  border:1px solid #9ca3af !important;
+}
+
+/* Some earlier theme code uses overlay/invert filters. Neutralize that in light mode. */
+body.light-mode,
+body.light-mode *{
+  text-shadow:none !important;
+}
+
+body.light-mode .dim,
+body.light-mode .disabled,
+body.light-mode [disabled]{
+  opacity:.65 !important;
+}
+
+
+/* Register v41: light mode button visibility and two-way theme */
+body.light-mode .top-button,
+body.light-mode .nav-button,
+body.light-mode .toolbar button,
+body.light-mode .header-actions button,
 body.light-mode .icon-button,
 body.light-mode .theme-button,
 body.light-mode .font-button,
@@ -1031,25 +1244,196 @@ body.light-mode .home-button,
 body.light-mode .help-button,
 body.light-mode .back-button,
 body.light-mode .design-button,
-body.light-mode button.toolbar-button{
-  background:var(--opp-light-panel2) !important;
-  color:var(--opp-light-text) !important;
+body.light-mode button:not(.mic-button):not(.voice-mic-btn):not(.bible-edit-button):not(.primary):not(.save-button){
+  background:#e5e7eb !important;
+  color:#111827 !important;
+  border:0 !important;
+  box-shadow:none !important;
+  opacity:1 !important;
+}
+
+body.light-mode .top-button:hover,
+body.light-mode .nav-button:hover,
+body.light-mode .toolbar button:hover,
+body.light-mode .header-actions button:hover,
+body.light-mode .icon-button:hover,
+body.light-mode .theme-button:hover,
+body.light-mode .font-button:hover,
+body.light-mode .home-button:hover,
+body.light-mode .help-button:hover,
+body.light-mode .back-button:hover,
+body.light-mode .design-button:hover,
+body.light-mode button:not(.mic-button):not(.voice-mic-btn):not(.bible-edit-button):not(.primary):not(.save-button):hover{
+  background:#d1d5db !important;
+  color:#111827 !important;
+  opacity:1 !important;
+}
+
+body.light-mode .voice-clear-btn,
+body.light-mode .clear-voice-button,
+body.light-mode .bible-clear-button,
+body.light-mode button.voice-clear-btn,
+body.light-mode button.clear-voice-button,
+body.light-mode button.bible-clear-button{
+  background:#e5e7eb !important;
+  color:#111827 !important;
+  border:0 !important;
+  box-shadow:none !important;
+  opacity:1 !important;
+}
+
+body.light-mode .voice-clear-btn:hover,
+body.light-mode .clear-voice-button:hover,
+body.light-mode .bible-clear-button:hover,
+body.light-mode button.voice-clear-btn:hover,
+body.light-mode button.clear-voice-button:hover,
+body.light-mode button.bible-clear-button:hover{
+  background:#d1d5db !important;
+  color:#111827 !important;
+  opacity:1 !important;
+}
+
+body.light-mode .mic-button,
+body.light-mode .voice-mic-btn,
+body.light-mode .bible-edit-button,
+body.light-mode .primary,
+body.light-mode .save-button{
+  background:#0ea5d4 !important;
+  color:#ffffff !important;
+  border:0 !important;
+  opacity:1 !important;
+}
+
+/* Sørg for at ikonene selv er synlige når knappen er lys */
+body.light-mode .top-button *,
+body.light-mode .nav-button *,
+body.light-mode .toolbar button *,
+body.light-mode .header-actions button *,
+body.light-mode .icon-button *,
+body.light-mode .theme-button *,
+body.light-mode .font-button *,
+body.light-mode .home-button *,
+body.light-mode .help-button *,
+body.light-mode .back-button *,
+body.light-mode .design-button *,
+body.light-mode .voice-clear-btn *,
+body.light-mode .clear-voice-button *,
+body.light-mode .bible-clear-button *{
+  color:#111827 !important;
+  opacity:1 !important;
+  filter:none !important;
+}
+
+
+/* Register v42: make all text-field clear buttons visible in light mode */
+body.light-mode button[aria-label*="Slett"],
+body.light-mode button[aria-label*="slett"],
+body.light-mode button[aria-label*="Fjern"],
+body.light-mode button[aria-label*="fjern"],
+body.light-mode button[title*="Slett"],
+body.light-mode button[title*="slett"],
+body.light-mode button[title*="Fjern"],
+body.light-mode button[title*="fjern"],
+body.light-mode button.clear-btn,
+body.light-mode button.clear-button,
+body.light-mode button.voice-clear,
+body.light-mode button.voice-clear-btn,
+body.light-mode button.clear-voice,
+body.light-mode button.clear-voice-button,
+body.light-mode button.bible-clear-button,
+body.light-mode .voice-actions button:first-child,
+body.light-mode .text-actions button:first-child,
+body.light-mode .field-actions button:first-child,
+body.light-mode .textarea-actions button:first-child,
+body.light-mode .register-bible-actions button:first-child{
+  background:#e5e7eb !important;
+  color:#111827 !important;
   border:0 !important;
   box-shadow:none !important;
   opacity:1 !important;
   filter:none !important;
 }
 
-/* Clear/X buttons: actual classes and title/aria fallback */
+body.light-mode button[aria-label*="Slett"]:hover,
+body.light-mode button[aria-label*="slett"]:hover,
+body.light-mode button[aria-label*="Fjern"]:hover,
+body.light-mode button[aria-label*="fjern"]:hover,
+body.light-mode button[title*="Slett"]:hover,
+body.light-mode button[title*="slett"]:hover,
+body.light-mode button[title*="Fjern"]:hover,
+body.light-mode button[title*="fjern"]:hover,
+body.light-mode button.clear-btn:hover,
+body.light-mode button.clear-button:hover,
+body.light-mode button.voice-clear:hover,
+body.light-mode button.voice-clear-btn:hover,
+body.light-mode button.clear-voice:hover,
+body.light-mode button.clear-voice-button:hover,
+body.light-mode button.bible-clear-button:hover,
+body.light-mode .voice-actions button:first-child:hover,
+body.light-mode .text-actions button:first-child:hover,
+body.light-mode .field-actions button:first-child:hover,
+body.light-mode .textarea-actions button:first-child:hover,
+body.light-mode .register-bible-actions button:first-child:hover{
+  background:#d1d5db !important;
+  color:#111827 !important;
+  opacity:1 !important;
+  filter:none !important;
+}
+
+body.light-mode button[aria-label*="Slett"] *,
+body.light-mode button[aria-label*="slett"] *,
+body.light-mode button[aria-label*="Fjern"] *,
+body.light-mode button[aria-label*="fjern"] *,
+body.light-mode button[title*="Slett"] *,
+body.light-mode button[title*="slett"] *,
+body.light-mode button[title*="Fjern"] *,
+body.light-mode button[title*="fjern"] *,
+body.light-mode button.clear-btn *,
+body.light-mode button.clear-button *,
+body.light-mode button.voice-clear *,
+body.light-mode button.voice-clear-btn *,
+body.light-mode button.clear-voice *,
+body.light-mode button.clear-voice-button *,
+body.light-mode button.bible-clear-button *,
+body.light-mode .voice-actions button:first-child *,
+body.light-mode .text-actions button:first-child *,
+body.light-mode .field-actions button:first-child *,
+body.light-mode .textarea-actions button:first-child *,
+body.light-mode .register-bible-actions button:first-child *{
+  color:#111827 !important;
+  opacity:1 !important;
+  filter:none !important;
+}
+
+/* Keep microphone/edit buttons blue */
+body.light-mode .voice-actions button:last-child,
+body.light-mode .text-actions button:last-child,
+body.light-mode .field-actions button:last-child,
+body.light-mode .textarea-actions button:last-child,
+body.light-mode .register-bible-actions button:last-child,
+body.light-mode button[aria-label*="mikrofon"],
+body.light-mode button[aria-label*="Mikrofon"],
+body.light-mode button[title*="mikrofon"],
+body.light-mode button[title*="Mikrofon"],
+body.light-mode button.bible-edit-button{
+  background:#0ea5d4 !important;
+  color:#ffffff !important;
+  border:0 !important;
+  opacity:1 !important;
+  filter:none !important;
+}
+
+
+/* Register v43b: minimal post-rollback button visibility fix only */
 body.light-mode button.clear-voice-button,
 body.light-mode button.voice-clear-btn,
 body.light-mode button.bible-clear-button,
-body.light-mode button[title*="Tøm"],
-body.light-mode button[title*="Fjern"],
-body.light-mode button[aria-label*="Tøm"],
-body.light-mode button[aria-label*="Fjern"]{
-  background:var(--opp-light-panel2) !important;
-  color:var(--opp-light-text) !important;
+body.light-mode button[title="Tøm felt"],
+body.light-mode button[aria-label="Tøm felt"],
+body.light-mode button[title="Fjern bibelsted"],
+body.light-mode button[aria-label="Fjern bibelsted"]{
+  background:#e5e7eb !important;
+  color:#111827 !important;
   border:0 !important;
   box-shadow:none !important;
   opacity:1 !important;
@@ -1059,135 +1443,36 @@ body.light-mode button[aria-label*="Fjern"]{
 body.light-mode button.clear-voice-button:hover,
 body.light-mode button.voice-clear-btn:hover,
 body.light-mode button.bible-clear-button:hover,
-body.light-mode button[title*="Tøm"]:hover,
-body.light-mode button[title*="Fjern"]:hover,
-body.light-mode button[aria-label*="Tøm"]:hover,
-body.light-mode button[aria-label*="Fjern"]:hover,
-body.light-mode .toolbar button:hover,
-body.light-mode .header-actions button:hover,
-body.light-mode .top-button:hover,
-body.light-mode .nav-button:hover{
+body.light-mode button[title="Tøm felt"]:hover,
+body.light-mode button[aria-label="Tøm felt"]:hover,
+body.light-mode button[title="Fjern bibelsted"]:hover,
+body.light-mode button[aria-label="Fjern bibelsted"]:hover{
   background:#d1d5db !important;
-  color:var(--opp-light-text) !important;
+  color:#111827 !important;
   opacity:1 !important;
   filter:none !important;
 }
 
-/* Make icons inside grey buttons visible */
 body.light-mode button.clear-voice-button *,
 body.light-mode button.voice-clear-btn *,
-body.light-mode button.bible-clear-button *,
-body.light-mode .toolbar button *,
-body.light-mode .header-actions button *,
-body.light-mode .top-button *,
-body.light-mode .nav-button *{
-  color:var(--opp-light-text) !important;
+body.light-mode button.bible-clear-button *{
+  color:#111827 !important;
   opacity:1 !important;
   filter:none !important;
 }
 
-/* Blue action buttons */
 body.light-mode button.mic-button,
 body.light-mode button.voice-mic-btn,
-body.light-mode button.bible-edit-button,
-body.light-mode button.primary,
-body.light-mode button.save-button,
-body.light-mode button.search-button,
-body.light-mode .mic-button,
-body.light-mode .voice-mic-btn,
-body.light-mode .bible-edit-button,
-body.light-mode .primary,
-body.light-mode .save-button,
-body.light-mode .search-button{
-  background:var(--opp-light-blue) !important;
+body.light-mode button.bible-edit-button{
+  background:#0ea5d4 !important;
   color:#ffffff !important;
   border:0 !important;
   opacity:1 !important;
   filter:none !important;
 }
 
-/* Lists */
-body.light-mode .item,
-body.light-mode .experience-item,
-body.light-mode .result-item,
-body.light-mode .list-item,
-body.light-mode .result-card{
-  background:#f3f4f6 !important;
-  color:var(--opp-light-text) !important;
-  border:0 !important;
-}
-
-body.light-mode .item:hover,
-body.light-mode .experience-item:hover,
-body.light-mode .result-item:hover,
-body.light-mode .list-item:hover,
-body.light-mode .result-card:hover{
-  background:#e5e7eb !important;
-}
-
-/* Selected experience row */
-body.light-mode .item.selected,
-body.light-mode .item.active,
-body.light-mode .item.is-selected,
-body.light-mode .experience-item.selected,
-body.light-mode .experience-item.active,
-body.light-mode .experience-item.is-selected,
-body.light-mode .result-item.selected,
-body.light-mode .result-item.active,
-body.light-mode .result-item.is-selected,
-body.light-mode .list-item.selected,
-body.light-mode .list-item.active,
-body.light-mode .list-item.is-selected,
-body.light-mode [data-selected="true"],
-body.light-mode [aria-selected="true"]{
-  background:var(--opp-light-selected) !important;
-  color:var(--opp-light-text) !important;
-  border-left:5px solid var(--opp-light-selected-border) !important;
-  box-shadow:inset 0 0 0 1px rgba(37,99,235,.22) !important;
-}
-
-body.light-mode .item.selected *,
-body.light-mode .item.active *,
-body.light-mode .item.is-selected *,
-body.light-mode [data-selected="true"] *,
-body.light-mode [aria-selected="true"] *{
-  color:var(--opp-light-text) !important;
-  opacity:1 !important;
-  filter:none !important;
-}
-
-body.light-mode .muted,
-body.light-mode .meta,
-body.light-mode .subtle,
-body.light-mode .item-meta,
-body.light-mode .detail-meta,
-body.light-mode .result-meta{
-  color:var(--opp-light-muted) !important;
-}
-
-body.light-mode .status,
-body.light-mode .message,
-body.light-mode .notice,
-body.light-mode .info,
-body.light-mode .help-text,
-body.light-mode .footer-status,
-body.light-mode #status{
-  background:var(--opp-light-panel) !important;
-  color:#374151 !important;
-  border:1px solid var(--opp-light-border) !important;
-}
-
-body.light-mode a{
-  color:#2563eb !important;
-}
-
-body.light-mode,
-body.light-mode *{
-  text-shadow:none !important;
-}
-
 </style>
-<!-- version: REGISTER v43 cleanup-standard-theme-buttons 2026-06-16 -->
+<!-- version: REGISTER v43b rollback-minimal-button-fix 2026-06-16 -->
 </head>
 <body class="dark-mode">
 <div class="login-widget">
@@ -1274,7 +1559,7 @@ body.light-mode *{
               <input id="bibleReference" type="hidden" value="">
               <input id="bibleSource" type="hidden" value="Bibelen på Norsk (1930)">
               <div id="bibleDisplaySource" class="register-bible-source"></div>
-              <textarea id="bibleText" class="register-bible-text" readonly tabindex="0" role="button" title="" onclick="openRegisterBibleSearchBlankSafe()"></textarea>
+              <textarea id="bibleText" class="register-bible-text" readonly tabindex="0" role="button" title="Klikk for å endre bibelsted" onclick="openRegisterBibleSearchBlankSafe()"></textarea>
             </div>
 
 
@@ -1548,10 +1833,1038 @@ body.light-mode *{
     loadOptions();
   </script>
 
+<script>
+(function(){
+  const FONT_KEY = "opplevelserFontSize";
+  const THEME_KEY = "opplevelserTheme";
+  const DESIGN_KEY = "opplevelserDesign";
+
+  const fontValues = ["small","medium","large"];
+
+  function applyOpplevelserFont(){
+    const saved = localStorage.getItem(FONT_KEY) || "small";
+    const size = fontValues.includes(saved) ? saved : "small";
+    document.documentElement.classList.remove("opplevelser-size-small","opplevelser-size-medium","opplevelser-size-large");
+    document.documentElement.classList.add("opplevelser-size-" + size);
+
+    const btn = document.getElementById("opplevelserFontToggle");
+    if(btn){
+      btn.textContent = size === "small" ? "A" : (size === "medium" ? "A+" : "A++");
+      btn.title = "Endre tekststørrelse: " + (size === "small" ? "liten" : (size === "medium" ? "medium" : "stor"));
+    }
+  }
+
+  function applyOpplevelserTheme(){
+    const saved = localStorage.getItem(THEME_KEY) || "dark";
+    document.body.classList.toggle("light-mode", saved === "light");
+    document.body.classList.toggle("dark-mode", saved !== "light");
+
+    const btn = document.getElementById("opplevelserThemeToggle");
+    if(btn){
+      btn.innerHTML = saved === "light" ? `<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M21 14.6A8.5 8.5 0 0 1 9.4 3a1 1 0 0 0-1.1-1.6A10.5 10.5 0 1 0 22.6 15.7a1 1 0 0 0-1.6-1.1Z" fill="currentColor"/></svg>` : `<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10Zm0-5a1 1 0 0 1 1 1v1a1 1 0 1 1-2 0V3a1 1 0 0 1 1-1Zm0 17a1 1 0 0 1 1 1v1a1 1 0 1 1-2 0v-1a1 1 0 0 1 1-1ZM4.22 4.22a1 1 0 0 1 1.42 0l.7.71a1 1 0 1 1-1.41 1.41l-.71-.7a1 1 0 0 1 0-1.42Zm13.44 13.44a1 1 0 0 1 1.41 0l.71.7a1 1 0 0 1-1.42 1.42l-.7-.71a1 1 0 0 1 0-1.41ZM2 12a1 1 0 0 1 1-1h1a1 1 0 1 1 0 2H3a1 1 0 0 1-1-1Zm17 0a1 1 0 0 1 1-1h1a1 1 0 1 1 0 2h-1a1 1 0 0 1-1-1ZM4.22 19.78a1 1 0 0 1 0-1.42l.71-.7a1 1 0 0 1 1.41 1.41l-.7.71a1 1 0 0 1-1.42 0ZM17.66 6.34a1 1 0 0 1 0-1.41l.7-.71a1 1 0 0 1 1.42 1.42l-.71.7a1 1 0 0 1-1.41 0Z" fill="currentColor"/></svg>`;
+      btn.title = saved === "light" ? "Bytt til mørk visning" : "Bytt til lys visning";
+    }
+  }
+
+  function applyOpplevelserDesign(){
+    const saved = localStorage.getItem(DESIGN_KEY) || "soft";
+    document.documentElement.classList.toggle("classic-design-root", saved === "classic");
+
+    const btn = document.getElementById("opplevelserDesignToggle");
+    if(btn){
+      btn.textContent = saved === "classic" ? "◩" : "◫";
+      btn.title = saved === "classic" ? "Bytt til mykt design" : "Bytt til klassisk design";
+    }
+  }
+
+  window.toggleOpplevelserFontSize = function(){
+    const current = localStorage.getItem(FONT_KEY) || "small";
+    const index = fontValues.indexOf(current);
+    const next = fontValues[(index < 0 ? 1 : index + 1) % fontValues.length];
+    localStorage.setItem(FONT_KEY, next);
+    applyOpplevelserFont();
+  };
+
+  window.toggleOpplevelserTheme = function(){
+    const current = localStorage.getItem(THEME_KEY) || "dark";
+    localStorage.setItem(THEME_KEY, current === "light" ? "dark" : "light");
+    applyOpplevelserTheme();
+  };
+
+  window.toggleOpplevelserDesign = function(){
+    const current = localStorage.getItem(DESIGN_KEY) || "soft";
+    localStorage.setItem(DESIGN_KEY, current === "classic" ? "soft" : "classic");
+    applyOpplevelserDesign();
+  };
+
+  window.goOpplevelserBack = function(event){
+    if(event) event.preventDefault();
+    if(window.history.length > 1){
+      window.history.back();
+    }else{
+      location.href = "https://kvimarka92.carstereogarage.com/index.html?restoreMenu=1";
+    }
+  };
+
+  function initOpplevelserStandard(){
+    applyOpplevelserFont();
+    applyOpplevelserTheme();
+    applyOpplevelserDesign();
+  }
+
+  if(document.readyState === "loading"){
+    document.addEventListener("DOMContentLoaded", initOpplevelserStandard);
+  }else{
+    initOpplevelserStandard();
+  }
+})();
+</script>
+
 
 <script>
-/* Opplevelser standard cleanup v50/v43
-   Én samlet theme/selected helper. */
+(function(){
+  const KEY = "kvimarka92SelectedBibleVerse";
+
+  function clearBibleFieldsOnFreshRegistration(){
+    try{
+      sessionStorage.removeItem(KEY);
+      localStorage.removeItem(KEY);
+    }catch(error){}
+
+    function clearNow(){
+      const ref = document.getElementById("bibleReference");
+      const text = document.getElementById("bibleText");
+      const source = document.getElementById("bibleSource");
+      const card = document.getElementById("biblePreviewCard") || document.getElementById("selectedBibleCard") || document.getElementById("bibleCard");
+
+      if(ref) ref.value = "";
+      if(text) text.value = "";
+      if(source) source.value = "Bibelen på Norsk (1930)";
+
+      if(card){
+        card.style.display = "none";
+      }
+
+      document.querySelectorAll("[data-bible-reference-output]").forEach(el => el.textContent = "");
+      document.querySelectorAll("[data-bible-text-output]").forEach(el => el.textContent = "");
+    }
+
+    if(document.readyState === "loading"){
+      document.addEventListener("DOMContentLoaded", clearNow);
+    }else{
+      clearNow();
+    }
+  }
+
+  clearBibleFieldsOnFreshRegistration();
+})();
+</script>
+
+
+<script>
+(function(){
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  let activeRecognition = null;
+  let activeButton = null;
+  let activeTextarea = null;
+  let baseText = "";
+
+  function setVoiceStatus(text){
+    let status = document.getElementById("voiceStatus");
+
+    if(!status){
+      status = document.createElement("div");
+      status.id = "voiceStatus";
+      status.className = "voice-status";
+      const firstMic = document.querySelector(".mic-button");
+      if(firstMic && firstMic.closest(".voice-field-wrap")){
+        firstMic.closest(".voice-field-wrap").appendChild(status);
+      }else{
+        document.body.appendChild(status);
+      }
+    }
+
+    status.textContent = text || "";
+    status.classList.toggle("visible", !!text);
+  }
+
+  function stopActiveRecognition(){
+    if(activeRecognition){
+      try{ activeRecognition.stop(); }catch(error){}
+    }
+
+    if(activeButton){
+      activeButton.classList.remove("listening");
+      activeButton.title = "Les inn tekst";
+      activeButton.setAttribute("aria-label", "Les inn tekst");
+    }
+
+    activeRecognition = null;
+    activeButton = null;
+    activeTextarea = null;
+    baseText = "";
+    setVoiceStatus("");
+  }
+
+  function appendTranscript(textarea, originalText, transcript){
+    const spoken = String(transcript || "").trim();
+
+    if(!spoken){
+      return;
+    }
+
+    const before = String(originalText || "").trim();
+
+    if(before){
+      textarea.value = before + (/[.!?…]$/.test(before) ? " " : ". ") + spoken;
+    }else{
+      textarea.value = spoken;
+    }
+
+    textarea.dispatchEvent(new Event("input", { bubbles:true }));
+    textarea.dispatchEvent(new Event("change", { bubbles:true }));
+  }
+
+  function startDictation(button, textareaId){
+    const textarea = document.getElementById(textareaId);
+
+    if(!textarea){
+      alert("Fant ikke tekstfeltet.");
+      return;
+    }
+
+    if(!SpeechRecognition){
+      alert("Talegjenkjenning støttes ikke i denne nettleseren.");
+      return;
+    }
+
+    if(activeRecognition && activeButton === button){
+      stopActiveRecognition();
+      return;
+    }
+
+    stopActiveRecognition();
+
+    const recognition = new SpeechRecognition();
+    recognition.lang = "nb-NO";
+    recognition.interimResults = true;
+    recognition.continuous = true;
+
+    activeRecognition = recognition;
+    activeButton = button;
+    activeTextarea = textarea;
+    baseText = textarea.value;
+
+    button.classList.add("listening");
+    button.title = "Stopp innlesing";
+    button.setAttribute("aria-label", "Stopp innlesing");
+    setVoiceStatus("Lytter ... trykk mikrofonen igjen for å stoppe.");
+
+    let finalTranscript = "";
+
+    recognition.onresult = event => {
+      let interim = "";
+
+      for(let index = event.resultIndex; index < event.results.length; index += 1){
+        const result = event.results[index];
+        const transcript = result[0] && result[0].transcript ? result[0].transcript : "";
+
+        if(result.isFinal){
+          finalTranscript += transcript + " ";
+        }else{
+          interim += transcript;
+        }
+      }
+
+      const preview = (finalTranscript + " " + interim).trim();
+
+      if(preview){
+        appendTranscript(textarea, baseText, preview);
+      }
+    };
+
+    recognition.onerror = event => {
+      setVoiceStatus("Mikrofonfeil: " + (event.error || "ukjent feil"));
+      window.setTimeout(stopActiveRecognition, 1200);
+    };
+
+    recognition.onend = () => {
+      if(activeRecognition === recognition){
+        stopActiveRecognition();
+      }
+    };
+
+    try{
+      recognition.start();
+    }catch(error){
+      setVoiceStatus("Kunne ikke starte mikrofon: " + error.message);
+      stopActiveRecognition();
+    }
+  }
+
+  function initMicButtons(){
+    const buttons = document.querySelectorAll("[data-dictate-target]");
+
+    buttons.forEach(button => {
+      if(SpeechRecognition){
+        button.classList.add("visible");
+      }else{
+        button.classList.remove("visible");
+      }
+
+      if(button.dataset.dictateReady === "1"){
+        return;
+      }
+
+      button.dataset.dictateReady = "1";
+      button.addEventListener("click", () => {
+        startDictation(button, button.dataset.dictateTarget);
+      });
+    });
+  }
+
+  window.initOpplevelserMicButtons = initMicButtons;
+
+  if(document.readyState === "loading"){
+    document.addEventListener("DOMContentLoaded", initMicButtons);
+  }else{
+    initMicButtons();
+  }
+})();
+</script>
+
+
+<script>
+(function(){
+  const LOGIN_API_BASE = "https://api-kvimarka92.carstereogarage.com";
+
+  function getInitials(nameOrEmail){
+    const value = String(nameOrEmail || "").trim();
+
+    if(!value){
+      return "?";
+    }
+
+    const namePart = value.includes("@")
+      ? value.split("@")[0]
+      : value;
+
+    const parts = namePart
+      .split(/\s+/)
+      .filter(Boolean);
+
+    if(parts.length >= 2){
+      return (parts[0][0] + parts[1][0]).toUpperCase();
+    }
+
+    return namePart.slice(0, 2).toUpperCase();
+  }
+
+  async function performOpplevelserLogout(){
+    try{
+      await fetch(`${LOGIN_API_BASE}/cdn-cgi/access/logout`, {
+        method:"GET",
+        credentials:"include",
+        mode:"no-cors"
+      });
+    }catch(error){
+      console.warn("Logout request may have been blocked, continuing anyway.", error);
+    }
+
+    window.location.href = window.location.pathname + "?logout=" + Date.now();
+  }
+
+  window.setupOpplevelserLoginWidget = function(user){
+    const loginStatus = document.getElementById("loginStatus");
+    const loginMenu = document.getElementById("loginMenu");
+    const loginMenuName = document.getElementById("loginMenuName");
+    const logoutLink = document.getElementById("logoutLink");
+
+    if(!loginStatus || !loginMenu){
+      return;
+    }
+
+    if(user && (user.name || user.email)){
+      const displayName = user.name || user.email || "Innlogget";
+
+      loginStatus.textContent = getInitials(displayName);
+      loginStatus.href = "#";
+      loginStatus.classList.remove("is-signin");
+      loginStatus.classList.add("signed-in");
+      loginStatus.title = displayName;
+      loginStatus.setAttribute("aria-label", displayName);
+
+      if(loginMenuName){
+        loginMenuName.textContent = displayName;
+      }
+
+      loginStatus.onclick = function(event){
+        event.preventDefault();
+        loginMenu.style.display =
+          loginMenu.style.display === "block" ? "none" : "block";
+      };
+
+      if(logoutLink){
+        logoutLink.onclick = function(event){
+          event.preventDefault();
+          performOpplevelserLogout();
+        };
+      }
+    }else{
+      const returnUrl =
+        window.location.origin +
+        window.location.pathname +
+        window.location.search;
+
+      loginStatus.textContent = "Sign in";
+      loginStatus.href =
+        `${LOGIN_API_BASE}/login?returnUrl=${encodeURIComponent(returnUrl)}`;
+
+      loginStatus.classList.add("is-signin");
+      loginStatus.classList.remove("signed-in");
+      loginStatus.title = "Logg inn";
+      loginStatus.setAttribute("aria-label", "Logg inn");
+      loginStatus.onclick = null;
+      loginMenu.style.display = "none";
+    }
+  };
+
+  document.addEventListener("click", function(event){
+    const widget = document.querySelector(".login-widget");
+    const menu = document.getElementById("loginMenu");
+
+    if(widget && menu && !widget.contains(event.target)){
+      menu.style.display = "none";
+    }
+  });
+
+  if(document.readyState === "loading"){
+    document.addEventListener("DOMContentLoaded", function(){
+      window.setupOpplevelserLoginWidget(null);
+    });
+  }else{
+    window.setupOpplevelserLoginWidget(null);
+  }
+})();
+</script>
+
+
+<script>
+(function(){
+  window.clearOpplevelserVoiceField = function(textareaId){
+    const textarea = document.getElementById(textareaId);
+    if(!textarea){
+      return;
+    }
+
+    if(textarea.value && !confirm("Tømme dette feltet?")){
+      return;
+    }
+
+    textarea.value = "";
+    textarea.focus();
+    textarea.dispatchEvent(new Event("input", { bubbles:true }));
+    textarea.dispatchEvent(new Event("change", { bubbles:true }));
+  };
+})();
+</script>
+
+
+<script>
+(function(){
+  const KEY = "kvimarka92SelectedBibleVerse";
+  const OVERRIDE_KEY = "kvimarka92BibleSearchInputVerse";
+
+  function readField(id){
+    const el = document.getElementById(id);
+    return el ? String(el.value || "").trim() : "";
+  }
+
+  function getCurrentBibleVerseFromPage(){
+    const reference =
+      readField("bibleReference") ||
+      readField("editBibleReference");
+
+    const text =
+      readField("bibleText") ||
+      readField("editBibleText");
+
+    const source =
+      readField("bibleSource") ||
+      readField("editBibleSource") ||
+      "Bibelen på Norsk (1930)";
+
+    return {
+      reference,
+      text,
+      source,
+      sourceId:"nb-1930",
+      selectedAt:new Date().toISOString()
+    };
+  }
+
+  function prepareBibleSearchFromCurrentPage(){
+    const verse = getCurrentBibleVerseFromPage();
+
+    try{
+      sessionStorage.setItem(OVERRIDE_KEY, JSON.stringify(verse));
+      sessionStorage.setItem(KEY, JSON.stringify(verse));
+
+      // localStorage oppdateres også slik at nytt popup-vindu kan lese samme verdi.
+      // Men sessionStorage override er fasit for akkurat denne åpningen.
+      localStorage.setItem(OVERRIDE_KEY, JSON.stringify(verse));
+      localStorage.setItem(KEY, JSON.stringify(verse));
+    }catch(error){}
+
+    return verse;
+  }
+
+  function applySelectedBibleVerseToPage(verse){
+    if(!verse){
+      return;
+    }
+
+    const normalRef = document.getElementById("bibleReference");
+    const normalText = document.getElementById("bibleText");
+    const normalSource = document.getElementById("bibleSource");
+
+    const editRef = document.getElementById("editBibleReference");
+    const editText = document.getElementById("editBibleText");
+    const editSource = document.getElementById("editBibleSource");
+
+    if(normalRef) normalRef.value = verse.reference || "";
+    if(normalText) normalText.value = verse.text || "";
+    if(normalSource) normalSource.value = verse.source || "Bibelen på Norsk (1930)";
+
+    if(editRef) editRef.value = verse.reference || "";
+    if(editText) editText.value = verse.text || "";
+    if(editSource) editSource.value = verse.source || "Bibelen på Norsk (1930)";
+
+    if(typeof window.updateBiblePreview === "function"){
+      window.updateBiblePreview();
+      if(window.updateBibleHeaderDisplay){ window.updateBibleHeaderDisplay(); }
+    }
+
+    for(const id of ["bibleReference","bibleText","bibleSource","editBibleReference","editBibleText","editBibleSource"]){
+      const field = document.getElementById(id);
+      if(field){
+        field.dispatchEvent(new Event("input", { bubbles:true }));
+        field.dispatchEvent(new Event("change", { bubbles:true }));
+      }
+    }
+
+    try{
+      sessionStorage.setItem(KEY, JSON.stringify(verse));
+      sessionStorage.setItem(OVERRIDE_KEY, JSON.stringify(verse));
+      localStorage.setItem(KEY, JSON.stringify(verse));
+      localStorage.setItem(OVERRIDE_KEY, JSON.stringify(verse));
+    }catch(error){}
+  }
+
+  window.prepareBibleSearchFromCurrentPage = prepareBibleSearchFromCurrentPage;
+  window.applySelectedBibleVerseToPage = applySelectedBibleVerseToPage;
+
+  window.addEventListener("message", event => {
+    if(!event.data || event.data.type !== "kvimarka92:bible-verse-selected"){
+      return;
+    }
+
+    applySelectedBibleVerseToPage(event.data.payload);
+  });
+})();
+</script>
+
+
+<script>
+(function(){
+  function updateBibleHeaderDisplay(){
+    const pairs = [
+      {
+        ref:"bibleReference",
+        source:"bibleSource",
+        title:"bibleDisplayTitle",
+        sourceOut:"bibleDisplaySource"
+      },
+      {
+        ref:"editBibleReference",
+        source:"editBibleSource",
+        title:"editBibleDisplayTitle",
+        sourceOut:"editBibleDisplaySource"
+      }
+    ];
+
+    pairs.forEach(pair => {
+      const ref = document.getElementById(pair.ref);
+      const source = document.getElementById(pair.source);
+      const title = document.getElementById(pair.title);
+      const sourceOut = document.getElementById(pair.sourceOut);
+
+      if(!title && !sourceOut){
+        return;
+      }
+
+      const refText = ref ? String(ref.value || "").trim() : "";
+      const sourceText = source ? String(source.value || "Bibelen på Norsk (1930)").trim() : "Bibelen på Norsk (1930)";
+
+      if(title){
+        title.textContent = refText ? "Bibeltekst: " + refText : "Bibeltekst";
+      }
+
+      if(sourceOut){
+        sourceOut.textContent = sourceText ? "(" + sourceText + ")" : "";
+      }
+    });
+  }
+
+  window.updateBibleHeaderDisplay = updateBibleHeaderDisplay;
+
+  function initBibleHeaderDisplay(){
+    updateBibleHeaderDisplay();
+
+    ["bibleReference","bibleSource","editBibleReference","editBibleSource"].forEach(id => {
+      const field = document.getElementById(id);
+
+      if(field && field.dataset.bibleHeaderListener !== "1"){
+        field.dataset.bibleHeaderListener = "1";
+        field.addEventListener("input", updateBibleHeaderDisplay);
+        field.addEventListener("change", updateBibleHeaderDisplay);
+      }
+    });
+  }
+
+  window.initBibleHeaderDisplay = initBibleHeaderDisplay;
+
+  if(document.readyState === "loading"){
+    document.addEventListener("DOMContentLoaded", initBibleHeaderDisplay);
+  }else{
+    initBibleHeaderDisplay();
+  }
+})();
+</script>
+
+
+<script>
+(function(){
+  window.openOpplevelserBibleSearch = function(){
+    if(typeof window.prepareBibleSearchFromCurrentPage === "function"){
+      window.prepareBibleSearchFromCurrentPage();
+    }
+
+    const width = Math.min(980, Math.max(360, Math.floor(window.screen.availWidth * 0.88)));
+    const height = Math.min(760, Math.max(520, Math.floor(window.screen.availHeight * 0.82)));
+
+    const left = Math.max(0, Math.round((window.screenX || window.screenLeft || 0) + ((window.outerWidth || width) - width) / 2));
+    const top = Math.max(0, Math.round((window.screenY || window.screenTop || 0) + ((window.outerHeight || height) - height) / 2));
+
+    const features = [
+      "popup=yes",
+      "width=" + width,
+      "height=" + height,
+      "left=" + left,
+      "top=" + top,
+      "resizable=yes",
+      "scrollbars=yes"
+    ].join(",");
+
+    window.open("bibel-sok.html", "kvimarka92BibleSearch", features);
+  };
+})();
+</script>
+
+
+<script>
+(function(){
+  function autoGrowTextarea(textarea){
+    if(!textarea){
+      return;
+    }
+
+    textarea.classList.add("auto-grow-textarea");
+    textarea.style.height = "auto";
+    textarea.style.height = Math.max(textarea.scrollHeight, 88) + "px";
+  }
+
+  function initAutoGrowTextareas(){
+    document
+      .querySelectorAll("textarea")
+      .forEach(textarea => {
+        autoGrowTextarea(textarea);
+
+        if(textarea.dataset.autoGrowReady === "1"){
+          return;
+        }
+
+        textarea.dataset.autoGrowReady = "1";
+        textarea.addEventListener("input", () => autoGrowTextarea(textarea));
+        textarea.addEventListener("change", () => autoGrowTextarea(textarea));
+      });
+  }
+
+  window.initOpplevelserAutoGrowTextareas = initAutoGrowTextareas;
+  window.autoGrowOpplevelserTextarea = autoGrowTextarea;
+
+  if(document.readyState === "loading"){
+    document.addEventListener("DOMContentLoaded", initAutoGrowTextareas);
+  }else{
+    initAutoGrowTextareas();
+  }
+})();
+</script>
+
+
+
+<script>
+(function(){
+  const SELECTED_KEY = "kvimarka92SelectedBibleVerse";
+  const INPUT_KEY = "kvimarka92BibleSearchInputVerse";
+
+  function readRegisterField(id){
+    const el = document.getElementById(id);
+    return el ? String(el.value || "").trim() : "";
+  }
+
+  function clearStoredBibleSelectionForNewExperience(){
+    try{
+      sessionStorage.removeItem(SELECTED_KEY);
+      sessionStorage.removeItem(INPUT_KEY);
+      localStorage.removeItem(SELECTED_KEY);
+      localStorage.removeItem(INPUT_KEY);
+    }catch(error){}
+  }
+
+  window.prepareRegisterBibleSearch = function(){
+    const reference = readRegisterField("bibleReference");
+    const text = readRegisterField("bibleText");
+    const source = readRegisterField("bibleSource") || "Bibelen på Norsk (1930)";
+
+    // Registrer ny skal ikke arve forrige valg fra en tidligere popup.
+    // Hvis siden ikke har et faktisk valgt bibelsted, starter bibelsøk blankt.
+    if(!reference && !text){
+      clearStoredBibleSelectionForNewExperience();
+      return null;
+    }
+
+    const payload = {
+      reference,
+      text,
+      source,
+      sourceId:"nb-1930",
+      selectedAt:new Date().toISOString()
+    };
+
+    try{
+      sessionStorage.setItem(INPUT_KEY, JSON.stringify(payload));
+      sessionStorage.setItem(SELECTED_KEY, JSON.stringify(payload));
+      localStorage.setItem(INPUT_KEY, JSON.stringify(payload));
+      localStorage.setItem(SELECTED_KEY, JSON.stringify(payload));
+    }catch(error){}
+
+    return payload;
+  };
+
+  window.openRegisterBibleSearchBlankSafe = function(){
+    if(typeof window.prepareRegisterBibleSearch === "function"){
+      window.prepareRegisterBibleSearch();
+    }
+
+    const width = Math.min(980, Math.max(360, Math.floor(window.screen.availWidth * 0.88)));
+    const height = Math.min(760, Math.max(520, Math.floor(window.screen.availHeight * 0.82)));
+    const left = Math.max(0, Math.round((window.screenX || window.screenLeft || 0) + ((window.outerWidth || width) - width) / 2));
+    const top = Math.max(0, Math.round((window.screenY || window.screenTop || 0) + ((window.outerHeight || height) - height) / 2));
+
+    window.open(
+      "bibel-sok.html",
+      "kvimarka92BibleSearch",
+      [
+        "popup=yes",
+        "width=" + width,
+        "height=" + height,
+        "left=" + left,
+        "top=" + top,
+        "resizable=yes",
+        "scrollbars=yes"
+      ].join(",")
+    );
+  };
+})();
+</script>
+
+
+<script>
+(function(){
+  window.openOpplevelserBibleSearch = function(){
+    if(typeof window.openRegisterBibleSearchBlankSafe === "function"){
+      window.openRegisterBibleSearchBlankSafe();
+      return;
+    }
+
+    window.open("bibel-sok.html", "kvimarka92BibleSearch", "popup=yes,width=980,height=760,resizable=yes,scrollbars=yes");
+  };
+})();
+</script>
+
+
+<script>
+(function(){
+  function applyRegisterBibleSelection(payload){
+    if(!payload){
+      return;
+    }
+
+    const reference = payload.reference || "";
+    const text = payload.text || "";
+    const source = payload.source || "Bibelen på Norsk (1930)";
+
+    const refEl = document.getElementById("bibleReference");
+    const textEl = document.getElementById("bibleText");
+    const sourceEl = document.getElementById("bibleSource");
+
+    if(refEl){ refEl.value = reference; }
+    if(textEl){ textEl.value = text; }
+    if(sourceEl){ sourceEl.value = source; }
+
+    if(window.updateRegisterBibleHeader){ window.updateRegisterBibleHeader(); }
+    if(window.ensureRegisterBibleTextLink){ window.ensureRegisterBibleTextLink(); }
+    if(window.initOpplevelserAutoGrowTextareas){ window.initOpplevelserAutoGrowTextareas(); }
+  }
+
+  window.applyRegisterBibleSelection = applyRegisterBibleSelection;
+
+  window.addEventListener("message", event => {
+    const data = event.data || {};
+    if(data.type !== "kvimarka92:bible-verse-selected"){
+      return;
+    }
+
+    applyRegisterBibleSelection(data.payload || data.verse || data);
+  });
+
+  window.addEventListener("storage", event => {
+    if(event.key !== "kvimarka92SelectedBibleVerse" || !event.newValue){
+      return;
+    }
+
+    try{
+      applyRegisterBibleSelection(JSON.parse(event.newValue));
+    }catch(error){}
+  });
+})();
+</script>
+
+
+
+<script>
+(function(){
+  function formatBibleSourceRegister(source){
+    const text = String(source || "Bibelen på Norsk (1930)").trim();
+    return text.replace(/\s*\((\d{4})\)\s*$/, " $1");
+  }
+
+  function readRegisterField(id){
+    const el = document.getElementById(id);
+    return el ? String(el.value || "").trim() : "";
+  }
+
+  function updateRegisterBibleHeader(){
+    const title = document.getElementById("bibleDisplayTitle");
+    const sourceEl = document.getElementById("bibleDisplaySource");
+    const reference = readRegisterField("bibleReference");
+    const source = readRegisterField("bibleSource") || "Bibelen på Norsk (1930)";
+
+    if(title){
+      title.textContent = reference ? "Bibeltekst: " + reference : "Bibeltekst";
+    }
+
+    if(sourceEl){
+      sourceEl.textContent = source ? "(" + formatBibleSourceRegister(source) + ")" : "";
+    }
+  }
+
+  function ensureRegisterBibleTextLink(){
+    const el = document.getElementById("bibleText");
+    if(!el){
+      return;
+    }
+
+    el.setAttribute("readonly", "readonly");
+    el.setAttribute("tabindex", "0");
+    el.setAttribute("role", "button");
+    el.setAttribute("title", "Klikk for å endre bibelsted");
+
+    el.onclick = function(){
+      if(typeof window.openRegisterBibleSearchBlankSafe === "function"){
+        window.openRegisterBibleSearchBlankSafe();
+      }
+    };
+
+    if(el.dataset.bibleTextOpenKeyReady !== "1"){
+      el.dataset.bibleTextOpenKeyReady = "1";
+      el.addEventListener("keydown", event => {
+        if(event.key !== "Enter" && event.key !== " "){
+          return;
+        }
+
+        event.preventDefault();
+
+        if(typeof window.openRegisterBibleSearchBlankSafe === "function"){
+          window.openRegisterBibleSearchBlankSafe();
+        }
+      });
+    }
+  }
+
+  window.updateRegisterBibleHeader = updateRegisterBibleHeader;
+  window.ensureRegisterBibleTextLink = ensureRegisterBibleTextLink;
+
+  window.clearRegisterBiblePlace = function(){
+    const values = {
+      bibleReference:"",
+      bibleText:"",
+      bibleSource:"Bibelen på Norsk (1930)"
+    };
+
+    Object.keys(values).forEach(id => {
+      const el = document.getElementById(id);
+      if(!el){
+        return;
+      }
+
+      el.value = values[id];
+      el.dispatchEvent(new Event("input", { bubbles:true }));
+      el.dispatchEvent(new Event("change", { bubbles:true }));
+    });
+
+    updateRegisterBibleHeader();
+    ensureRegisterBibleTextLink();
+
+    if(window.initOpplevelserAutoGrowTextareas){
+      window.initOpplevelserAutoGrowTextareas();
+    }
+
+    try{
+      sessionStorage.removeItem("kvimarka92SelectedBibleVerse");
+      sessionStorage.removeItem("kvimarka92BibleSearchInputVerse");
+      localStorage.removeItem("kvimarka92SelectedBibleVerse");
+      localStorage.removeItem("kvimarka92BibleSearchInputVerse");
+    }catch(error){}
+  };
+
+  function initRegisterBibleField(){
+    updateRegisterBibleHeader();
+    ensureRegisterBibleTextLink();
+
+    const textEl = document.getElementById("bibleText");
+    if(textEl && window.autoGrowOpplevelserTextarea){
+      window.autoGrowOpplevelserTextarea(textEl);
+    }
+  }
+
+  window.initRegisterBibleField = initRegisterBibleField;
+
+  if(document.readyState === "loading"){
+    document.addEventListener("DOMContentLoaded", initRegisterBibleField);
+  }else{
+    initRegisterBibleField();
+  }
+})();
+</script>
+
+
+<script>
+(function(){
+  function pad2(v){return String(v).padStart(2,"0");}
+  function isoToNorwegianDate(value){
+    const text=String(value||"").trim();
+    const iso=text.match(/^(\d{4})-(\d{2})-(\d{2})/);
+    if(iso){return iso[3]+"."+iso[2]+"."+iso[1];}
+    const no=text.match(/^(\d{1,2})\.(\d{1,2})\.(\d{4})$/);
+    if(no){return pad2(no[1])+"."+pad2(no[2])+"."+no[3];}
+    const us=text.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+    if(us){return pad2(us[2])+"."+pad2(us[1])+"."+us[3];}
+    return text;
+  }
+  function norwegianDateToIso(value){
+    const text=String(value||"").trim();
+    const no=text.match(/^(\d{1,2})\.(\d{1,2})\.(\d{4})$/);
+    if(no){return no[3]+"-"+pad2(no[2])+"-"+pad2(no[1]);}
+    const iso=text.match(/^(\d{4})-(\d{2})-(\d{2})/);
+    if(iso){return iso[1]+"-"+iso[2]+"-"+iso[3];}
+    const us=text.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+    if(us){return us[3]+"-"+pad2(us[1])+"-"+pad2(us[2]);}
+    return text;
+  }
+  function todayIso(){const d=new Date();return d.getFullYear()+"-"+pad2(d.getMonth()+1)+"-"+pad2(d.getDate());}
+  window.formatOpplevelserDate=isoToNorwegianDate;
+  window.parseOpplevelserDate=norwegianDateToIso;
+
+  function syncDatePickerFromText(){
+    const text=document.getElementById("experienceDate");
+    const picker=document.getElementById("experienceDatePicker");
+    if(!text||!picker){return;}
+    const iso=norwegianDateToIso(text.value);
+    if(/^\d{4}-\d{2}-\d{2}$/.test(iso)){picker.value=iso;}
+  }
+  function setRegisterTodayIfBlank(){
+    const text=document.getElementById("experienceDate");
+    const picker=document.getElementById("experienceDatePicker");
+    if(!text){return;}
+    if(!String(text.value||"").trim()){
+      const iso=todayIso();
+      text.value=isoToNorwegianDate(iso);
+      if(picker){picker.value=iso;}
+    }else{
+      text.value=isoToNorwegianDate(text.value);
+      syncDatePickerFromText();
+    }
+  }
+  window.forceNorwegianRegisterDate=function(){
+    const text=document.getElementById("experienceDate");
+    if(!text){return;}
+    text.type="text";
+    text.placeholder="dd.mm.åååå";
+    text.inputMode="numeric";
+    text.autocomplete="off";
+    setRegisterTodayIfBlank();
+  };
+  window.openExperienceDatePicker=function(){
+    const picker=document.getElementById("experienceDatePicker");
+    syncDatePickerFromText();
+    if(!picker){return;}
+    try{picker.showPicker();}catch(e){picker.focus();picker.click();}
+  };
+  function installDatePicker(){
+    const text=document.getElementById("experienceDate");
+    const picker=document.getElementById("experienceDatePicker");
+    if(!text){return;}
+
+    text.setAttribute("readonly", "readonly");
+    text.onclick = function(){
+      if(typeof window.openExperienceDatePicker === "function"){
+        window.openExperienceDatePicker();
+      }
+    };
+
+    setRegisterTodayIfBlank();
+    if(text.dataset.datePickerReady!=="1"){
+      text.dataset.datePickerReady="1";
+      text.addEventListener("blur",()=>{text.value=isoToNorwegianDate(text.value);syncDatePickerFromText();});
+      text.addEventListener("change",syncDatePickerFromText);
+    }
+    if(picker&&picker.dataset.datePickerReady!=="1"){
+      picker.dataset.datePickerReady="1";
+      picker.addEventListener("change",()=>{if(picker.value){text.value=isoToNorwegianDate(picker.value);}});
+    }
+    [0,50,150,400,900].forEach(delay=>window.setTimeout(setRegisterTodayIfBlank,delay));
+  }
+  window.installExperienceDatePicker=installDatePicker;
+  if(document.readyState==="loading"){document.addEventListener("DOMContentLoaded",installDatePicker);}else{installDatePicker();}
+  window.addEventListener("pageshow",installDatePicker);
+})();
+</script>
+
+
+
+<script>
 (function(){
   const THEME_KEYS = ["kvimarka92Theme", "opplevelserTheme", "theme"];
 
@@ -1564,12 +2877,15 @@ body.light-mode *{
         }
       }catch(error){}
     }
+
     return "";
   }
 
   function storeTheme(theme){
     THEME_KEYS.forEach(key => {
-      try{ localStorage.setItem(key, theme); }catch(error){}
+      try{
+        localStorage.setItem(key, theme);
+      }catch(error){}
     });
   }
 
@@ -1608,7 +2924,9 @@ body.light-mode *{
   }
 
   function isThemeButton(button){
-    if(!button){ return false; }
+    if(!button){
+      return false;
+    }
 
     const txt = (button.textContent || "").trim();
     const title = (button.getAttribute("title") || button.getAttribute("aria-label") || "").toLowerCase();
@@ -1624,7 +2942,9 @@ body.light-mode *{
 
   function toggleThemeFromButton(event){
     const button = event.target.closest("button");
-    if(!isThemeButton(button)){ return; }
+    if(!isThemeButton(button)){
+      return;
+    }
 
     event.preventDefault();
     event.stopPropagation();
@@ -1638,70 +2958,16 @@ body.light-mode *{
     setTheme(currentlyLight ? "dark" : "light");
   }
 
-  function getExperienceRow(target){
-    if(!target || !target.closest){ return null; }
-
-    return target.closest(
-      ".item, .experience-item, .result-item, .list-item, [data-experience-id], [data-id], [role='option'], [role='listitem']"
-    );
-  }
-
-  function markSelectedExperience(row){
-    if(!row){ return; }
-
-    const container =
-      row.closest("#results, #list, .items, .results-panel, .list-panel, .experience-list, .result-list")
-      || row.parentElement;
-
-    if(container){
-      container.querySelectorAll(".is-selected, .selected, .active, [data-selected='true'], [aria-selected='true']").forEach(el => {
-        if(el === row){ return; }
-        el.classList.remove("is-selected", "selected", "active");
-        el.removeAttribute("data-selected");
-        el.removeAttribute("aria-selected");
-      });
-    }
-
-    row.classList.add("is-selected", "selected");
-    row.setAttribute("data-selected", "true");
-    row.setAttribute("aria-selected", "true");
-  }
-
-  function markInitialSelectedExperience(){
-    const existing = document.querySelector(
-      ".item.selected, .item.active, .experience-item.selected, .result-item.selected, .list-item.selected, [data-selected='true'], [aria-selected='true']"
-    );
-    if(existing){
-      markSelectedExperience(existing);
-      return;
-    }
-
-    const first = document.querySelector(".item, .experience-item, .result-item, .list-item, [data-experience-id], [role='option'], [role='listitem']");
-    if(first){ markSelectedExperience(first); }
-  }
-
+  window.applyRealRegisterTheme = applySavedTheme;
   window.setOpplevelserTheme = setTheme;
-  window.applyOpplevelserTheme = applySavedTheme;
-  window.markSelectedExperience = markSelectedExperience;
-  window.markInitialSelectedExperience = markInitialSelectedExperience;
 
   if(document.readyState === "loading"){
-    document.addEventListener("DOMContentLoaded", () => {
-      applySavedTheme();
-      setTimeout(markInitialSelectedExperience, 80);
-      setTimeout(markInitialSelectedExperience, 350);
-    });
+    document.addEventListener("DOMContentLoaded", applySavedTheme);
   }else{
     applySavedTheme();
-    setTimeout(markInitialSelectedExperience, 80);
-    setTimeout(markInitialSelectedExperience, 350);
   }
 
   document.addEventListener("click", toggleThemeFromButton, true);
-  document.addEventListener("click", event => {
-    const row = getExperienceRow(event.target);
-    if(row){ markSelectedExperience(row); }
-  }, true);
 })();
 </script>
 
