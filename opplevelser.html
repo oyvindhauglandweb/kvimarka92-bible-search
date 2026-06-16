@@ -1063,49 +1063,23 @@ body.light-mode .readonly-bible-display .bible{
 
 
 
-/* List v36: clean Bible edit section */
-.bible-edit-block{
-  margin:18px 0 16px !important;
-}
 
-.bible-edit-header{
-  display:flex !important;
+/* List v37: Bible action buttons moved to top right */
+.bible-top-actions{
+  position:fixed !important;
+  top:58px !important;
+  right:22px !important;
+  z-index:2147483000 !important;
+  display:none;
   align-items:center !important;
-  justify-content:space-between !important;
-  gap:12px !important;
-  margin:0 0 8px !important;
-}
-
-.bible-edit-info{
-  display:flex !important;
-  align-items:baseline !important;
-  gap:14px !important;
-  flex:1 1 auto !important;
-  min-width:0 !important;
-}
-
-.bible-edit-title{
-  font-weight:800 !important;
-  color:var(--opp-text, #eee) !important;
-  min-width:0 !important;
-}
-
-.bible-edit-source{
-  margin-left:auto !important;
-  color:var(--opp-muted, #bbb) !important;
-  font-size:.92em !important;
-  white-space:nowrap !important;
-}
-
-.bible-edit-actions{
-  display:flex !important;
-  align-items:center !important;
-  justify-content:flex-end !important;
   gap:8px !important;
-  flex:0 0 auto !important;
-  margin-left:auto !important;
 }
 
+body.editing-experience .bible-top-actions{
+  display:flex !important;
+}
+
+.bible-top-actions .bible-icon-button,
 .bible-icon-button{
   display:inline-flex !important;
   align-items:center !important;
@@ -1126,15 +1100,18 @@ body.light-mode .readonly-bible-display .bible{
   cursor:pointer !important;
 }
 
+.bible-top-actions .bible-icon-button:hover,
 .bible-icon-button:hover{
   background:rgba(255,255,255,.13) !important;
 }
 
+body.light-mode .bible-top-actions .bible-icon-button,
 body.light-mode .bible-icon-button{
   background:rgba(0,0,0,.075) !important;
   color:var(--opp-text, #333) !important;
 }
 
+body.light-mode .bible-top-actions .bible-icon-button:hover,
 body.light-mode .bible-icon-button:hover{
   background:rgba(0,0,0,.13) !important;
 }
@@ -1146,7 +1123,35 @@ body.light-mode .bible-icon-button:hover{
   color:currentColor !important;
 }
 
-.bible-edit-text{
+.bible-edit-block{
+  margin:18px 0 16px !important;
+}
+
+.bible-edit-header{
+  display:block !important;
+  margin:0 0 8px !important;
+}
+
+.bible-edit-title{
+  font-weight:800 !important;
+  color:var(--opp-text, #eee) !important;
+}
+
+.bible-edit-source{
+  display:none !important;
+}
+
+.bible-edit-actions,
+.bible-action-row,
+.bible-search-click-overlay,
+button.bible-search-click-overlay{
+  display:none !important;
+  pointer-events:none !important;
+}
+
+.bible-edit-text,
+#editBibleText,
+#bibleText{
   display:block !important;
   width:100% !important;
   min-height:88px !important;
@@ -1166,13 +1171,19 @@ body.light-mode .bible-icon-button:hover{
   line-height:1.4 !important;
 }
 
-body.light-mode .bible-edit-text{
+body.light-mode .bible-edit-text,
+body.light-mode #editBibleText,
+body.light-mode #bibleText{
   background:rgba(0,0,0,.045) !important;
   color:var(--opp-text, #333) !important;
 }
 
 .bible-edit-text:hover,
-.bible-edit-text:focus{
+.bible-edit-text:focus,
+#editBibleText:hover,
+#editBibleText:focus,
+#bibleText:hover,
+#bibleText:focus{
   background:rgba(0,0,0,.18) !important;
   border:0 !important;
   outline:0 !important;
@@ -1180,27 +1191,31 @@ body.light-mode .bible-edit-text{
 }
 
 body.light-mode .bible-edit-text:hover,
-body.light-mode .bible-edit-text:focus{
+body.light-mode .bible-edit-text:focus,
+body.light-mode #editBibleText:hover,
+body.light-mode #editBibleText:focus,
+body.light-mode #bibleText:hover,
+body.light-mode #bibleText:focus{
   background:rgba(0,0,0,.045) !important;
 }
 
 @media(max-width:700px){
-  .bible-edit-header{
-    align-items:flex-start !important;
-  }
-  .bible-edit-info{
-    display:block !important;
-  }
-  .bible-edit-source{
-    display:block !important;
-    margin:4px 0 0 !important;
+  .bible-top-actions{
+    top:60px !important;
+    right:18px !important;
   }
 }
 
 </style>
-  <!-- version: LIST v36 clean-edit-bible-section 2026-06-16 -->
+  <!-- version: LIST v37 bible-buttons-top-right 2026-06-16 -->
 </head>
 <body class="dark-mode">
+
+<div id="bibleTopActions" class="bible-top-actions" aria-label="Bibeltekst handlinger">
+  <button type="button" class="bible-icon-button" onclick="clearOpplevelserBiblePlace()" title="Fjern bibelsted" aria-label="Fjern bibelsted">×</button>
+  <button type="button" class="bible-icon-button" onclick="openOpplevelserBibleSearch()" title="Finn eller endre bibelsted" aria-label="Finn eller endre bibelsted"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 17.25V20h2.75L17.8 8.95l-2.75-2.75L4 17.25Zm15.9-10.2a1 1 0 0 0 0-1.4l-1.55-1.55a1 1 0 0 0-1.4 0l-1.2 1.2 2.75 2.75 1.4-1Z" fill="currentColor"/></svg></button>
+</div>
+
 <div class="login-widget">
   <a id="loginStatus"
      class="login-status is-signin"
@@ -1317,8 +1332,6 @@ body.light-mode .bible-edit-text:focus{
 
     function formatBibleSource(source){
       const text = String(source || "Bibelen på Norsk (1930)").trim();
-
-      // "Bibelen på Norsk (1930)" -> "Bibelen på Norsk 1930"
       return text.replace(/\s*\((\d{4})\)\s*$/, " $1");
     }
 
@@ -1497,14 +1510,8 @@ body.light-mode .bible-edit-text:focus{
               <div id="editBibleClickFrame" class="bible-click-frame">
 <div class="bible-edit-block">
               <div class="bible-edit-header">
-                <div class="bible-edit-info">
-                  <div class="bible-edit-title" id="editBibleDisplayTitle">Bibeltekst</div>
-                  <div class="bible-edit-source" id="editBibleDisplaySource"></div>
-                </div>
-                <div class="bible-edit-actions">
-                  <button type="button" class="bible-icon-button" onclick="clearOpplevelserBiblePlace()" title="Fjern bibelsted" aria-label="Fjern bibelsted">×</button>
-                  <button type="button" class="bible-icon-button" onclick="openOpplevelserBibleSearch()" title="Finn eller endre bibelsted" aria-label="Finn eller endre bibelsted"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 17.25V20h2.75L17.8 8.95l-2.75-2.75L4 17.25Zm15.9-10.2a1 1 0 0 0 0-1.4l-1.55-1.55a1 1 0 0 0-1.4 0l-1.2 1.2 2.75 2.75 1.4-1Z" fill="currentColor"/></svg></button>
-                </div>
+                <div class="bible-edit-title" id="editBibleDisplayTitle">Bibeltekst</div>
+                <div class="bible-edit-source" id="editBibleDisplaySource"></div>
               </div>
               <textarea id="editBibleText" class="bible-edit-text" readonly>${esc(item.bibleText || "")}</textarea>
             </div>
@@ -2452,6 +2459,29 @@ body.light-mode .bible-edit-text:focus{
       localStorage.removeItem("kvimarka92BibleSearchInputVerse");
     }catch(error){}
   };
+})();
+</script>
+
+
+<script>
+(function(){
+  function markExperienceEditing(){
+    document.body.classList.toggle("editing-experience", !!document.getElementById("editForm"));
+  }
+
+  window.markExperienceEditing = markExperienceEditing;
+
+  const observer = new MutationObserver(markExperienceEditing);
+
+  if(document.readyState === "loading"){
+    document.addEventListener("DOMContentLoaded", () => {
+      observer.observe(document.body, { childList:true, subtree:true });
+      markExperienceEditing();
+    });
+  }else{
+    observer.observe(document.body, { childList:true, subtree:true });
+    markExperienceEditing();
+  }
 })();
 </script>
 
