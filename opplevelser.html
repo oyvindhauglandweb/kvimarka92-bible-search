@@ -1060,8 +1060,39 @@ body.light-mode .readonly-bible-display .bible{
   }
 }
 
+
+/* List v27: Bible text is selectable via bible search, not directly editable */
+.readonly-bible-display,
+.bible-click-frame{
+  cursor:pointer;
+}
+.readonly-bible-display .bible,
+.bible-click-frame textarea,
+textarea#editBibleText,
+textarea#bibleText{
+  cursor:pointer !important;
+  user-select:text;
+}
+.bible-click-frame textarea,
+textarea#editBibleText,
+textarea#bibleText{
+  pointer-events:auto;
+}
+textarea#editBibleText[readonly],
+textarea#bibleText[readonly]{
+  caret-color:transparent;
+}
+.readonly-bible-display:hover .bible,
+.bible-click-frame:hover textarea{
+  background:rgba(255,255,255,.075) !important;
+}
+body.light-mode .readonly-bible-display:hover .bible,
+body.light-mode .bible-click-frame:hover textarea{
+  background:rgba(0,0,0,.075) !important;
+}
+
 </style>
-  <!-- version: LIST v26 bible-source-year-parentheses-fix 2026-06-16 -->
+  <!-- version: LIST v27 bible-text-click-opens-search 2026-06-16 -->
 </head>
 <body class="dark-mode">
 <div class="login-widget">
@@ -1312,7 +1343,7 @@ body.light-mode .readonly-bible-display .bible{
         </div>
 
         ${item.bibleReference || item.bibleText ? `
-          <div class="readonly-bible-display">
+          <div class="readonly-bible-display" onclick="openOpplevelserBibleSearch()" title="Klikk for å endre bibelsted">
             <div class="bible-display-header">
               <div class="bible-display-title">Bibeltekst: ${esc(item.bibleReference || "")}</div>
               <div class="bible-display-source">(${esc(formatBibleSource(item.bibleSource || "Bibelen på Norsk (1930)"))})</div>
@@ -1362,7 +1393,7 @@ body.light-mode .readonly-bible-display .bible{
               <div class="bible-display-title" id="editBibleDisplayTitle">Bibeltekst</div>
               <div class="bible-display-source" id="editBibleDisplaySource"></div>
             </div>
-              <textarea id="editBibleText" readonly>${esc(item.bibleText || "")}</textarea>
+              <textarea id="editBibleText" readonly onclick="openOpplevelserBibleSearch()">${esc(item.bibleText || "")}</textarea>
 </div>
             </div>
 
@@ -1416,6 +1447,7 @@ body.light-mode .readonly-bible-display .bible{
 
       el("editForm").addEventListener("submit", saveEdit);
       if(window.initBibleHeaderDisplay){ window.initBibleHeaderDisplay(); }
+      if(window.bindBibleTextClickToSearch){ window.bindBibleTextClickToSearch(); }
       if(window.initOpplevelserMicButtons){ window.initOpplevelserMicButtons(); }
       if(window.initOpplevelserAutoGrowTextareas){ window.initOpplevelserAutoGrowTextareas(); }
       if(window.initBibleHeaderDisplay){ window.initBibleHeaderDisplay(); }
@@ -2151,6 +2183,45 @@ body.light-mode .readonly-bible-display .bible{
     document.addEventListener("DOMContentLoaded", initAutoGrowTextareas);
   }else{
     initAutoGrowTextareas();
+  }
+})();
+</script>
+
+
+<script>
+(function(){
+  function bindBibleTextClickToSearch(){
+    ["bibleText", "editBibleText"].forEach(id => {
+      const el = document.getElementById(id);
+      if(!el || el.dataset.bibleSearchClickReady === "1"){
+        return;
+      }
+
+      el.dataset.bibleSearchClickReady = "1";
+      el.setAttribute("readonly", "readonly");
+      el.addEventListener("click", event => {
+        event.preventDefault();
+        if(typeof window.openOpplevelserBibleSearch === "function"){
+          window.openOpplevelserBibleSearch();
+        }
+      });
+      el.addEventListener("keydown", event => {
+        event.preventDefault();
+        if(event.key === "Enter" || event.key === " "){
+          if(typeof window.openOpplevelserBibleSearch === "function"){
+            window.openOpplevelserBibleSearch();
+          }
+        }
+      });
+    });
+  }
+
+  window.bindBibleTextClickToSearch = bindBibleTextClickToSearch;
+
+  if(document.readyState === "loading"){
+    document.addEventListener("DOMContentLoaded", bindBibleTextClickToSearch);
+  }else{
+    bindBibleTextClickToSearch();
   }
 })();
 </script>
