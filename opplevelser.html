@@ -2423,9 +2423,12 @@ button[aria-label="Tilbake til liste"]{
             </div>
           </div>
 
-          <div class="edit-actions">
-            <button type="submit">Lagre endringer</button>
-            <button type="button" class="secondary" onclick="cancelEdit()">Avbryt</button>
+          <div class="edit-actions edit-actions-save-right">
+            <button type="button" class="secondary edit-cancel-button" onclick="cancelEdit()">Avbryt</button>
+            <div class="edit-actions-right">
+              <button type="button" class="secondary edit-delete-button" onclick="deleteCurrentExperience()">Slette</button>
+              <button type="submit" class="primary edit-save-button">Lagre endringer</button>
+            </div>
           </div>
         </form>
       `;
@@ -2512,6 +2515,45 @@ button[aria-label="Tilbake til liste"]{
         setStatus("Kunne ikke lagre endringer: " + error.message, "err");
       }
     }
+
+    async function deleteCurrentExperience(){
+      const item = selectedItem();
+      if(!item) return;
+
+      const heading = item.heading || "denne opplevelsen";
+      const ok = window.confirm(`Vil du slette "${heading}"? Dette kan ikke angres.`);
+      if(!ok) return;
+
+      setStatus("Sletter opplevelse ...");
+
+      try{
+        await apiFetch("/experience-delete", {
+          method:"POST",
+          body:JSON.stringify({ id:item.id })
+        });
+
+        const deletedId = item.id;
+        const oldIndex = currentItems.findIndex(entry => entry.id === deletedId);
+        currentItems = currentItems.filter(entry => entry.id !== deletedId);
+
+        if(currentItems.length){
+          const nextIndex = Math.min(Math.max(oldIndex, 0), currentItems.length - 1);
+          selectedId = currentItems[nextIndex].id;
+        }else{
+          selectedId = null;
+        }
+
+        editMode = false;
+        renderItems();
+        renderDetails();
+        setMobileDetailState(!!selectedId);
+        setStatus("Opplevelsen er slettet.", "ok");
+      }catch(error){
+        setStatus("Kunne ikke slette opplevelse: " + error.message, "err");
+      }
+    }
+
+    window.deleteCurrentExperience = deleteCurrentExperience;
 
     async function loadExperiences(){
       const q = el("searchBox").value.trim();
@@ -4334,8 +4376,77 @@ html body.light-mode .items .item:not(.selected):not(.active):not(.is-selected):
     white-space:normal !important;
   }
 }
+
+
+/* List v54: edit action buttons - save on far right, delete to the left */
+.edit-actions.edit-actions-save-right{
+  display:flex !important;
+  align-items:center !important;
+  justify-content:space-between !important;
+  gap:12px !important;
+  width:100% !important;
+  margin-top:14px !important;
+}
+
+.edit-actions-right{
+  display:flex !important;
+  align-items:center !important;
+  justify-content:flex-end !important;
+  gap:10px !important;
+  margin-left:auto !important;
+}
+
+.edit-save-button,
+button.edit-save-button{
+  background:var(--opp-link, #1f789d) !important;
+  border-color:var(--opp-link, #1f789d) !important;
+  color:#fff !important;
+}
+
+.edit-delete-button,
+button.edit-delete-button{
+  background:rgba(0,0,0,.075) !important;
+  border:0 !important;
+  color:var(--opp-text, #333) !important;
+}
+
+.edit-delete-button:hover,
+button.edit-delete-button:hover{
+  background:rgba(0,0,0,.13) !important;
+  color:var(--opp-text, #333) !important;
+}
+
+body.dark-mode .edit-delete-button,
+body.dark-mode button.edit-delete-button{
+  background:rgba(255,255,255,.075) !important;
+  color:var(--opp-text, #eee) !important;
+}
+
+body.dark-mode .edit-delete-button:hover,
+body.dark-mode button.edit-delete-button:hover{
+  background:rgba(255,255,255,.13) !important;
+  color:var(--opp-text, #eee) !important;
+}
+
+@media(max-width:700px){
+  .edit-actions.edit-actions-save-right{
+    display:grid !important;
+    grid-template-columns:1fr !important;
+  }
+  .edit-actions-right{
+    display:grid !important;
+    grid-template-columns:1fr 1fr !important;
+    width:100% !important;
+    margin-left:0 !important;
+  }
+  .edit-cancel-button{
+    width:100% !important;
+  }
+}
 </style>
 
 <!-- Opplevelser v53: saveEdit uses editExperienceDate and converts date to ISO before API update. -->
+
+<!-- Opplevelser v54: edit buttons moved right, delete button added before save. -->
 </body>
 </html>
