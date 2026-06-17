@@ -1656,7 +1656,7 @@ body.light-mode #saveButton{
 }
 
 </style>
-<!-- version: REGISTER v44b safe-mobile-polish-no-observer 2026-06-17 -->
+<!-- version: REGISTER v44c safe-direct-light-button-backgrounds 2026-06-17 -->
 </head>
 <body class="dark-mode">
 <div class="login-widget">
@@ -3521,6 +3521,209 @@ html body.light-mode button[type="submit"] *{
   }, true);
 
   [100, 400, 900].forEach(delay => setTimeout(run, delay));
+})();
+</script>
+
+
+<style id="opplevelser-register-v44c-button-safety">
+/* v44c: fallback styling for light mode buttons */
+body.light-mode button[data-opp-grey-button="1"],
+body.light button[data-opp-grey-button="1"],
+html.light-mode body button[data-opp-grey-button="1"],
+html.light body button[data-opp-grey-button="1"]{
+  background:#e5e7eb !important;
+  color:#111827 !important;
+  border:0 !important;
+  box-shadow:none !important;
+  opacity:1 !important;
+  filter:none !important;
+}
+
+body.light-mode button[data-opp-grey-button="1"]:hover,
+body.light button[data-opp-grey-button="1"]:hover,
+html.light-mode body button[data-opp-grey-button="1"]:hover,
+html.light body button[data-opp-grey-button="1"]:hover{
+  background:#d1d5db !important;
+  color:#111827 !important;
+}
+
+body.light-mode button[data-opp-blue-button="1"],
+body.light button[data-opp-blue-button="1"],
+html.light-mode body button[data-opp-blue-button="1"],
+html.light body button[data-opp-blue-button="1"]{
+  background:#0ea5d4 !important;
+  color:#ffffff !important;
+  border:0 !important;
+  box-shadow:none !important;
+  opacity:1 !important;
+  filter:none !important;
+}
+</style>
+
+
+<script>
+/* Register v44c: safe direct button backgrounds
+   No MutationObserver. No class mutations. Limited timers only. */
+(function(){
+  function isLightMode(){
+    return (
+      document.body.classList.contains("light-mode") ||
+      document.body.classList.contains("light") ||
+      document.documentElement.classList.contains("light-mode") ||
+      document.documentElement.classList.contains("light")
+    );
+  }
+
+  function setImportant(el, prop, value){
+    el.style.setProperty(prop, value, "important");
+  }
+
+  function textOf(button){
+    return (button.textContent || "").trim();
+  }
+
+  function attr(button, name){
+    return (button.getAttribute(name) || "").trim().toLowerCase();
+  }
+
+  function classText(button){
+    return button.className ? String(button.className).toLowerCase() : "";
+  }
+
+  function isDeleteButton(button){
+    const txt = textOf(button).toLowerCase();
+    const title = attr(button, "title");
+    const aria = attr(button, "aria-label");
+    const cls = classText(button);
+
+    return (
+      txt === "×" ||
+      txt === "x" ||
+      title === "tøm felt" ||
+      aria === "tøm felt" ||
+      title === "fjern bibelsted" ||
+      aria === "fjern bibelsted" ||
+      cls.includes("clear-voice") ||
+      cls.includes("voice-clear") ||
+      cls.includes("bible-clear")
+    );
+  }
+
+  function isClearFormButton(button){
+    return textOf(button) === "Tøm skjema";
+  }
+
+  function isBlueAction(button){
+    const txt = textOf(button);
+    const title = attr(button, "title");
+    const aria = attr(button, "aria-label");
+    const cls = classText(button);
+    const id = (button.id || "").toLowerCase();
+
+    return (
+      txt === "Lagre opplevelse" ||
+      id === "savebtn" ||
+      id === "savebutton" ||
+      cls.includes("voice-mic") ||
+      cls.includes("mic-button") ||
+      cls.includes("bible-edit") ||
+      title.includes("mikrofon") ||
+      aria.includes("mikrofon") ||
+      title.includes("endre bibelsted") ||
+      aria.includes("endre bibelsted")
+    );
+  }
+
+  function styleSmallGrey(button){
+    button.setAttribute("data-opp-grey-button", "1");
+    setImportant(button, "display", "inline-flex");
+    setImportant(button, "align-items", "center");
+    setImportant(button, "justify-content", "center");
+    setImportant(button, "width", "32px");
+    setImportant(button, "height", "32px");
+    setImportant(button, "min-width", "32px");
+    setImportant(button, "min-height", "32px");
+    setImportant(button, "padding", "0");
+    setImportant(button, "border-radius", "999px");
+    setImportant(button, "background", "#e5e7eb");
+    setImportant(button, "color", "#111827");
+    setImportant(button, "border", "0");
+    setImportant(button, "box-shadow", "none");
+    setImportant(button, "opacity", "1");
+    setImportant(button, "filter", "none");
+    setImportant(button, "font-weight", "800");
+  }
+
+  function stylePillGrey(button){
+    button.setAttribute("data-opp-grey-button", "1");
+    setImportant(button, "display", "inline-flex");
+    setImportant(button, "align-items", "center");
+    setImportant(button, "justify-content", "center");
+    setImportant(button, "min-height", "34px");
+    setImportant(button, "padding", "8px 18px");
+    setImportant(button, "border-radius", "999px");
+    setImportant(button, "background", "#e5e7eb");
+    setImportant(button, "color", "#111827");
+    setImportant(button, "border", "0");
+    setImportant(button, "box-shadow", "none");
+    setImportant(button, "opacity", "1");
+    setImportant(button, "filter", "none");
+    setImportant(button, "font-weight", "800");
+  }
+
+  function styleBlue(button){
+    button.setAttribute("data-opp-blue-button", "1");
+    setImportant(button, "background", "#0ea5d4");
+    setImportant(button, "color", "#ffffff");
+    setImportant(button, "border", "0");
+    setImportant(button, "box-shadow", "none");
+    setImportant(button, "opacity", "1");
+    setImportant(button, "filter", "none");
+  }
+
+  function applyButtonBackgrounds(){
+    if(!isLightMode()){
+      return;
+    }
+
+    document.querySelectorAll("button").forEach(button => {
+      if(isDeleteButton(button)){
+        styleSmallGrey(button);
+        return;
+      }
+
+      if(isClearFormButton(button)){
+        stylePillGrey(button);
+        return;
+      }
+
+      if(isBlueAction(button)){
+        styleBlue(button);
+      }
+    });
+  }
+
+  window.fixOpplevelserRegisterButtonBackgrounds = applyButtonBackgrounds;
+
+  function runSeveralTimes(){
+    applyButtonBackgrounds();
+    [50, 150, 350, 700, 1200, 2000].forEach(delay => {
+      setTimeout(applyButtonBackgrounds, delay);
+    });
+  }
+
+  if(document.readyState === "loading"){
+    document.addEventListener("DOMContentLoaded", runSeveralTimes);
+  }else{
+    runSeveralTimes();
+  }
+
+  window.addEventListener("pageshow", runSeveralTimes);
+
+  document.addEventListener("click", function(){
+    setTimeout(applyButtonBackgrounds, 0);
+    setTimeout(applyButtonBackgrounds, 120);
+  }, true);
 })();
 </script>
 
