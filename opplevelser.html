@@ -2142,6 +2142,74 @@ button[aria-label="Tilbake til liste"]{
     let selectedId = null;
     let editMode = false;
     let searchTimer = null;
+    let editEnvironmentOptions = [];
+    let editEnvironmentOptionsLoaded = false;
+
+    const FALLBACK_ENVIRONMENT_OPTIONS = ["Hjemme", "Jobb", "Naturen", "Kirke", "Familie", "Annet"];
+
+    function collectEnvironmentNames(items){
+      const names = [];
+      function add(value){
+        const text = String(value || "").trim();
+        if(text && !names.includes(text)) names.push(text);
+      }
+
+      (items || []).forEach(item => {
+        if(item && typeof item === "object"){
+          add(item.name || item.environmentName || item.value || item.environment);
+        }else{
+          add(item);
+        }
+      });
+
+      return names;
+    }
+
+    function getKnownEnvironmentOptions(currentValue){
+      const names = [];
+      function add(value){
+        const text = String(value || "").trim();
+        if(text && !names.includes(text)) names.push(text);
+      }
+
+      add(currentValue);
+      editEnvironmentOptions.forEach(add);
+      collectEnvironmentNames(currentItems).forEach(add);
+      FALLBACK_ENVIRONMENT_OPTIONS.forEach(add);
+
+      return names;
+    }
+
+    function renderEditEnvironmentOptions(currentValue){
+      const value = String(currentValue || "").trim();
+      const names = getKnownEnvironmentOptions(value);
+      return '<option value="">Velg miljø</option>' + names.map(name => {
+        const selected = name === value ? ' selected' : '';
+        return `<option value="${esc(name)}"${selected}>${esc(name)}</option>`;
+      }).join("");
+    }
+
+    function populateEditEnvironmentSelect(currentValue){
+      const select = el("editEnvironment");
+      if(!select) return;
+      const value = String(currentValue != null ? currentValue : select.value || "").trim();
+      select.innerHTML = renderEditEnvironmentOptions(value);
+      select.value = value;
+    }
+
+    async function loadEditEnvironmentOptions(){
+      if(editEnvironmentOptionsLoaded) return editEnvironmentOptions;
+
+      try{
+        const data = await apiFetch("/experience-options", { method:"GET" });
+        editEnvironmentOptions = collectEnvironmentNames(data.environmentOptions || []);
+      }catch(error){
+        editEnvironmentOptions = [];
+      }
+
+      editEnvironmentOptionsLoaded = true;
+      return editEnvironmentOptions;
+    }
 
     function setBibleVerseInEditForm(verse){
       if(!verse){
@@ -2363,7 +2431,9 @@ button[aria-label="Tilbake til liste"]{
 
             <div>
               <label for="editEnvironment">Miljø</label>
-              <input id="editEnvironment" value="${esc(item.environment || "")}">
+              <select id="editEnvironment" name="editEnvironment">
+                ${renderEditEnvironmentOptions(item.environment || "")}
+              </select>
             </div>
 
             <input id="editBibleReference" class="bible-hidden-input" type="hidden" value="${esc(item.bibleReference || "")}">
@@ -2434,6 +2504,11 @@ button[aria-label="Tilbake til liste"]{
       `;
 
       el("editForm").addEventListener("submit", saveEdit);
+      populateEditEnvironmentSelect(item.environment || "");
+      loadEditEnvironmentOptions().then(() => {
+        const select = el("editEnvironment");
+        if(select) populateEditEnvironmentSelect(select.value || item.environment || "");
+      });
       if(window.initBibleHeaderDisplay){ window.initBibleHeaderDisplay(); }
       if(window.autoGrowOpplevelserTextarea){ window.autoGrowOpplevelserTextarea(document.getElementById("editBibleText")); }
       
