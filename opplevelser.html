@@ -4525,3 +4525,43 @@ body.dark-mode button.edit-delete-button:hover{
 <!-- Opplevelser v54: edit buttons moved right, delete button added before save. -->
 </body>
 </html>
+
+<style id="opplevelser-list-v56-back-button-mobile-only">
+/* v56: "Tilbake til liste" skal bare vises når venstre liste er skjult i mobilvisning. */
+@media (min-width: 801px){
+  #backToListBtn.back-to-list-hard.mobile-only{
+    display:none !important;
+  }
+}
+
+@media (max-width: 800px){
+  #backToListBtn.back-to-list-hard.mobile-only{
+    display:grid !important;
+    grid-template-columns:1fr !important;
+    place-items:center !important;
+    align-items:center !important;
+    justify-content:center !important;
+    justify-items:center !important;
+    width:100% !important;
+    min-height:54px !important;
+    box-sizing:border-box !important;
+    padding:0 18px !important;
+    margin:0 !important;
+    text-align:center !important;
+    line-height:1.2 !important;
+    white-space:normal !important;
+  }
+
+  #backToListBtn.back-to-list-hard.mobile-only .back-to-list-label{
+    display:block !important;
+    width:100% !important;
+    margin:0 auto !important;
+    padding:0 !important;
+    text-align:center !important;
+    justify-self:center !important;
+    align-self:center !important;
+    line-height:1.2 !important;
+    white-space:normal !important;
+  }
+}
+</style>
