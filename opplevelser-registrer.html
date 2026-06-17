@@ -1840,6 +1840,7 @@ body.light-mode #saveButton{
 
     function fillDatalist(id, items, getName){
       const list = el(id);
+      if(!list) return;
       list.innerHTML = "";
 
       (items || []).forEach(item => {
@@ -1853,6 +1854,7 @@ body.light-mode #saveButton{
 
     function fillSelect(id, items){
       const select = el(id);
+      if(!select) return;
       const currentValue = select.value;
       const names = [];
 
@@ -1887,14 +1889,35 @@ body.light-mode #saveButton{
       const text = (verse && verse.text || "").trim();
       const source = (verse && verse.source || "Bibelen på Norsk (1930)").trim();
 
-      el("bibleReference").value = reference;
-      el("bibleText").value = text;
-      el("bibleSource").value = source;
+      const referenceField = el("bibleReference");
+      const textField = el("bibleText");
+      const sourceField = el("bibleSource");
 
-      if(reference || text){
-        el("bibleCard").innerHTML = `<strong>${escapeHtml(reference || "Valgt bibelsted")}</strong><br>${escapeHtml(text)}<br><span class="small">${escapeHtml(source)}</span>`;
-      }else{
-        el("bibleCard").textContent = "Ingen bibelreferanse valgt ennå.";
+      if(referenceField) referenceField.value = reference;
+      if(textField){
+        textField.value = text;
+        textField.dispatchEvent(new Event("input", { bubbles:true }));
+        textField.dispatchEvent(new Event("change", { bubbles:true }));
+      }
+      if(sourceField) sourceField.value = source;
+
+      const oldBibleCard = el("bibleCard");
+      if(oldBibleCard){
+        if(reference || text){
+          oldBibleCard.innerHTML = `<strong>${escapeHtml(reference || "Valgt bibelsted")}</strong><br>${escapeHtml(text)}<br><span class="small">${escapeHtml(source)}</span>`;
+        }else{
+          oldBibleCard.textContent = "Ingen bibelreferanse valgt ennå.";
+        }
+      }
+
+      if(window.updateRegisterBibleHeader){
+        window.updateRegisterBibleHeader();
+      }
+      if(window.ensureRegisterBibleTextLink){
+        window.ensureRegisterBibleTextLink();
+      }
+      if(textField && window.autoGrowOpplevelserTextarea){
+        window.autoGrowOpplevelserTextarea(textField);
       }
     }
 
