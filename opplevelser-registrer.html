@@ -1666,7 +1666,7 @@ body.light-mode #saveButton{
 }
 
 </style>
-<!-- version: REGISTER v44d stable-mobile-date-environment-options 2026-06-17 -->
+<!-- version: REGISTER v44e stable-ios-date-no-ddmmyyyy-after-selection 2026-06-17 -->
 </head>
 <body class="dark-mode">
 <div class="login-widget">
@@ -1957,7 +1957,14 @@ body.light-mode #saveButton{
     });
 
     function initDate(defaultDate){
-      el("experienceDate").value = defaultDate || new Date().toISOString().slice(0, 10);
+      const value = defaultDate || new Date().toISOString().slice(0, 10);
+      const dateInput = el("experienceDate");
+
+      if(window.setOpplevelserRegisterDateValue){
+        window.setOpplevelserRegisterDateValue(value);
+      }else{
+        dateInput.value = value;
+      }
     }
 
     async function loadOptions(){
@@ -2966,93 +2973,267 @@ body.light-mode #saveButton{
 
 <script>
 (function(){
-  function pad2(v){return String(v).padStart(2,"0");}
-  function isoToNorwegianDate(value){
-    const text=String(value||"").trim();
-    const iso=text.match(/^(\d{4})-(\d{2})-(\d{2})/);
-    if(iso){return iso[3]+"."+iso[2]+"."+iso[1];}
-    const no=text.match(/^(\d{1,2})\.(\d{1,2})\.(\d{4})$/);
-    if(no){return pad2(no[1])+"."+pad2(no[2])+"."+no[3];}
-    const us=text.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
-    if(us){return pad2(us[2])+"."+pad2(us[1])+"."+us[3];}
-    return text;
+  function pad2(value){
+    return String(value).padStart(2, "0");
   }
-  function norwegianDateToIso(value){
-    const text=String(value||"").trim();
-    const no=text.match(/^(\d{1,2})\.(\d{1,2})\.(\d{4})$/);
-    if(no){return no[3]+"-"+pad2(no[2])+"-"+pad2(no[1]);}
-    const iso=text.match(/^(\d{4})-(\d{2})-(\d{2})/);
-    if(iso){return iso[1]+"-"+iso[2]+"-"+iso[3];}
-    const us=text.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
-    if(us){return us[3]+"-"+pad2(us[1])+"-"+pad2(us[2]);}
-    return text;
-  }
-  function todayIso(){const d=new Date();return d.getFullYear()+"-"+pad2(d.getMonth()+1)+"-"+pad2(d.getDate());}
-  window.formatOpplevelserDate=isoToNorwegianDate;
-  window.parseOpplevelserDate=norwegianDateToIso;
 
-  function syncDatePickerFromText(){
-    const text=document.getElementById("experienceDate");
-    const picker=document.getElementById("experienceDatePicker");
-    if(!text||!picker){return;}
-    const iso=norwegianDateToIso(text.value);
-    if(/^\d{4}-\d{2}-\d{2}$/.test(iso)){picker.value=iso;}
+  function isoToNorwegianDate(value){
+    const text = String(value || "").trim();
+
+    const iso = text.match(/^(\d{4})-(\d{2})-(\d{2})/);
+    if(iso){
+      return iso[3] + "." + iso[2] + "." + iso[1];
+    }
+
+    const no = text.match(/^(\d{1,2})\.(\d{1,2})\.(\d{4})$/);
+    if(no){
+      return pad2(no[1]) + "." + pad2(no[2]) + "." + no[3];
+    }
+
+    const us = text.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+    if(us){
+      return pad2(us[2]) + "." + pad2(us[1]) + "." + us[3];
+    }
+
+    return text;
   }
-  function setRegisterTodayIfBlank(){
-    const text=document.getElementById("experienceDate");
-    const picker=document.getElementById("experienceDatePicker");
-    if(!text){return;}
-    if(!String(text.value||"").trim()){
-      const iso=todayIso();
-      text.value=isoToNorwegianDate(iso);
-      if(picker){picker.value=iso;}
-    }else{
-      text.value=isoToNorwegianDate(text.value);
-      syncDatePickerFromText();
+
+  function norwegianDateToIso(value){
+    const text = String(value || "").trim();
+
+    const no = text.match(/^(\d{1,2})\.(\d{1,2})\.(\d{4})$/);
+    if(no){
+      return no[3] + "-" + pad2(no[2]) + "-" + pad2(no[1]);
+    }
+
+    const iso = text.match(/^(\d{4})-(\d{2})-(\d{2})/);
+    if(iso){
+      return iso[1] + "-" + iso[2] + "-" + iso[3];
+    }
+
+    const us = text.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+    if(us){
+      return us[3] + "-" + pad2(us[1]) + "-" + pad2(us[2]);
+    }
+
+    return "";
+  }
+
+  function todayIso(){
+    const now = new Date();
+    return now.getFullYear() + "-" + pad2(now.getMonth() + 1) + "-" + pad2(now.getDate());
+  }
+
+  function isMobileDateEnvironment(){
+    return (
+      window.matchMedia("(pointer: coarse)").matches ||
+      window.matchMedia("(max-width: 700px)").matches ||
+      /iPad|iPhone|iPod|Android/i.test(navigator.userAgent)
+    );
+  }
+
+  window.formatOpplevelserDate = isoToNorwegianDate;
+  window.parseOpplevelserDate = function(value){
+    return norwegianDateToIso(value) || String(value || "").trim();
+  };
+
+  function getIsoFromInput(input){
+    if(!input){
+      return "";
+    }
+
+    return norwegianDateToIso(input.value) || input.dataset.mobileIsoDate || "";
+  }
+
+  function setRegisterDateValue(value){
+    const input = document.getElementById("experienceDate");
+    const picker = document.getElementById("experienceDatePicker");
+
+    if(!input){
+      return;
+    }
+
+    const iso = norwegianDateToIso(value) || todayIso();
+
+    if(isMobileDateEnvironment()){
+      // iOS/Safari må beholde ekte type=date og ISO-verdi. Ikke skriv DD.MM.YYYY til dette feltet.
+      input.type = "date";
+      input.value = iso;
+      input.dataset.mobileIsoDate = iso;
+      input.removeAttribute("readonly");
+      input.removeAttribute("onclick");
+      input.onclick = null;
+      input.placeholder = "";
+      input.inputMode = "";
+      input.autocomplete = "off";
+
+      if(picker){
+        picker.value = iso;
+      }
+
+      return;
+    }
+
+    // PC: vis norsk dato i tekstfelt, men lagre/submit konverterer tilbake til ISO.
+    input.type = "text";
+    input.value = isoToNorwegianDate(iso);
+    input.placeholder = "dd.mm.åååå";
+    input.inputMode = "numeric";
+    input.autocomplete = "off";
+    input.setAttribute("readonly", "readonly");
+
+    if(picker){
+      picker.value = iso;
     }
   }
-  window.forceNorwegianRegisterDate=function(){
-    const text=document.getElementById("experienceDate");
-    if(!text){return;}
-    text.type="text";
-    text.placeholder="dd.mm.åååå";
-    text.inputMode="numeric";
-    text.autocomplete="off";
-    setRegisterTodayIfBlank();
-  };
-  window.openExperienceDatePicker=function(){
-    const picker=document.getElementById("experienceDatePicker");
-    syncDatePickerFromText();
-    if(!picker){return;}
-    try{picker.showPicker();}catch(e){picker.focus();picker.click();}
-  };
-  function installDatePicker(){
-    const text=document.getElementById("experienceDate");
-    const picker=document.getElementById("experienceDatePicker");
-    if(!text){return;}
 
-    text.setAttribute("readonly", "readonly");
-    text.onclick = function(){
+  function syncDatePickerFromText(){
+    const input = document.getElementById("experienceDate");
+    const picker = document.getElementById("experienceDatePicker");
+
+    if(!input || !picker){
+      return;
+    }
+
+    const iso = getIsoFromInput(input);
+    if(/^\d{4}-\d{2}-\d{2}$/.test(iso)){
+      picker.value = iso;
+    }
+  }
+
+  window.setOpplevelserRegisterDateValue = setRegisterDateValue;
+
+  window.forceNorwegianRegisterDate = function(){
+    if(isMobileDateEnvironment()){
+      const input = document.getElementById("experienceDate");
+      setRegisterDateValue(getIsoFromInput(input) || todayIso());
+      return;
+    }
+
+    const input = document.getElementById("experienceDate");
+    setRegisterDateValue(getIsoFromInput(input) || todayIso());
+  };
+
+  window.openExperienceDatePicker = function(){
+    const input = document.getElementById("experienceDate");
+    const picker = document.getElementById("experienceDatePicker");
+
+    if(!input){
+      return;
+    }
+
+    if(isMobileDateEnvironment()){
+      input.type = "date";
+      input.removeAttribute("readonly");
+      try{
+        input.showPicker();
+      }catch(error){
+        input.focus();
+      }
+      return;
+    }
+
+    syncDatePickerFromText();
+
+    if(!picker){
+      return;
+    }
+
+    try{
+      picker.showPicker();
+    }catch(error){
+      picker.focus();
+      picker.click();
+    }
+  };
+
+  function installDatePicker(){
+    const input = document.getElementById("experienceDate");
+    const picker = document.getElementById("experienceDatePicker");
+
+    if(!input){
+      return;
+    }
+
+    setRegisterDateValue(getIsoFromInput(input) || todayIso());
+
+    if(input.dataset.datePickerReady !== "1"){
+      input.dataset.datePickerReady = "1";
+
+      input.addEventListener("change", function(){
+        const iso = norwegianDateToIso(input.value);
+
+        if(isMobileDateEnvironment()){
+          if(/^\d{4}-\d{2}-\d{2}$/.test(iso)){
+            input.dataset.mobileIsoDate = iso;
+            input.value = iso;
+            if(picker){
+              picker.value = iso;
+            }
+          }
+          return;
+        }
+
+        syncDatePickerFromText();
+      });
+
+      input.addEventListener("input", function(){
+        if(!isMobileDateEnvironment()){
+          return;
+        }
+
+        const iso = norwegianDateToIso(input.value);
+        if(/^\d{4}-\d{2}-\d{2}$/.test(iso)){
+          input.dataset.mobileIsoDate = iso;
+          if(picker){
+            picker.value = iso;
+          }
+        }
+      });
+
+      input.addEventListener("blur", function(){
+        if(isMobileDateEnvironment()){
+          // Kritisk: ikke konverter type=date til DD.MM.YYYY på iOS/Safari.
+          const iso = norwegianDateToIso(input.value) || input.dataset.mobileIsoDate;
+          if(/^\d{4}-\d{2}-\d{2}$/.test(iso)){
+            input.value = iso;
+            input.dataset.mobileIsoDate = iso;
+          }
+          return;
+        }
+
+        setRegisterDateValue(getIsoFromInput(input) || todayIso());
+      });
+    }
+
+    if(picker && picker.dataset.datePickerReady !== "1"){
+      picker.dataset.datePickerReady = "1";
+      picker.addEventListener("change", function(){
+        if(picker.value){
+          setRegisterDateValue(picker.value);
+        }
+      });
+    }
+
+    input.onclick = function(){
       if(typeof window.openExperienceDatePicker === "function"){
         window.openExperienceDatePicker();
       }
     };
-
-    setRegisterTodayIfBlank();
-    if(text.dataset.datePickerReady!=="1"){
-      text.dataset.datePickerReady="1";
-      text.addEventListener("blur",()=>{text.value=isoToNorwegianDate(text.value);syncDatePickerFromText();});
-      text.addEventListener("change",syncDatePickerFromText);
-    }
-    if(picker&&picker.dataset.datePickerReady!=="1"){
-      picker.dataset.datePickerReady="1";
-      picker.addEventListener("change",()=>{if(picker.value){text.value=isoToNorwegianDate(picker.value);}});
-    }
-    [0,50,150,400,900].forEach(delay=>window.setTimeout(setRegisterTodayIfBlank,delay));
   }
-  window.installExperienceDatePicker=installDatePicker;
-  if(document.readyState==="loading"){document.addEventListener("DOMContentLoaded",installDatePicker);}else{installDatePicker();}
-  window.addEventListener("pageshow",installDatePicker);
+
+  window.installExperienceDatePicker = installDatePicker;
+
+  if(document.readyState === "loading"){
+    document.addEventListener("DOMContentLoaded", installDatePicker);
+  }else{
+    installDatePicker();
+  }
+
+  window.addEventListener("pageshow", installDatePicker);
+  window.addEventListener("resize", function(){
+    setTimeout(installDatePicker, 100);
+  });
 })();
 </script>
 
@@ -3786,48 +3967,8 @@ html.light body button[data-opp-blue-button="1"]{
   }
 
   function stabilizeMobileDate(){
-    const el = document.getElementById("experienceDate");
-    if(!el){
-      return;
-    }
-
-    if(!isMobileDateEnvironment()){
-      // Desktop: keep Norwegian text format.
-      if(el.type !== "text"){
-        const no = isoToNo(el.value);
-        el.type = "text";
-        if(no){
-          el.value = no;
-        }
-      }
-      return;
-    }
-
-    // Mobile: native iOS/Safari picker requires value in ISO format.
-    const iso = noToIso(el.value) || el.dataset.mobileIsoDate || todayIso();
-
-    el.dataset.mobileIsoDate = iso;
-    el.type = "date";
-    el.removeAttribute("readonly");
-    el.value = iso;
-
-    if(el.dataset.mobileDateStableReady !== "1"){
-      el.dataset.mobileDateStableReady = "1";
-
-      el.addEventListener("change", () => {
-        const selected = noToIso(el.value) || el.value;
-        if(/^\d{4}-\d{2}-\d{2}$/.test(selected)){
-          el.dataset.mobileIsoDate = selected;
-          el.value = selected;
-        }
-      });
-
-      el.addEventListener("input", () => {
-        const selected = noToIso(el.value) || el.value;
-        if(/^\d{4}-\d{2}-\d{2}$/.test(selected)){
-          el.dataset.mobileIsoDate = selected;
-        }
-      });
+    if(typeof window.installExperienceDatePicker === "function"){
+      window.installExperienceDatePicker();
     }
   }
 

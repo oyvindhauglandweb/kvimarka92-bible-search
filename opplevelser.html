@@ -2077,7 +2077,7 @@ button[aria-label="Tilbake til liste"]{
 }
 
 </style>
-  <!-- version: LIST v51b center-back-button-mobile 2026-06-17 -->
+  <!-- version: LIST v52 hard-center-back-button-mobile 2026-06-17 -->
 </head>
 <body class="dark-mode">
 <div class="login-widget">
@@ -2320,7 +2320,7 @@ button[aria-label="Tilbake til liste"]{
             </div>
           </div>
           <div class="readonly-actions">
-            <button type="button" class="secondary mobile-only" onclick="backToMobileList()">Tilbake til liste</button>
+            <button type="button" id="backToListBtn" class="secondary mobile-only back-to-list-hard" onclick="backToMobileList()"><span class="back-to-list-label">Tilbake til liste</span></button>
             <button type="button" class="secondary" onclick="startEdit()">Rediger</button>
           </div>
         </div>
@@ -4295,82 +4295,46 @@ html body.light-mode .items .item:not(.selected):not(.active):not(.is-selected):
 </script>
 
 
-<script>
-/* Opplevelser mobile polish: mark Tilbake til liste button */
-(function(){
-  function markBackToListButton(){
-    document.querySelectorAll("button").forEach(button => {
-      if((button.textContent || "").trim() === "Tilbake til liste"){
-        button.classList.add("back-to-list");
-        button.id = button.id || "backToListBtn";
-      }
-    });
-  }
 
-  if(document.readyState === "loading"){
-    document.addEventListener("DOMContentLoaded", markBackToListButton);
-  }else{
-    markBackToListButton();
-  }
-
-  [100, 400, 900, 1500].forEach(delay => setTimeout(markBackToListButton, delay));
-})();
-</script>
-
-
-<style id="opplevelser-list-v51b-back-button-center">
-/* v51b: center Tilbake til liste on mobile */
+<style id="opplevelser-list-v52-back-button-hard-center">
+/* v52: hard center for mobile "Tilbake til liste".
+   Knappen har nå fast id i selve HTML-template, ikke tekst-søk etterpå. */
 @media (max-width: 700px), (pointer: coarse){
-  button.back-to-list,
-  #backToListBtn,
-  button[data-back-to-list="1"],
-  button[title="Tilbake til liste"],
-  button[aria-label="Tilbake til liste"]{
-    display:flex !important;
+  #backToListBtn.back-to-list-hard{
+    display:grid !important;
+    grid-template-columns:1fr !important;
+    place-items:center !important;
     align-items:center !important;
     justify-content:center !important;
-    text-align:center !important;
+    justify-items:center !important;
+
     width:100% !important;
     min-height:54px !important;
-    padding-left:18px !important;
-    padding-right:18px !important;
+    box-sizing:border-box !important;
+
+    padding:0 18px !important;
+    margin:0 !important;
+
+    text-align:center !important;
+    line-height:1.2 !important;
+    white-space:normal !important;
   }
 
-  button.back-to-list *,
-  #backToListBtn *,
-  button[data-back-to-list="1"] *{
+  #backToListBtn.back-to-list-hard .back-to-list-label{
+    display:block !important;
+    width:100% !important;
+    max-width:100% !important;
+    margin:0 auto !important;
+    padding:0 !important;
+
     text-align:center !important;
+    justify-self:center !important;
+    align-self:center !important;
+    line-height:1.2 !important;
+    white-space:normal !important;
   }
 }
 </style>
-
-
-<script>
-/* List v51b: center back to list on mobile */
-(function(){
-  function markBackButton(){
-    document.querySelectorAll("button").forEach(button => {
-      const text = (button.textContent || "").trim();
-      if(text === "Tilbake til liste" || text === "Tilbake til listen"){
-        button.classList.add("back-to-list");
-        button.setAttribute("data-back-to-list", "1");
-        button.style.setProperty("display", "flex", "important");
-        button.style.setProperty("align-items", "center", "important");
-        button.style.setProperty("justify-content", "center", "important");
-        button.style.setProperty("text-align", "center", "important");
-      }
-    });
-  }
-
-  if(document.readyState === "loading"){
-    document.addEventListener("DOMContentLoaded", markBackButton);
-  }else{
-    markBackButton();
-  }
-
-  [100, 300, 700, 1200, 2000].forEach(delay => setTimeout(markBackButton, delay));
-})();
-</script>
 
 </body>
 </html>
