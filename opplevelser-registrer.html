@@ -1937,17 +1937,23 @@ body.light-mode #saveButton{
       }
     });
 
-    el("findBibleBtn").addEventListener("click", () => {
-      window.open(BIBLE_SEARCH_URL, "kvimarka92BibleSearch", "width=980,height=760");
-      pollSelectedBibleVerseForAWhile();
-    });
+    const legacyFindBibleBtn = el("findBibleBtn");
+    if(legacyFindBibleBtn){
+      legacyFindBibleBtn.addEventListener("click", () => {
+        window.open(BIBLE_SEARCH_URL, "kvimarka92BibleSearch", "width=980,height=760");
+        pollSelectedBibleVerseForAWhile();
+      });
+    }
 
-    el("clearBibleBtn").addEventListener("click", () => {
-      setBibleVerse(null);
-      localStorage.removeItem(SELECTED_VERSE_KEY);
-      sessionStorage.removeItem(SELECTED_VERSE_KEY);
-      setStatus("Bibelsted fjernet.");
-    });
+    const legacyClearBibleBtn = el("clearBibleBtn");
+    if(legacyClearBibleBtn){
+      legacyClearBibleBtn.addEventListener("click", () => {
+        setBibleVerse(null);
+        localStorage.removeItem(SELECTED_VERSE_KEY);
+        sessionStorage.removeItem(SELECTED_VERSE_KEY);
+        setStatus("Bibelsted fjernet.");
+      });
+    }
 
     el("resetBtn").addEventListener("click", () => {
       form.reset();
