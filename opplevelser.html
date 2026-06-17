@@ -2352,7 +2352,7 @@ button[aria-label="Tilbake til liste"]{
             </div>
 
             <div>
-              <label for="editDate">Dato</label>
+              <label for="editExperienceDate">Dato</label>
               <div class="edit-date-picker-wrap"><input id="editExperienceDate" name="editExperienceDate" type="text" placeholder="dd.mm.åååå" inputmode="numeric" autocomplete="off" readonly onclick="openEditExperienceDatePicker()" value="${esc(formatOpplevelserDate(item.experienceDate || ""))}"><input id="editExperienceDatePicker" type="date" tabindex="-1" aria-hidden="true"></div>
             </div>
 
@@ -2481,7 +2481,7 @@ button[aria-label="Tilbake til liste"]{
       const payload = {
         id:item.id,
         heading:el("editHeading").value,
-        experienceDate:el("editDate").value,
+        experienceDate:(window.parseOpplevelserDate ? window.parseOpplevelserDate(el("editExperienceDate").value) : el("editExperienceDate").value),
         place:el("editPlace").value,
         environment:el("editEnvironment").value,
         bibleReference:el("editBibleReference").value,
@@ -4336,5 +4336,6 @@ html body.light-mode .items .item:not(.selected):not(.active):not(.is-selected):
 }
 </style>
 
+<!-- Opplevelser v53: saveEdit uses editExperienceDate and converts date to ISO before API update. -->
 </body>
 </html>
