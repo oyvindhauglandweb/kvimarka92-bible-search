@@ -2077,7 +2077,7 @@ button[aria-label="Tilbake til liste"]{
 }
 
 </style>
-  <!-- version: LIST v51 mobile-date-theme-icon-button-polish 2026-06-17 -->
+  <!-- version: LIST v51b center-back-button-mobile 2026-06-17 -->
 </head>
 <body class="dark-mode">
 <div class="login-widget">
@@ -4314,6 +4314,61 @@ html body.light-mode .items .item:not(.selected):not(.active):not(.is-selected):
   }
 
   [100, 400, 900, 1500].forEach(delay => setTimeout(markBackToListButton, delay));
+})();
+</script>
+
+
+<style id="opplevelser-list-v51b-back-button-center">
+/* v51b: center Tilbake til liste on mobile */
+@media (max-width: 700px), (pointer: coarse){
+  button.back-to-list,
+  #backToListBtn,
+  button[data-back-to-list="1"],
+  button[title="Tilbake til liste"],
+  button[aria-label="Tilbake til liste"]{
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    text-align:center !important;
+    width:100% !important;
+    min-height:54px !important;
+    padding-left:18px !important;
+    padding-right:18px !important;
+  }
+
+  button.back-to-list *,
+  #backToListBtn *,
+  button[data-back-to-list="1"] *{
+    text-align:center !important;
+  }
+}
+</style>
+
+
+<script>
+/* List v51b: center back to list on mobile */
+(function(){
+  function markBackButton(){
+    document.querySelectorAll("button").forEach(button => {
+      const text = (button.textContent || "").trim();
+      if(text === "Tilbake til liste" || text === "Tilbake til listen"){
+        button.classList.add("back-to-list");
+        button.setAttribute("data-back-to-list", "1");
+        button.style.setProperty("display", "flex", "important");
+        button.style.setProperty("align-items", "center", "important");
+        button.style.setProperty("justify-content", "center", "important");
+        button.style.setProperty("text-align", "center", "important");
+      }
+    });
+  }
+
+  if(document.readyState === "loading"){
+    document.addEventListener("DOMContentLoaded", markBackButton);
+  }else{
+    markBackButton();
+  }
+
+  [100, 300, 700, 1200, 2000].forEach(delay => setTimeout(markBackButton, delay));
 })();
 </script>
 

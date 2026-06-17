@@ -1655,8 +1655,18 @@ body.light-mode #saveButton{
   }
 }
 
+
+/* Register v44d: stable mobile date and environment dropdown */
+@media (max-width: 700px), (pointer: coarse){
+  #experienceDate[type="date"]{
+    min-height:44px !important;
+    appearance:auto !important;
+    -webkit-appearance:auto !important;
+  }
+}
+
 </style>
-<!-- version: REGISTER v44c safe-direct-light-button-backgrounds 2026-06-17 -->
+<!-- version: REGISTER v44d stable-mobile-date-environment-options 2026-06-17 -->
 </head>
 <body class="dark-mode">
 <div class="login-widget">
@@ -3723,6 +3733,223 @@ html.light body button[data-opp-blue-button="1"]{
   document.addEventListener("click", function(){
     setTimeout(applyButtonBackgrounds, 0);
     setTimeout(applyButtonBackgrounds, 120);
+  }, true);
+})();
+</script>
+
+
+<script>
+/* Register v44d: stable mobile date and environment options fallback */
+(function(){
+  function pad2(value){
+    return String(value).padStart(2, "0");
+  }
+
+  function noToIso(value){
+    const text = String(value || "").trim();
+
+    const no = text.match(/^(\d{1,2})\.(\d{1,2})\.(\d{4})$/);
+    if(no){
+      return no[3] + "-" + pad2(no[2]) + "-" + pad2(no[1]);
+    }
+
+    const iso = text.match(/^(\d{4})-(\d{2})-(\d{2})/);
+    if(iso){
+      return iso[1] + "-" + iso[2] + "-" + iso[3];
+    }
+
+    return "";
+  }
+
+  function isoToNo(value){
+    const text = String(value || "").trim();
+    const iso = text.match(/^(\d{4})-(\d{2})-(\d{2})/);
+
+    if(iso){
+      return iso[3] + "." + iso[2] + "." + iso[1];
+    }
+
+    return text;
+  }
+
+  function todayIso(){
+    const now = new Date();
+    return now.getFullYear() + "-" + pad2(now.getMonth() + 1) + "-" + pad2(now.getDate());
+  }
+
+  function isMobileDateEnvironment(){
+    return (
+      window.matchMedia("(pointer: coarse)").matches ||
+      window.matchMedia("(max-width: 700px)").matches ||
+      /iPad|iPhone|iPod|Android/i.test(navigator.userAgent)
+    );
+  }
+
+  function stabilizeMobileDate(){
+    const el = document.getElementById("experienceDate");
+    if(!el){
+      return;
+    }
+
+    if(!isMobileDateEnvironment()){
+      // Desktop: keep Norwegian text format.
+      if(el.type !== "text"){
+        const no = isoToNo(el.value);
+        el.type = "text";
+        if(no){
+          el.value = no;
+        }
+      }
+      return;
+    }
+
+    // Mobile: native iOS/Safari picker requires value in ISO format.
+    const iso = noToIso(el.value) || el.dataset.mobileIsoDate || todayIso();
+
+    el.dataset.mobileIsoDate = iso;
+    el.type = "date";
+    el.removeAttribute("readonly");
+    el.value = iso;
+
+    if(el.dataset.mobileDateStableReady !== "1"){
+      el.dataset.mobileDateStableReady = "1";
+
+      el.addEventListener("change", () => {
+        const selected = noToIso(el.value) || el.value;
+        if(/^\d{4}-\d{2}-\d{2}$/.test(selected)){
+          el.dataset.mobileIsoDate = selected;
+          el.value = selected;
+        }
+      });
+
+      el.addEventListener("input", () => {
+        const selected = noToIso(el.value) || el.value;
+        if(/^\d{4}-\d{2}-\d{2}$/.test(selected)){
+          el.dataset.mobileIsoDate = selected;
+        }
+      });
+    }
+  }
+
+  function getEnvironmentSelect(){
+    return (
+      document.getElementById("environment") ||
+      document.getElementById("environmentSelect") ||
+      document.getElementById("miljo") ||
+      document.getElementById("miljø") ||
+      document.querySelector('select[name="environment"]') ||
+      document.querySelector('select[name="miljo"]') ||
+      document.querySelector('select[name="miljø"]')
+    );
+  }
+
+  function hasRealEnvironmentOptions(select){
+    if(!select){
+      return false;
+    }
+
+    return Array.from(select.options || []).some(option => {
+      const value = String(option.value || "").trim();
+      const text = String(option.textContent || "").trim();
+      return value && !/laster|velg/i.test(text);
+    });
+  }
+
+  function addFallbackEnvironmentOptions(select){
+    if(!select || hasRealEnvironmentOptions(select)){
+      return;
+    }
+
+    const current = select.value || "";
+    const labels = ["Hjemme", "Jobb", "Naturen", "Kirke", "Familie", "Annet"];
+
+    // Keep first placeholder option, remove duplicate fallback options from earlier attempts.
+    Array.from(select.options || []).forEach(option => {
+      if(option.dataset && option.dataset.fallbackMiljo === "1"){
+        option.remove();
+      }
+    });
+
+    labels.forEach(label => {
+      const option = document.createElement("option");
+      option.value = label;
+      option.textContent = label;
+      option.dataset.fallbackMiljo = "1";
+      select.appendChild(option);
+    });
+
+    if(current){
+      select.value = current;
+    }else{
+      select.value = "";
+    }
+  }
+
+  function retryKnownEnvironmentLoaders(){
+    [
+      "loadEnvironmentOptions",
+      "loadMiljoOptions",
+      "loadMiljøOptions",
+      "loadLookupOptions",
+      "loadRegisterLookups",
+      "loadOptions",
+      "populateEnvironmentOptions",
+      "populateMiljoOptions"
+    ].forEach(name => {
+      const fn = window[name];
+      if(typeof fn !== "function"){
+        return;
+      }
+
+      try{
+        fn();
+      }catch(error){}
+    });
+  }
+
+  function ensureEnvironmentOptions(){
+    const select = getEnvironmentSelect();
+    if(!select){
+      return;
+    }
+
+    if(hasRealEnvironmentOptions(select)){
+      return;
+    }
+
+    retryKnownEnvironmentLoaders();
+
+    // If async loader still has not filled it, provide safe fallback choices.
+    setTimeout(() => addFallbackEnvironmentOptions(select), 300);
+    setTimeout(() => addFallbackEnvironmentOptions(select), 900);
+    setTimeout(() => addFallbackEnvironmentOptions(select), 1600);
+  }
+
+  function run(){
+    stabilizeMobileDate();
+    ensureEnvironmentOptions();
+  }
+
+  window.stabilizeOpplevelserMobileDate = stabilizeMobileDate;
+  window.ensureOpplevelserEnvironmentOptions = ensureEnvironmentOptions;
+
+  if(document.readyState === "loading"){
+    document.addEventListener("DOMContentLoaded", run);
+  }else{
+    run();
+  }
+
+  window.addEventListener("pageshow", run);
+
+  // Finite retries only, no MutationObserver.
+  [50, 150, 350, 700, 1200, 2000, 3500].forEach(delay => {
+    setTimeout(run, delay);
+  });
+
+  document.addEventListener("click", event => {
+    if(event.target && event.target.closest && event.target.closest("select")){
+      ensureEnvironmentOptions();
+    }
   }, true);
 })();
 </script>
