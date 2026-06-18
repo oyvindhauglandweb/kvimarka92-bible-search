@@ -2606,6 +2606,48 @@ body.light-mode .readonly-melody-notes{
   color:#111827 !important;
 }
 
+
+/* Opplevelser v75: redigering på mobil skal alltid vise alle 5 melodifelt */
+.edit-melody-list{
+  display:grid !important;
+  grid-template-columns:1fr !important;
+  gap:12px !important;
+}
+
+.edit-melody-card,
+.edit-melody-card.edit-melody-empty,
+.edit-melody-card.edit-melody-has-content{
+  display:block !important;
+  visibility:visible !important;
+  opacity:1 !important;
+  height:auto !important;
+  min-height:0 !important;
+}
+
+.edit-melody-card.edit-melody-empty{
+  border:1px dashed rgba(255,255,255,.10) !important;
+}
+
+body.light-mode .edit-melody-card.edit-melody-empty{
+  border:1px dashed rgba(0,0,0,.12) !important;
+}
+
+@media(max-width:800px){
+  .edit-melodies-section,
+  .edit-melody-list,
+  .edit-melody-card,
+  .edit-melody-card.edit-melody-empty,
+  .edit-melody-card.edit-melody-has-content{
+    display:block !important;
+    visibility:visible !important;
+  }
+
+  .edit-melody-list{
+    display:grid !important;
+    grid-template-columns:1fr !important;
+  }
+}
+
 </style>
   <!-- version: LIST v52 hard-center-back-button-mobile 2026-06-17 -->
 </head>
@@ -3122,7 +3164,8 @@ body.light-mode .readonly-melody-notes{
 
         stopEditMelodyPitchDetection();
         const detected = editMelodyDetectedNotes.get(n) || [];
-        setEditMelodyState(n, detected.length ? "Nytt opptak klart. Tonehøyder registrert." : "Nytt opptak klart.");
+        setEditMelodyState(n, detected.length ? "Nytt opptak klart. Toner registrert." : "Nytt opptak klart.");
+        setEditMelodyCardEmptyState(n, false);
         setEditMelodyPitchText(n, detected.length ? "Toner: " + detected.join(" ") : "Toner: —", !!detected.length);
         button.classList.remove("recording");
         button.title = "Start opptak";
@@ -3184,11 +3227,33 @@ body.light-mode .readonly-melody-notes{
           }
 
           clearEditMelodyRecording(number, { keepExistingAudio:false });
+          setEditMelodyCardEmptyState(number, true);
         });
       });
     }
 
+
+    function setEditMelodyCardEmptyState(number, isEmpty){
+      const card = document.querySelector(`[data-edit-melody-card="${Number(number)}"]`);
+      if(!card){
+        return;
+      }
+
+      card.style.display = "block";
+      card.hidden = false;
+      card.classList.toggle("edit-melody-empty", !!isEmpty);
+      card.classList.toggle("edit-melody-has-content", !isEmpty);
+    }
+
+    function ensureAllEditMelodyCardsVisible(){
+      for(let number = 1; number <= 5; number += 1){
+        setEditMelodyCardEmptyState(number, true);
+      }
+    }
+
     async function loadEditMelodies(experienceId){
+      ensureAllEditMelodyCardsVisible();
+
       const data = await apiFetch(`/experience-melodies?experienceId=${encodeURIComponent(experienceId)}`, { method:"GET" });
       const items = data.items || [];
 
@@ -3197,11 +3262,14 @@ body.light-mode .readonly-melody-notes{
         if(el("editMelodyNote" + number)) el("editMelodyNote" + number).value = "";
         if(el("editMelodyDate" + number)) el("editMelodyDate" + number).value = todayIsoDate();
         clearEditMelodyRecording(number, { keepExistingAudio:false });
+        setEditMelodyCardEmptyState(number, true);
       }
 
       items.forEach(item => {
         const number = Number(item.melodyNumber || 0);
         if(number < 1 || number > 5) return;
+
+        setEditMelodyCardEmptyState(number, false);
 
         if(el("editMelodyId" + number)) el("editMelodyId" + number).value = item.id || "";
         if(el("editMelodyNote" + number)) el("editMelodyNote" + number).value = item.note || "";
@@ -3212,9 +3280,18 @@ body.light-mode .readonly-melody-notes{
           audio.src = item.audioUrl;
           audio.style.display = "";
           setEditMelodyState(number, "Opptak lagret.");
-          setEditMelodyPitchText(number, item.detectedNotes ? "Tonehøyder: " + item.detectedNotes : "Toner: —", !!item.detectedNotes);
+          setEditMelodyPitchText(number, item.detectedNotes ? "Toner: " + item.detectedNotes : "Toner: —", !!item.detectedNotes);
         }else{
           setEditMelodyState(number, item.note ? "Notat lagret uten opptak." : "Ikke spilt inn");
+        }
+      });
+
+      // Viktig på mobil: tomme melodier skal fortsatt vises, slik at man kan spille inn senere.
+      ensureAllEditMelodyCardsVisible();
+      items.forEach(item => {
+        const number = Number(item.melodyNumber || 0);
+        if(number >= 1 && number <= 5){
+          setEditMelodyCardEmptyState(number, false);
         }
       });
     }
@@ -3471,7 +3548,7 @@ body.light-mode .readonly-melody-notes{
 
       for(let number = 1; number <= 5; number += 1){
         cards.push(`
-            <div class="edit-melody-card" data-edit-melody-card="${number}">
+            <div class="edit-melody-card edit-melody-empty" data-edit-melody-card="${number}">
               <input type="hidden" id="editMelodyId${number}" value="">
               <div class="edit-melody-head">
                 <h3>Melodi ${number}</h3>
