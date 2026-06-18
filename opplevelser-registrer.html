@@ -1846,6 +1846,122 @@ input#experienceDate{
   }
 }
 
+
+/* Opplevelser registrer v66: melodiopptak */
+.melodies-section{
+  margin-top:8px !important;
+}
+.melodies-section h2{
+  margin:0 0 6px !important;
+  font-size:1.1rem !important;
+}
+.melody-help{
+  margin:0 0 12px !important;
+  color:var(--muted, #aaa) !important;
+}
+.melody-list{
+  display:grid !important;
+  grid-template-columns:1fr !important;
+  gap:12px !important;
+}
+.melody-card{
+  background:rgba(255,255,255,.035) !important;
+  border:0 !important;
+  border-radius:12px !important;
+  padding:12px !important;
+}
+body.light-mode .melody-card{
+  background:rgba(0,0,0,.045) !important;
+}
+.melody-head{
+  display:flex !important;
+  align-items:center !important;
+  justify-content:space-between !important;
+  gap:10px !important;
+  margin:0 0 10px !important;
+}
+.melody-head h3{
+  margin:0 !important;
+  font-size:1rem !important;
+}
+.melody-actions{
+  display:flex !important;
+  align-items:center !important;
+  justify-content:flex-end !important;
+  gap:8px !important;
+}
+.melody-record-button,
+.melody-clear-button{
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  width:34px !important;
+  height:34px !important;
+  min-width:34px !important;
+  min-height:34px !important;
+  padding:0 !important;
+  border-radius:50% !important;
+}
+.melody-record-button{
+  background:var(--opp-important-button, #2f5f6f) !important;
+  border-color:var(--opp-important-button, #2f5f6f) !important;
+  color:#fff !important;
+}
+.melody-record-button.recording{
+  background:#b45309 !important;
+  border-color:#b45309 !important;
+  animation:oppMicPulse 1s infinite;
+}
+.melody-record-button svg,
+.melody-clear-button svg{
+  width:17px !important;
+  height:17px !important;
+  display:block !important;
+  fill:none !important;
+  stroke:currentColor !important;
+  stroke-width:2 !important;
+  stroke-linecap:round !important;
+  stroke-linejoin:round !important;
+}
+.melody-grid{
+  display:grid !important;
+  grid-template-columns:220px 1fr !important;
+  gap:12px !important;
+  align-items:end !important;
+  margin-bottom:10px !important;
+}
+.melody-date-input{
+  height:44px !important;
+  min-height:44px !important;
+}
+.melody-audio-wrap audio{
+  width:100% !important;
+  height:38px !important;
+}
+.melody-state{
+  min-height:44px !important;
+  display:flex !important;
+  align-items:center !important;
+  padding:0 12px !important;
+  border-radius:10px !important;
+  background:rgba(0,0,0,.18) !important;
+  color:var(--muted, #aaa) !important;
+}
+body.light-mode .melody-state{
+  background:rgba(0,0,0,.045) !important;
+}
+.melody-note-header{
+  margin-top:8px !important;
+}
+.melody-note{
+  min-height:72px !important;
+}
+@media(max-width:700px){
+  .melody-grid{
+    grid-template-columns:1fr !important;
+  }
+}
+
 </style>
 <!-- version: REGISTER v44e stable-ios-date-no-ddmmyyyy-after-selection 2026-06-17 -->
 </head>
@@ -1961,6 +2077,159 @@ input#experienceDate{
             </div>
           <textarea id="note" name="note"></textarea>
           </div>
+
+          <div class="full melodies-section">
+            <h2>Melodier</h2>
+            <p class="melody-help">Du kan spille inn inntil 5 melodier. Hver melodi lagres først når opplevelsen lagres.</p>
+            <div class="melody-list">
+
+            <div class="melody-card" data-melody-card="1">
+              <div class="melody-head">
+                <h3>Melodi 1</h3>
+                <div class="melody-actions">
+                  <button type="button" class="melody-record-button" data-melody-record="1" title="Start opptak av melodi 1" aria-label="Start opptak av melodi 1"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9 18V5l11-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="17" cy="16" r="3"></circle></svg></button>
+                  <button type="button" class="clear-voice-button melody-clear-button" data-melody-clear="1" title="Fjern opptak" aria-label="Fjern opptak">×</button>
+                </div>
+              </div>
+              <div class="melody-grid">
+                <div>
+                  <label for="melodyDate1">Opptaksdato</label>
+                  <input id="melodyDate1" class="melody-date-input" type="date">
+                </div>
+                <div class="melody-audio-wrap">
+                  <label>Opptak</label>
+                  <audio id="melodyAudio1" controls style="display:none;"></audio>
+                  <div id="melodyState1" class="melody-state">Ikke spilt inn</div>
+                </div>
+              </div>
+              <div class="voice-field-header melody-note-header">
+                <label for="melodyNote1">Notat</label>
+                <div class="voice-actions">
+                  <button type="button" class="clear-voice-button" onclick="clearOpplevelserVoiceField('melodyNote1')" title="Tøm felt" aria-label="Tøm felt">×</button>
+                  <button type="button" class="mic-button" data-dictate-target="melodyNote1" title="Les inn tekst" aria-label="Les inn tekst"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 15a3 3 0 0 0 3-3V6a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3Zm5-3a1 1 0 1 0-2 0 3 3 0 0 1-6 0 1 1 0 1 0-2 0 5 5 0 0 0 4 4.9V19H9a1 1 0 1 0 0 2h6a1 1 0 1 0 0-2h-2v-2.1A5 5 0 0 0 17 12Z" fill="currentColor"/></svg></button>
+                </div>
+              </div>
+              <textarea id="melodyNote1" class="melody-note" name="melodyNote1"></textarea>
+            </div>
+
+            <div class="melody-card" data-melody-card="2">
+              <div class="melody-head">
+                <h3>Melodi 2</h3>
+                <div class="melody-actions">
+                  <button type="button" class="melody-record-button" data-melody-record="2" title="Start opptak av melodi 2" aria-label="Start opptak av melodi 2"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9 18V5l11-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="17" cy="16" r="3"></circle></svg></button>
+                  <button type="button" class="clear-voice-button melody-clear-button" data-melody-clear="2" title="Fjern opptak" aria-label="Fjern opptak">×</button>
+                </div>
+              </div>
+              <div class="melody-grid">
+                <div>
+                  <label for="melodyDate2">Opptaksdato</label>
+                  <input id="melodyDate2" class="melody-date-input" type="date">
+                </div>
+                <div class="melody-audio-wrap">
+                  <label>Opptak</label>
+                  <audio id="melodyAudio2" controls style="display:none;"></audio>
+                  <div id="melodyState2" class="melody-state">Ikke spilt inn</div>
+                </div>
+              </div>
+              <div class="voice-field-header melody-note-header">
+                <label for="melodyNote2">Notat</label>
+                <div class="voice-actions">
+                  <button type="button" class="clear-voice-button" onclick="clearOpplevelserVoiceField('melodyNote2')" title="Tøm felt" aria-label="Tøm felt">×</button>
+                  <button type="button" class="mic-button" data-dictate-target="melodyNote2" title="Les inn tekst" aria-label="Les inn tekst"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 15a3 3 0 0 0 3-3V6a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3Zm5-3a1 1 0 1 0-2 0 3 3 0 0 1-6 0 1 1 0 1 0-2 0 5 5 0 0 0 4 4.9V19H9a1 1 0 1 0 0 2h6a1 1 0 1 0 0-2h-2v-2.1A5 5 0 0 0 17 12Z" fill="currentColor"/></svg></button>
+                </div>
+              </div>
+              <textarea id="melodyNote2" class="melody-note" name="melodyNote2"></textarea>
+            </div>
+
+            <div class="melody-card" data-melody-card="3">
+              <div class="melody-head">
+                <h3>Melodi 3</h3>
+                <div class="melody-actions">
+                  <button type="button" class="melody-record-button" data-melody-record="3" title="Start opptak av melodi 3" aria-label="Start opptak av melodi 3"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9 18V5l11-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="17" cy="16" r="3"></circle></svg></button>
+                  <button type="button" class="clear-voice-button melody-clear-button" data-melody-clear="3" title="Fjern opptak" aria-label="Fjern opptak">×</button>
+                </div>
+              </div>
+              <div class="melody-grid">
+                <div>
+                  <label for="melodyDate3">Opptaksdato</label>
+                  <input id="melodyDate3" class="melody-date-input" type="date">
+                </div>
+                <div class="melody-audio-wrap">
+                  <label>Opptak</label>
+                  <audio id="melodyAudio3" controls style="display:none;"></audio>
+                  <div id="melodyState3" class="melody-state">Ikke spilt inn</div>
+                </div>
+              </div>
+              <div class="voice-field-header melody-note-header">
+                <label for="melodyNote3">Notat</label>
+                <div class="voice-actions">
+                  <button type="button" class="clear-voice-button" onclick="clearOpplevelserVoiceField('melodyNote3')" title="Tøm felt" aria-label="Tøm felt">×</button>
+                  <button type="button" class="mic-button" data-dictate-target="melodyNote3" title="Les inn tekst" aria-label="Les inn tekst"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 15a3 3 0 0 0 3-3V6a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3Zm5-3a1 1 0 1 0-2 0 3 3 0 0 1-6 0 1 1 0 1 0-2 0 5 5 0 0 0 4 4.9V19H9a1 1 0 1 0 0 2h6a1 1 0 1 0 0-2h-2v-2.1A5 5 0 0 0 17 12Z" fill="currentColor"/></svg></button>
+                </div>
+              </div>
+              <textarea id="melodyNote3" class="melody-note" name="melodyNote3"></textarea>
+            </div>
+
+            <div class="melody-card" data-melody-card="4">
+              <div class="melody-head">
+                <h3>Melodi 4</h3>
+                <div class="melody-actions">
+                  <button type="button" class="melody-record-button" data-melody-record="4" title="Start opptak av melodi 4" aria-label="Start opptak av melodi 4"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9 18V5l11-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="17" cy="16" r="3"></circle></svg></button>
+                  <button type="button" class="clear-voice-button melody-clear-button" data-melody-clear="4" title="Fjern opptak" aria-label="Fjern opptak">×</button>
+                </div>
+              </div>
+              <div class="melody-grid">
+                <div>
+                  <label for="melodyDate4">Opptaksdato</label>
+                  <input id="melodyDate4" class="melody-date-input" type="date">
+                </div>
+                <div class="melody-audio-wrap">
+                  <label>Opptak</label>
+                  <audio id="melodyAudio4" controls style="display:none;"></audio>
+                  <div id="melodyState4" class="melody-state">Ikke spilt inn</div>
+                </div>
+              </div>
+              <div class="voice-field-header melody-note-header">
+                <label for="melodyNote4">Notat</label>
+                <div class="voice-actions">
+                  <button type="button" class="clear-voice-button" onclick="clearOpplevelserVoiceField('melodyNote4')" title="Tøm felt" aria-label="Tøm felt">×</button>
+                  <button type="button" class="mic-button" data-dictate-target="melodyNote4" title="Les inn tekst" aria-label="Les inn tekst"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 15a3 3 0 0 0 3-3V6a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3Zm5-3a1 1 0 1 0-2 0 3 3 0 0 1-6 0 1 1 0 1 0-2 0 5 5 0 0 0 4 4.9V19H9a1 1 0 1 0 0 2h6a1 1 0 1 0 0-2h-2v-2.1A5 5 0 0 0 17 12Z" fill="currentColor"/></svg></button>
+                </div>
+              </div>
+              <textarea id="melodyNote4" class="melody-note" name="melodyNote4"></textarea>
+            </div>
+
+            <div class="melody-card" data-melody-card="5">
+              <div class="melody-head">
+                <h3>Melodi 5</h3>
+                <div class="melody-actions">
+                  <button type="button" class="melody-record-button" data-melody-record="5" title="Start opptak av melodi 5" aria-label="Start opptak av melodi 5"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9 18V5l11-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="17" cy="16" r="3"></circle></svg></button>
+                  <button type="button" class="clear-voice-button melody-clear-button" data-melody-clear="5" title="Fjern opptak" aria-label="Fjern opptak">×</button>
+                </div>
+              </div>
+              <div class="melody-grid">
+                <div>
+                  <label for="melodyDate5">Opptaksdato</label>
+                  <input id="melodyDate5" class="melody-date-input" type="date">
+                </div>
+                <div class="melody-audio-wrap">
+                  <label>Opptak</label>
+                  <audio id="melodyAudio5" controls style="display:none;"></audio>
+                  <div id="melodyState5" class="melody-state">Ikke spilt inn</div>
+                </div>
+              </div>
+              <div class="voice-field-header melody-note-header">
+                <label for="melodyNote5">Notat</label>
+                <div class="voice-actions">
+                  <button type="button" class="clear-voice-button" onclick="clearOpplevelserVoiceField('melodyNote5')" title="Tøm felt" aria-label="Tøm felt">×</button>
+                  <button type="button" class="mic-button" data-dictate-target="melodyNote5" title="Les inn tekst" aria-label="Les inn tekst"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 15a3 3 0 0 0 3-3V6a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3Zm5-3a1 1 0 1 0-2 0 3 3 0 0 1-6 0 1 1 0 1 0-2 0 5 5 0 0 0 4 4.9V19H9a1 1 0 1 0 0 2h6a1 1 0 1 0 0-2h-2v-2.1A5 5 0 0 0 17 12Z" fill="currentColor"/></svg></button>
+                </div>
+              </div>
+              <textarea id="melodyNote5" class="melody-note" name="melodyNote5"></textarea>
+            </div>
+            </div>
+          </div>
+
         </div>
 
 
@@ -2018,6 +2287,241 @@ input#experienceDate{
 
       return data;
     }
+
+    async function apiFetchFormData(path, formData){
+      const res = await fetch(API_BASE + path, {
+        method:"POST",
+        credentials:"include",
+        body:formData
+      });
+
+      const data = await res.json().catch(() => ({}));
+
+      if(!res.ok){
+        throw new Error(data.detail || data.error || `HTTP ${res.status}`);
+      }
+
+      return data;
+    }
+
+    const melodyRecordings = new Map();
+    let activeMelodyRecorder = null;
+    let activeMelodyNumber = null;
+    let activeMelodyChunks = [];
+    let activeMelodyStream = null;
+
+    function bestMelodyMimeType(){
+      const candidates = [
+        "audio/webm;codecs=opus",
+        "audio/webm",
+        "audio/mp4",
+        "audio/ogg;codecs=opus"
+      ];
+
+      for(const candidate of candidates){
+        if(window.MediaRecorder && MediaRecorder.isTypeSupported && MediaRecorder.isTypeSupported(candidate)){
+          return candidate;
+        }
+      }
+
+      return "";
+    }
+
+    function setMelodyState(number, text){
+      const state = el("melodyState" + number);
+      if(state){
+        state.textContent = text || "Ikke spilt inn";
+      }
+    }
+
+    function todayIsoDate(){
+      return new Date().toISOString().slice(0, 10);
+    }
+
+    function initMelodyDates(){
+      for(let i = 1; i <= 5; i += 1){
+        const date = el("melodyDate" + i);
+        if(date && !date.value){
+          date.value = todayIsoDate();
+        }
+      }
+    }
+
+    function clearMelodyRecording(number){
+      const n = Number(number || 0);
+      const current = melodyRecordings.get(n);
+
+      if(current && current.url){
+        try{ URL.revokeObjectURL(current.url); }catch(error){}
+      }
+
+      melodyRecordings.delete(n);
+
+      const audio = el("melodyAudio" + n);
+      if(audio){
+        audio.pause();
+        audio.removeAttribute("src");
+        audio.style.display = "none";
+      }
+
+      setMelodyState(n, "Ikke spilt inn");
+    }
+
+    function stopActiveMelodyRecording(){
+      if(activeMelodyRecorder && activeMelodyRecorder.state !== "inactive"){
+        try{ activeMelodyRecorder.stop(); }catch(error){}
+      }
+    }
+
+    async function toggleMelodyRecording(number){
+      const n = Number(number || 0);
+      const button = document.querySelector(`[data-melody-record="${n}"]`);
+
+      if(!n || !button){
+        return;
+      }
+
+      if(activeMelodyRecorder && activeMelodyNumber === n){
+        stopActiveMelodyRecording();
+        return;
+      }
+
+      if(activeMelodyRecorder){
+        stopActiveMelodyRecording();
+        return;
+      }
+
+      if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia || !window.MediaRecorder){
+        alert("Lydopptak støttes ikke i denne nettleseren.");
+        return;
+      }
+
+      const stream = await navigator.mediaDevices.getUserMedia({ audio:true });
+      const mimeType = bestMelodyMimeType();
+      const options = mimeType ? { mimeType } : {};
+      const recorder = new MediaRecorder(stream, options);
+
+      activeMelodyRecorder = recorder;
+      activeMelodyNumber = n;
+      activeMelodyChunks = [];
+      activeMelodyStream = stream;
+
+      button.classList.add("recording");
+      button.title = "Stopp opptak";
+      button.setAttribute("aria-label", "Stopp opptak");
+      setMelodyState(n, "Spiller inn ... trykk knappen igjen for å stoppe.");
+
+      recorder.ondataavailable = event => {
+        if(event.data && event.data.size){
+          activeMelodyChunks.push(event.data);
+        }
+      };
+
+      recorder.onstop = () => {
+        const type = recorder.mimeType || mimeType || "audio/webm";
+        const blob = new Blob(activeMelodyChunks, { type });
+        const url = URL.createObjectURL(blob);
+        const audio = el("melodyAudio" + n);
+
+        clearMelodyRecording(n);
+        melodyRecordings.set(n, {
+          blob,
+          url,
+          type
+        });
+
+        if(audio){
+          audio.src = url;
+          audio.style.display = "";
+        }
+
+        setMelodyState(n, "Opptak klart.");
+
+        button.classList.remove("recording");
+        button.title = "Start opptak";
+        button.setAttribute("aria-label", "Start opptak");
+
+        if(activeMelodyStream){
+          activeMelodyStream.getTracks().forEach(track => track.stop());
+        }
+
+        activeMelodyRecorder = null;
+        activeMelodyNumber = null;
+        activeMelodyChunks = [];
+        activeMelodyStream = null;
+      };
+
+      recorder.start();
+    }
+
+    function initMelodyRecorderButtons(){
+      document.querySelectorAll("[data-melody-record]").forEach(button => {
+        if(button.dataset.melodyReady === "1"){
+          return;
+        }
+
+        button.dataset.melodyReady = "1";
+        button.addEventListener("click", async () => {
+          try{
+            await toggleMelodyRecording(button.dataset.melodyRecord);
+          }catch(error){
+            alert("Kunne ikke starte opptak: " + error.message);
+          }
+        });
+      });
+
+      document.querySelectorAll("[data-melody-clear]").forEach(button => {
+        if(button.dataset.melodyClearReady === "1"){
+          return;
+        }
+
+        button.dataset.melodyClearReady = "1";
+        button.addEventListener("click", () => {
+          clearMelodyRecording(button.dataset.melodyClear);
+        });
+      });
+
+      initMelodyDates();
+    }
+
+    async function uploadMelodiesForExperience(experienceId){
+      const uploads = [];
+
+      for(let number = 1; number <= 5; number += 1){
+        const recording = melodyRecordings.get(number);
+
+        if(!recording || !recording.blob){
+          continue;
+        }
+
+        const formData = new FormData();
+        const extension = recording.type && recording.type.includes("mp4") ? "mp4" : (recording.type && recording.type.includes("ogg") ? "ogg" : "webm");
+        formData.append("experienceId", String(experienceId));
+        formData.append("melodyNumber", String(number));
+        formData.append("recordingDate", el("melodyDate" + number)?.value || todayIsoDate());
+        formData.append("note", el("melodyNote" + number)?.value || "");
+        formData.append("audio", recording.blob, `melodi-${number}.${extension}`);
+
+        uploads.push(apiFetchFormData("/experience-melody-upload", formData));
+      }
+
+      if(!uploads.length){
+        return [];
+      }
+
+      return await Promise.all(uploads);
+    }
+
+    function clearAllMelodies(){
+      for(let number = 1; number <= 5; number += 1){
+        clearMelodyRecording(number);
+        const note = el("melodyNote" + number);
+        const date = el("melodyDate" + number);
+        if(note) note.value = "";
+        if(date) date.value = todayIsoDate();
+      }
+    }
+
 
     function fillDatalist(id, items, getName){
       const list = el(id);
@@ -2163,6 +2667,7 @@ input#experienceDate{
       form.reset();
       setBibleVerse(null);
       initDate();
+      clearAllMelodies();
       setStatus("Skjema tømt.");
     });
 
@@ -2232,7 +2737,9 @@ input#experienceDate{
           body:JSON.stringify(payload)
         });
 
-        setStatus(`Opplevelse lagret. Rad-ID: ${data.id}`, "ok");
+        const melodyUploads = await uploadMelodiesForExperience(data.id);
+        const melodyText = melodyUploads.length ? ` ${melodyUploads.length} melodi(er) lagret.` : "";
+        setStatus(`Opplevelse lagret. Rad-ID: ${data.id}.${melodyText}`, "ok");
         await loadOptions();
       }catch(error){
         setStatus("Lagring feilet: " + error.message, "err");
@@ -2241,6 +2748,7 @@ input#experienceDate{
       }
     });
 
+    initMelodyRecorderButtons();
     loadOptions();
   </script>
 
