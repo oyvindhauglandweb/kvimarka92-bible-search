@@ -2359,6 +2359,143 @@ body.light-mode .item.active *{
   }
 }
 
+
+/* Opplevelser v68: redigering – knapper øverst og melodier */
+#editForm .edit-actions-top{
+  display:flex !important;
+  justify-content:space-between !important;
+  align-items:center !important;
+  gap:10px !important;
+  margin:0 0 14px !important;
+  padding:0 !important;
+}
+#editForm .edit-actions-top .edit-actions-right{
+  margin-left:auto !important;
+  display:flex !important;
+  gap:10px !important;
+  align-items:center !important;
+}
+.edit-melodies-section{
+  margin-top:8px !important;
+}
+.edit-melodies-section h2{
+  margin:0 0 6px !important;
+  font-size:1.1rem !important;
+}
+.edit-melody-help{
+  margin:0 0 12px !important;
+  color:var(--muted, #aaa) !important;
+}
+.edit-melody-list{
+  display:grid !important;
+  grid-template-columns:1fr !important;
+  gap:12px !important;
+}
+.edit-melody-card{
+  background:rgba(255,255,255,.035) !important;
+  border:0 !important;
+  border-radius:12px !important;
+  padding:12px !important;
+}
+body.light-mode .edit-melody-card{
+  background:rgba(0,0,0,.045) !important;
+}
+.edit-melody-head{
+  display:flex !important;
+  align-items:center !important;
+  justify-content:space-between !important;
+  gap:10px !important;
+  margin:0 0 10px !important;
+}
+.edit-melody-head h3{
+  margin:0 !important;
+  font-size:1rem !important;
+}
+.edit-melody-actions{
+  display:flex !important;
+  align-items:center !important;
+  justify-content:flex-end !important;
+  gap:8px !important;
+}
+.edit-melody-record-button,
+.edit-melody-clear-button{
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  width:34px !important;
+  height:34px !important;
+  min-width:34px !important;
+  min-height:34px !important;
+  padding:0 !important;
+  border-radius:50% !important;
+}
+.edit-melody-record-button{
+  background:var(--opp-important-button, #2f5f6f) !important;
+  border-color:var(--opp-important-button, #2f5f6f) !important;
+  color:#fff !important;
+}
+.edit-melody-record-button.recording{
+  background:#b45309 !important;
+  border-color:#b45309 !important;
+  animation:oppMicPulse 1s infinite;
+}
+.edit-melody-record-button svg,
+.edit-melody-clear-button svg{
+  width:17px !important;
+  height:17px !important;
+  display:block !important;
+  fill:none !important;
+  stroke:currentColor !important;
+  stroke-width:2 !important;
+  stroke-linecap:round !important;
+  stroke-linejoin:round !important;
+}
+.edit-melody-grid{
+  display:grid !important;
+  grid-template-columns:220px 1fr !important;
+  gap:12px !important;
+  align-items:end !important;
+  margin-bottom:10px !important;
+}
+.edit-melody-date-input{
+  height:44px !important;
+  min-height:44px !important;
+}
+.edit-melody-audio-wrap audio{
+  width:100% !important;
+  height:38px !important;
+}
+.edit-melody-state{
+  min-height:44px !important;
+  display:flex !important;
+  align-items:center !important;
+  padding:0 12px !important;
+  border-radius:10px !important;
+  background:rgba(0,0,0,.18) !important;
+  color:var(--muted, #aaa) !important;
+}
+body.light-mode .edit-melody-state{
+  background:rgba(0,0,0,.045) !important;
+}
+.edit-melody-note-header{
+  margin-top:8px !important;
+}
+.edit-melody-note{
+  min-height:72px !important;
+}
+@media(max-width:700px){
+  #editForm .edit-actions-top{
+    flex-wrap:nowrap !important;
+  }
+  #editForm .edit-actions-top button{
+    width:auto !important;
+    white-space:nowrap !important;
+  }
+  .edit-melody-grid{
+    grid-template-columns:1fr !important;
+  }
+}
+
 </style>
   <!-- version: LIST v52 hard-center-back-button-mobile 2026-06-17 -->
 </head>
@@ -2582,6 +2719,246 @@ body.light-mode .item.active *{
       return data;
     }
 
+
+    async function apiFetchFormData(path, formData){
+      const res = await fetch(API_BASE + path, {
+        method:"POST",
+        credentials:"include",
+        body:formData
+      });
+
+      const data = await res.json().catch(() => ({}));
+
+      if(!res.ok){
+        throw new Error(data.detail || data.error || `HTTP ${res.status}`);
+      }
+
+      return data;
+    }
+
+    const editMelodyRecordings = new Map();
+    let activeEditMelodyRecorder = null;
+    let activeEditMelodyNumber = null;
+    let activeEditMelodyChunks = [];
+    let activeEditMelodyStream = null;
+
+    function todayIsoDate(){
+      return new Date().toISOString().slice(0, 10);
+    }
+
+    function bestMelodyMimeType(){
+      const candidates = ["audio/webm;codecs=opus", "audio/webm", "audio/mp4", "audio/ogg;codecs=opus"];
+      for(const candidate of candidates){
+        if(window.MediaRecorder && MediaRecorder.isTypeSupported && MediaRecorder.isTypeSupported(candidate)){
+          return candidate;
+        }
+      }
+      return "";
+    }
+
+    function setEditMelodyState(number, text){
+      const state = el("editMelodyState" + number);
+      if(state) state.textContent = text || "Ikke spilt inn";
+    }
+
+    function clearEditMelodyRecording(number, options){
+      const n = Number(number || 0);
+      const opts = options || {};
+      const current = editMelodyRecordings.get(n);
+      if(current && current.url){
+        try{ URL.revokeObjectURL(current.url); }catch(error){}
+      }
+      editMelodyRecordings.delete(n);
+      const audio = el("editMelodyAudio" + n);
+      if(audio && !opts.keepExistingAudio){
+        audio.pause();
+        audio.removeAttribute("src");
+        audio.style.display = "none";
+      }
+      if(!opts.keepExistingAudio) setEditMelodyState(n, "Ikke spilt inn");
+    }
+
+    function stopActiveEditMelodyRecording(){
+      if(activeEditMelodyRecorder && activeEditMelodyRecorder.state !== "inactive"){
+        try{ activeEditMelodyRecorder.stop(); }catch(error){}
+      }
+    }
+
+    async function toggleEditMelodyRecording(number){
+      const n = Number(number || 0);
+      const button = document.querySelector(`[data-edit-melody-record="${n}"]`);
+      if(!n || !button) return;
+
+      if(activeEditMelodyRecorder && activeEditMelodyNumber === n){
+        stopActiveEditMelodyRecording();
+        return;
+      }
+
+      if(activeEditMelodyRecorder){
+        stopActiveEditMelodyRecording();
+        return;
+      }
+
+      if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia || !window.MediaRecorder){
+        alert("Lydopptak støttes ikke i denne nettleseren.");
+        return;
+      }
+
+      const stream = await navigator.mediaDevices.getUserMedia({ audio:true });
+      const mimeType = bestMelodyMimeType();
+      const recorder = new MediaRecorder(stream, mimeType ? { mimeType } : {});
+
+      activeEditMelodyRecorder = recorder;
+      activeEditMelodyNumber = n;
+      activeEditMelodyChunks = [];
+      activeEditMelodyStream = stream;
+
+      button.classList.add("recording");
+      button.title = "Stopp opptak";
+      button.setAttribute("aria-label", "Stopp opptak");
+      setEditMelodyState(n, "Spiller inn ... trykk knappen igjen for å stoppe.");
+
+      recorder.ondataavailable = event => {
+        if(event.data && event.data.size) activeEditMelodyChunks.push(event.data);
+      };
+
+      recorder.onstop = () => {
+        const type = recorder.mimeType || mimeType || "audio/webm";
+        const blob = new Blob(activeEditMelodyChunks, { type });
+        const url = URL.createObjectURL(blob);
+        const audio = el("editMelodyAudio" + n);
+
+        clearEditMelodyRecording(n, { keepExistingAudio:false });
+        editMelodyRecordings.set(n, { blob, url, type });
+
+        if(audio){
+          audio.src = url;
+          audio.style.display = "";
+        }
+
+        setEditMelodyState(n, "Nytt opptak klart.");
+        button.classList.remove("recording");
+        button.title = "Start opptak";
+        button.setAttribute("aria-label", "Start opptak");
+
+        if(activeEditMelodyStream){
+          activeEditMelodyStream.getTracks().forEach(track => track.stop());
+        }
+
+        activeEditMelodyRecorder = null;
+        activeEditMelodyNumber = null;
+        activeEditMelodyChunks = [];
+        activeEditMelodyStream = null;
+      };
+
+      recorder.start();
+    }
+
+    function initEditMelodyRecorderButtons(){
+      editMelodyRecordings.clear();
+
+      for(let number = 1; number <= 5; number += 1){
+        const date = el("editMelodyDate" + number);
+        if(date && !date.value) date.value = todayIsoDate();
+      }
+
+      document.querySelectorAll("[data-edit-melody-record]").forEach(button => {
+        if(button.dataset.editMelodyReady === "1") return;
+        button.dataset.editMelodyReady = "1";
+        button.addEventListener("click", async () => {
+          try{
+            await toggleEditMelodyRecording(button.dataset.editMelodyRecord);
+          }catch(error){
+            alert("Kunne ikke starte opptak: " + error.message);
+          }
+        });
+      });
+
+      document.querySelectorAll("[data-edit-melody-clear]").forEach(button => {
+        if(button.dataset.editMelodyClearReady === "1") return;
+        button.dataset.editMelodyClearReady = "1";
+        button.addEventListener("click", async () => {
+          const number = Number(button.dataset.editMelodyClear || 0);
+          const melodyId = Number(el("editMelodyId" + number)?.value || 0);
+
+          if(melodyId){
+            const ok = window.confirm("Vil du fjerne denne melodien?");
+            if(!ok) return;
+            const item = selectedItem();
+            if(item){
+              await apiFetch("/experience-melody-delete", {
+                method:"POST",
+                body:JSON.stringify({ experienceId:item.id, melodyId })
+              });
+            }
+            if(el("editMelodyId" + number)) el("editMelodyId" + number).value = "";
+            if(el("editMelodyNote" + number)) el("editMelodyNote" + number).value = "";
+            if(el("editMelodyDate" + number)) el("editMelodyDate" + number).value = todayIsoDate();
+          }
+
+          clearEditMelodyRecording(number, { keepExistingAudio:false });
+        });
+      });
+    }
+
+    async function loadEditMelodies(experienceId){
+      const data = await apiFetch(`/experience-melodies?experienceId=${encodeURIComponent(experienceId)}`, { method:"GET" });
+      const items = data.items || [];
+
+      for(let number = 1; number <= 5; number += 1){
+        if(el("editMelodyId" + number)) el("editMelodyId" + number).value = "";
+        if(el("editMelodyNote" + number)) el("editMelodyNote" + number).value = "";
+        if(el("editMelodyDate" + number)) el("editMelodyDate" + number).value = todayIsoDate();
+        clearEditMelodyRecording(number, { keepExistingAudio:false });
+      }
+
+      items.forEach(item => {
+        const number = Number(item.melodyNumber || 0);
+        if(number < 1 || number > 5) return;
+
+        if(el("editMelodyId" + number)) el("editMelodyId" + number).value = item.id || "";
+        if(el("editMelodyNote" + number)) el("editMelodyNote" + number).value = item.note || "";
+        if(el("editMelodyDate" + number)) el("editMelodyDate" + number).value = item.recordingDate || todayIsoDate();
+
+        const audio = el("editMelodyAudio" + number);
+        if(audio && item.audioUrl){
+          audio.src = item.audioUrl;
+          audio.style.display = "";
+          setEditMelodyState(number, "Opptak lagret.");
+        }else{
+          setEditMelodyState(number, item.note ? "Notat lagret uten opptak." : "Ikke spilt inn");
+        }
+      });
+    }
+
+    async function saveEditMelodiesForExperience(experienceId){
+      const uploads = [];
+
+      for(let number = 1; number <= 5; number += 1){
+        const melodyId = Number(el("editMelodyId" + number)?.value || 0);
+        const note = el("editMelodyNote" + number)?.value || "";
+        const recording = editMelodyRecordings.get(number);
+
+        if(!melodyId && !recording && !note.trim()) continue;
+
+        const formData = new FormData();
+        const extension = recording && recording.type && recording.type.includes("mp4") ? "mp4" : (recording && recording.type && recording.type.includes("ogg") ? "ogg" : "webm");
+        formData.append("experienceId", String(experienceId));
+        formData.append("melodyNumber", String(number));
+        formData.append("melodyId", melodyId ? String(melodyId) : "");
+        formData.append("recordingDate", el("editMelodyDate" + number)?.value || todayIsoDate());
+        formData.append("note", note);
+
+        if(recording && recording.blob){
+          formData.append("audio", recording.blob, `melodi-${number}.${extension}`);
+        }
+
+        uploads.push(apiFetchFormData("/experience-melody-save", formData));
+      }
+
+      return uploads.length ? await Promise.all(uploads) : [];
+    }
+
     function bestTitle(item){
       return item.heading || item.bibleReference || item.place || item.environment || "(uten overskrift)";
     }
@@ -2697,9 +3074,57 @@ body.light-mode .item.active *{
       `;
     }
 
+
+    function renderEditMelodyCards(){
+      const cards = [];
+
+      for(let number = 1; number <= 5; number += 1){
+        cards.push(`
+            <div class="edit-melody-card" data-edit-melody-card="${number}">
+              <input type="hidden" id="editMelodyId${number}" value="">
+              <div class="edit-melody-head">
+                <h3>Melodi ${number}</h3>
+                <div class="edit-melody-actions">
+                  <button type="button" class="edit-melody-record-button" data-edit-melody-record="${number}" title="Start opptak av melodi ${number}" aria-label="Start opptak av melodi ${number}"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9 18V5l11-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="17" cy="16" r="3"></circle></svg></button>
+                  <button type="button" class="clear-voice-button edit-melody-clear-button" data-edit-melody-clear="${number}" title="Fjern opptak" aria-label="Fjern opptak">×</button>
+                </div>
+              </div>
+              <div class="edit-melody-grid">
+                <div>
+                  <label for="editMelodyDate${number}">Opptaksdato</label>
+                  <input id="editMelodyDate${number}" class="edit-melody-date-input" type="date">
+                </div>
+                <div class="edit-melody-audio-wrap">
+                  <label>Opptak</label>
+                  <audio id="editMelodyAudio${number}" controls style="display:none;"></audio>
+                  <div id="editMelodyState${number}" class="edit-melody-state">Ikke spilt inn</div>
+                </div>
+              </div>
+              <div class="voice-field-header edit-melody-note-header">
+                <label for="editMelodyNote${number}">Notat</label>
+                <div class="voice-actions">
+                  <button type="button" class="clear-voice-button" onclick="clearOpplevelserVoiceField('editMelodyNote${number}')" title="Tøm felt" aria-label="Tøm felt">×</button>
+                  <button type="button" class="mic-button" data-dictate-target="editMelodyNote${number}" title="Les inn tekst" aria-label="Les inn tekst"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 15a3 3 0 0 0 3-3V6a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3Zm5-3a1 1 0 1 0-2 0 3 3 0 0 1-6 0 1 1 0 1 0-2 0 5 5 0 0 0 4 4.9V19H9a1 1 0 1 0 0 2h6a1 1 0 1 0 0-2h-2v-2.1A5 5 0 0 0 17 12Z" fill="currentColor"/></svg></button>
+                </div>
+              </div>
+              <textarea id="editMelodyNote${number}" class="edit-melody-note" name="editMelodyNote${number}"></textarea>
+            </div>
+        `);
+      }
+
+      return cards.join("");
+    }
+
     function renderEditForm(item){
       el("details").innerHTML = `
         <form id="editForm">
+          <div class="edit-actions edit-actions-top edit-actions-save-right">
+            <button type="button" class="secondary edit-cancel-button" onclick="cancelEdit()">Avbryt</button>
+            <div class="edit-actions-right">
+              <button type="button" class="secondary edit-delete-button" onclick="deleteCurrentExperience()">Slette</button>
+              <button type="submit" class="primary edit-save-button">Lagre endringer</button>
+            </div>
+          </div>
           <div class="edit-grid">
             <div class="full">
               <label for="editHeading">Overskrift</label>
@@ -2778,13 +3203,13 @@ body.light-mode .item.active *{
             </div>
               <textarea id="editNote">${esc(item.note || "")}</textarea>
             </div>
-          </div>
 
-          <div class="edit-actions edit-actions-save-right">
-            <button type="button" class="secondary edit-cancel-button" onclick="cancelEdit()">Avbryt</button>
-            <div class="edit-actions-right">
-              <button type="button" class="secondary edit-delete-button" onclick="deleteCurrentExperience()">Slette</button>
-              <button type="submit" class="primary edit-save-button">Lagre endringer</button>
+            <div class="full edit-melodies-section">
+              <h2>Melodier</h2>
+              <p class="edit-melody-help">Spill inn eller oppdater inntil 5 melodier. Endringer lagres når du trykker «Lagre endringer».</p>
+              <div class="edit-melody-list">
+                ${renderEditMelodyCards()}
+              </div>
             </div>
           </div>
         </form>
@@ -2808,6 +3233,8 @@ body.light-mode .item.active *{
       if(window.initOpplevelserMicButtons){ window.initOpplevelserMicButtons(); }
       if(window.initOpplevelserAutoGrowTextareas){ window.initOpplevelserAutoGrowTextareas(); }
       if(window.initBibleHeaderDisplay){ window.initBibleHeaderDisplay(); }
+      initEditMelodyRecorderButtons();
+      loadEditMelodies(item.id).catch(error => setStatus("Kunne ikke laste melodier: " + error.message, "err"));
     }
 
     window.selectItem = function(id){
@@ -2863,6 +3290,8 @@ body.light-mode .item.active *{
           method:"POST",
           body:JSON.stringify(payload)
         });
+
+        await saveEditMelodiesForExperience(item.id);
 
         const index = currentItems.findIndex(entry => entry.id === item.id);
         if(index >= 0 && data.row){
