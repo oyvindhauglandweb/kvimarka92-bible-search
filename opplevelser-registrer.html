@@ -1991,6 +1991,50 @@ body.light-mode .melody-pitch-live.active{
   color:#111827 !important;
 }
 
+
+/* Opplevelser v79: toppmeny-knapper skal ikke bli blå når ramme/design aktiveres.
+   Gammel regel button:not(.secondary) traff også top-button i classic/ramme-modus. */
+.top-buttons .top-button,
+.top-buttons button.top-button,
+html.classic-design-root .top-buttons .top-button,
+html.classic-design-root .top-buttons button.top-button,
+html:not(.classic-design-root) .top-buttons .top-button,
+html:not(.classic-design-root) .top-buttons button.top-button{
+  background:rgba(255,255,255,.055) !important;
+  color:var(--opp-text) !important;
+  border:0 !important;
+  box-shadow:none !important;
+}
+
+html.classic-design-root .top-buttons .top-button,
+html.classic-design-root .top-buttons button.top-button{
+  border:1px solid var(--opp-border) !important;
+}
+
+.top-buttons .top-button:hover,
+.top-buttons button.top-button:hover,
+html.classic-design-root .top-buttons .top-button:hover,
+html.classic-design-root .top-buttons button.top-button:hover{
+  background:rgba(255,255,255,.10) !important;
+  color:var(--opp-text) !important;
+}
+
+body.light-mode .top-buttons .top-button,
+body.light-mode .top-buttons button.top-button,
+body.light-mode html.classic-design-root .top-buttons .top-button,
+body.light-mode html.classic-design-root .top-buttons button.top-button{
+  background:rgba(0,0,0,.055) !important;
+  color:var(--opp-text) !important;
+}
+
+body.light-mode .top-buttons .top-button:hover,
+body.light-mode .top-buttons button.top-button:hover,
+body.light-mode html.classic-design-root .top-buttons .top-button:hover,
+body.light-mode html.classic-design-root .top-buttons button.top-button:hover{
+  background:rgba(0,0,0,.10) !important;
+  color:var(--opp-text) !important;
+}
+
 </style>
 <!-- version: REGISTER v44e stable-ios-date-no-ddmmyyyy-after-selection 2026-06-17 -->
 </head>
