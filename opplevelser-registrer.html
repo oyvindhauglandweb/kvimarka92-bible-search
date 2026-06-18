@@ -1748,6 +1748,14 @@ body.light-mode #saveButton{
   }
 }
 
+
+/* Opplevelser registrer v62: datofelt venstrejustert og kortere label */
+#experienceForm #experienceDate,
+#experienceDate{
+  text-align:left !important;
+  justify-content:flex-start !important;
+}
+
 </style>
 <!-- version: REGISTER v44e stable-ios-date-no-ddmmyyyy-after-selection 2026-06-17 -->
 </head>
@@ -1790,7 +1798,7 @@ body.light-mode #saveButton{
             <input id="heading" name="heading" type="text" maxlength="160" placeholder="Kort overskrift">
           </div>
           <div>
-            <label for="experienceDate">Dato for opplevelse</label>
+            <label for="experienceDate">Dato</label>
             <div class="date-picker-wrap"><input id="experienceDate" name="experienceDate" type="text" placeholder="dd.mm.åååå" inputmode="numeric" autocomplete="off" onclick="openExperienceDatePicker()" readonly><input id="experienceDatePicker" type="date" tabindex="-1" aria-hidden="true"></div>
           </div>
           <div>
