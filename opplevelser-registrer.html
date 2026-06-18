@@ -2850,7 +2850,7 @@ body.light-mode .readonly-melody-notation{
         });
       });
 
-      return parsed.slice(0, 16);
+      return parsed;
     }
 
     function renderNotesWithVexFlow(container, notesText){
@@ -2879,10 +2879,22 @@ body.light-mode .readonly-melody-notation{
       try{
         const width = Math.max(280, Math.min(container.clientWidth || 560, 760));
         const notesPerLine = width < 420 ? 10 : 14;
+        const rowCount = Math.max(1, Math.ceil(parsed.length / notesPerLine));
+        const balancedPerLine = Math.ceil(parsed.length / rowCount);
         const rows = [];
 
-        for(let i = 0; i < parsed.length; i += notesPerLine){
-          rows.push(parsed.slice(i, i + notesPerLine));
+        for(let i = 0; i < parsed.length; i += balancedPerLine){
+          rows.push(parsed.slice(i, i + balancedPerLine));
+        }
+
+        // Hvis siste rad likevel blir veldig kort, fordel den inn i forrige rad.
+        if(rows.length > 1 && rows[rows.length - 1].length < 4){
+          const last = rows.pop();
+          const previous = rows.pop();
+          const combined = previous.concat(last);
+          const splitAt = Math.ceil(combined.length / 2);
+          rows.push(combined.slice(0, splitAt));
+          rows.push(combined.slice(splitAt));
         }
 
         const rowHeight = 112;
