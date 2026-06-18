@@ -2660,6 +2660,61 @@ body.light-mode .readonly-melody-card.readonly-melody-empty-card{
   opacity:.85 !important;
 }
 
+
+/* Opplevelser v77: redigeringsinngang for melodier fra vanlig visning */
+.readonly-melody-head-actions{
+  display:flex !important;
+  align-items:center !important;
+  justify-content:flex-end !important;
+  gap:8px !important;
+  margin-left:auto !important;
+}
+
+.readonly-melody-edit-button{
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  height:30px !important;
+  min-height:30px !important;
+  padding:0 12px !important;
+  border-radius:16px !important;
+  background:var(--opp-important-button, #2f5f6f) !important;
+  border-color:var(--opp-important-button, #2f5f6f) !important;
+  color:#fff !important;
+  font-weight:800 !important;
+  font-size:.86rem !important;
+  white-space:nowrap !important;
+}
+
+.readonly-melody-edit-button:hover{
+  background:var(--opp-important-button-hover, #376f82) !important;
+  border-color:var(--opp-important-button-hover, #376f82) !important;
+  color:#fff !important;
+}
+
+.edit-melody-card.edit-melody-focus{
+  outline:2px solid var(--opp-important-button, #2f5f6f) !important;
+  outline-offset:3px !important;
+}
+
+@media(max-width:800px){
+  .readonly-melody-head{
+    align-items:flex-start !important;
+  }
+
+  .readonly-melody-head-actions{
+    flex-direction:column !important;
+    align-items:flex-end !important;
+    gap:6px !important;
+  }
+
+  .readonly-melody-edit-button{
+    height:32px !important;
+    min-height:32px !important;
+    font-size:.88rem !important;
+  }
+}
+
 </style>
   <!-- version: LIST v52 hard-center-back-button-mobile 2026-06-17 -->
 </head>
@@ -3490,7 +3545,16 @@ body.light-mode .readonly-melody-card.readonly-melody-empty-card{
         <div class="readonly-melody-card ${hasContent ? "readonly-melody-has-content" : "readonly-melody-empty-card"}">
           <div class="readonly-melody-head">
             <h3>${esc(title)}</h3>
-            ${date ? `<span class="readonly-melody-date">${esc(date)}</span>` : ""}
+            <div class="readonly-melody-head-actions">
+              ${date ? `<span class="readonly-melody-date">${esc(date)}</span>` : ""}
+              <button type="button"
+                      class="readonly-melody-edit-button"
+                      onclick="openMelodyEdit(${Number(number || 0)})"
+                      title="${hasContent ? "Rediger melodi" : "Spill inn melodi"}"
+                      aria-label="${hasContent ? "Rediger melodi" : "Spill inn melodi"}">
+                ${hasContent ? "Rediger" : "Spill inn"}
+              </button>
+            </div>
           </div>
           ${audioUrl ? `<audio controls src="${esc(audioUrl)}"></audio>` : `<div class="readonly-melody-empty">Ikke spilt inn</div>`}
           ${detectedNotes ? `<div class="readonly-melody-notes">Toner: ${esc(detectedNotes)}</div>` : ""}
@@ -3747,6 +3811,25 @@ body.light-mode .readonly-melody-card.readonly-melody-empty-card{
     window.startEdit = function(){
       editMode = true;
       renderDetails();
+    };
+
+    window.openMelodyEdit = function(melodyNumber){
+      const number = Number(melodyNumber || 0);
+      editMode = true;
+      renderDetails();
+
+      window.setTimeout(() => {
+        const card = document.querySelector(`[data-edit-melody-card="${number}"]`);
+
+        if(card){
+          card.scrollIntoView({ behavior:"smooth", block:"start" });
+          card.classList.add("edit-melody-focus");
+
+          window.setTimeout(() => {
+            card.classList.remove("edit-melody-focus");
+          }, 1600);
+        }
+      }, 250);
     };
 
     window.cancelEdit = function(){
