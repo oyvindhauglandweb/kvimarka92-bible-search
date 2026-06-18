@@ -1962,6 +1962,33 @@ body.light-mode .melody-state{
   }
 }
 
+
+/* Opplevelser registrer v67: live tonehøyder under melodiopptak */
+.melody-pitch-live{
+  margin-top:6px !important;
+  min-height:32px !important;
+  display:flex !important;
+  align-items:center !important;
+  padding:0 12px !important;
+  border-radius:10px !important;
+  background:rgba(0,0,0,.14) !important;
+  color:var(--muted, #aaa) !important;
+  font-size:.92rem !important;
+  line-height:1.3 !important;
+  white-space:normal !important;
+}
+.melody-pitch-live.active{
+  color:#fff !important;
+  background:rgba(47,95,111,.38) !important;
+}
+body.light-mode .melody-pitch-live{
+  background:rgba(0,0,0,.045) !important;
+}
+body.light-mode .melody-pitch-live.active{
+  background:rgba(36,95,115,.18) !important;
+  color:#111827 !important;
+}
+
 </style>
 <!-- version: REGISTER v44e stable-ios-date-no-ddmmyyyy-after-selection 2026-06-17 -->
 </head>
@@ -2100,6 +2127,7 @@ body.light-mode .melody-state{
                   <label>Opptak</label>
                   <audio id="melodyAudio1" controls style="display:none;"></audio>
                   <div id="melodyState1" class="melody-state">Ikke spilt inn</div>
+                  <div id="melodyPitch1" class="melody-pitch-live">Tonehøyder: —</div>
                 </div>
               </div>
               <div class="voice-field-header melody-note-header">
@@ -2129,6 +2157,7 @@ body.light-mode .melody-state{
                   <label>Opptak</label>
                   <audio id="melodyAudio2" controls style="display:none;"></audio>
                   <div id="melodyState2" class="melody-state">Ikke spilt inn</div>
+                  <div id="melodyPitch2" class="melody-pitch-live">Tonehøyder: —</div>
                 </div>
               </div>
               <div class="voice-field-header melody-note-header">
@@ -2158,6 +2187,7 @@ body.light-mode .melody-state{
                   <label>Opptak</label>
                   <audio id="melodyAudio3" controls style="display:none;"></audio>
                   <div id="melodyState3" class="melody-state">Ikke spilt inn</div>
+                  <div id="melodyPitch3" class="melody-pitch-live">Tonehøyder: —</div>
                 </div>
               </div>
               <div class="voice-field-header melody-note-header">
@@ -2187,6 +2217,7 @@ body.light-mode .melody-state{
                   <label>Opptak</label>
                   <audio id="melodyAudio4" controls style="display:none;"></audio>
                   <div id="melodyState4" class="melody-state">Ikke spilt inn</div>
+                  <div id="melodyPitch4" class="melody-pitch-live">Tonehøyder: —</div>
                 </div>
               </div>
               <div class="voice-field-header melody-note-header">
@@ -2216,6 +2247,7 @@ body.light-mode .melody-state{
                   <label>Opptak</label>
                   <audio id="melodyAudio5" controls style="display:none;"></audio>
                   <div id="melodyState5" class="melody-state">Ikke spilt inn</div>
+                  <div id="melodyPitch5" class="melody-pitch-live">Tonehøyder: —</div>
                 </div>
               </div>
               <div class="voice-field-header melody-note-header">
@@ -2309,6 +2341,176 @@ body.light-mode .melody-state{
     let activeMelodyNumber = null;
     let activeMelodyChunks = [];
     let activeMelodyStream = null;
+    let activeMelodyPitch = null;
+    const melodyDetectedNotes = new Map();
+
+
+    function noteNameFromFrequency(frequency){
+      if(!frequency || !Number.isFinite(frequency) || frequency < 50 || frequency > 2000){
+        return "";
+      }
+
+      const names = ["C","C#","D","D#","E","F","F#","G","G#","A","A#","B"];
+      const midi = Math.round(12 * Math.log2(frequency / 440) + 69);
+      const octave = Math.floor(midi / 12) - 1;
+      return names[((midi % 12) + 12) % 12] + octave;
+    }
+
+    function autoCorrelatePitch(buffer, sampleRate){
+      let rms = 0;
+
+      for(let i = 0; i < buffer.length; i += 1){
+        rms += buffer[i] * buffer[i];
+      }
+
+      rms = Math.sqrt(rms / buffer.length);
+
+      if(rms < 0.012){
+        return 0;
+      }
+
+      let start = 0;
+      let end = buffer.length - 1;
+      const threshold = 0.2;
+
+      for(let i = 0; i < buffer.length / 2; i += 1){
+        if(Math.abs(buffer[i]) < threshold){
+          start = i;
+          break;
+        }
+      }
+
+      for(let i = 1; i < buffer.length / 2; i += 1){
+        if(Math.abs(buffer[buffer.length - i]) < threshold){
+          end = buffer.length - i;
+          break;
+        }
+      }
+
+      const trimmed = buffer.slice(start, end);
+      const size = trimmed.length;
+      const correlations = new Array(size).fill(0);
+
+      for(let lag = 0; lag < size; lag += 1){
+        for(let i = 0; i < size - lag; i += 1){
+          correlations[lag] += trimmed[i] * trimmed[i + lag];
+        }
+      }
+
+      let d = 0;
+      while(d < size - 1 && correlations[d] > correlations[d + 1]){
+        d += 1;
+      }
+
+      let maxValue = -1;
+      let maxPosition = -1;
+
+      for(let i = d; i < size; i += 1){
+        if(correlations[i] > maxValue){
+          maxValue = correlations[i];
+          maxPosition = i;
+        }
+      }
+
+      if(maxPosition <= 0){
+        return 0;
+      }
+
+      return sampleRate / maxPosition;
+    }
+
+    function setMelodyPitchText(number, text, active){
+      const target = el("melodyPitch" + number);
+      if(!target){
+        return;
+      }
+
+      target.textContent = text || "Tonehøyder: —";
+      target.classList.toggle("active", !!active);
+    }
+
+    function resetMelodyPitch(number){
+      melodyDetectedNotes.set(Number(number), []);
+      setMelodyPitchText(number, "Tonehøyder: —", false);
+    }
+
+    function stopMelodyPitchDetection(){
+      if(!activeMelodyPitch){
+        return;
+      }
+
+      activeMelodyPitch.running = false;
+
+      if(activeMelodyPitch.animationId){
+        cancelAnimationFrame(activeMelodyPitch.animationId);
+      }
+
+      if(activeMelodyPitch.audioContext){
+        activeMelodyPitch.audioContext.close().catch(() => {});
+      }
+
+      activeMelodyPitch = null;
+    }
+
+    async function startMelodyPitchDetection(number, stream){
+      stopMelodyPitchDetection();
+
+      const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+
+      if(!AudioContextClass){
+        setMelodyPitchText(number, "Tonehøyder: støttes ikke i denne nettleseren", false);
+        return;
+      }
+
+      const audioContext = new AudioContextClass();
+      await audioContext.resume().catch(() => {});
+      const analyser = audioContext.createAnalyser();
+      analyser.fftSize = 2048;
+      analyser.smoothingTimeConstant = 0.15;
+
+      const source = audioContext.createMediaStreamSource(stream);
+      source.connect(analyser);
+
+      const buffer = new Float32Array(analyser.fftSize);
+      const notes = [];
+      melodyDetectedNotes.set(Number(number), notes);
+
+      let lastNote = "";
+      let lastAcceptedAt = 0;
+
+      activeMelodyPitch = {
+        running:true,
+        audioContext,
+        analyser,
+        animationId:0
+      };
+
+      function tick(){
+        if(!activeMelodyPitch || !activeMelodyPitch.running){
+          return;
+        }
+
+        analyser.getFloatTimeDomainData(buffer);
+        const frequency = autoCorrelatePitch(buffer, audioContext.sampleRate);
+        const note = noteNameFromFrequency(frequency);
+        const now = Date.now();
+
+        if(note && (note !== lastNote || now - lastAcceptedAt > 900)){
+          notes.push(note);
+          lastNote = note;
+          lastAcceptedAt = now;
+
+          const displayNotes = notes.slice(-24).join(" ");
+          setMelodyPitchText(number, "Tonehøyder: " + displayNotes, true);
+        }
+
+        activeMelodyPitch.animationId = requestAnimationFrame(tick);
+      }
+
+      setMelodyPitchText(number, "Tonehøyder: lytter ...", true);
+      tick();
+    }
+
 
     function bestMelodyMimeType(){
       const candidates = [
@@ -2365,6 +2567,7 @@ body.light-mode .melody-state{
       }
 
       setMelodyState(n, "Ikke spilt inn");
+      resetMelodyPitch(n);
     }
 
     function stopActiveMelodyRecording(){
@@ -2397,6 +2600,7 @@ body.light-mode .melody-state{
       }
 
       const stream = await navigator.mediaDevices.getUserMedia({ audio:true });
+      await startMelodyPitchDetection(n, stream);
       const mimeType = bestMelodyMimeType();
       const options = mimeType ? { mimeType } : {};
       const recorder = new MediaRecorder(stream, options);
@@ -2435,7 +2639,10 @@ body.light-mode .melody-state{
           audio.style.display = "";
         }
 
-        setMelodyState(n, "Opptak klart.");
+        stopMelodyPitchDetection();
+        const detected = melodyDetectedNotes.get(n) || [];
+        setMelodyState(n, detected.length ? "Opptak klart. Tonehøyder registrert." : "Opptak klart.");
+        setMelodyPitchText(n, detected.length ? "Tonehøyder: " + detected.join(" ") : "Tonehøyder: —", !!detected.length);
 
         button.classList.remove("recording");
         button.title = "Start opptak";
@@ -2500,6 +2707,7 @@ body.light-mode .melody-state{
         formData.append("melodyNumber", String(number));
         formData.append("recordingDate", el("melodyDate" + number)?.value || todayIsoDate());
         formData.append("note", el("melodyNote" + number)?.value || "");
+        formData.append("detectedNotes", (melodyDetectedNotes.get(number) || []).join(" "));
         formData.append("audio", recording.blob, `melodi-${number}.${extension}`);
 
         uploads.push(apiFetchFormData("/experience-melody-upload", formData));
