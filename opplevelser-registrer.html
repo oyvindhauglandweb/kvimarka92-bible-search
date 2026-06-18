@@ -1756,6 +1756,37 @@ body.light-mode #saveButton{
   justify-content:flex-start !important;
 }
 
+
+/* Opplevelser registrer v63: tving datofeltet til venstrejustering på mobil/iOS */
+#experienceForm .date-picker-wrap,
+#experienceForm .date-picker-wrap #experienceDate,
+#experienceForm input#experienceDate,
+input#experienceDate{
+  text-align:left !important;
+  justify-content:flex-start !important;
+  align-items:center !important;
+}
+
+#experienceForm input#experienceDate{
+  padding-left:16px !important;
+  padding-right:16px !important;
+  direction:ltr !important;
+  -webkit-text-align-last:left !important;
+  text-align-last:left !important;
+}
+
+#experienceForm input#experienceDate::placeholder{
+  text-align:left !important;
+}
+
+@media(max-width:800px){
+  #experienceForm input#experienceDate{
+    text-align:left !important;
+    -webkit-text-align-last:left !important;
+    text-align-last:left !important;
+  }
+}
+
 </style>
 <!-- version: REGISTER v44e stable-ios-date-no-ddmmyyyy-after-selection 2026-06-17 -->
 </head>
