@@ -2412,6 +2412,98 @@ body.light-mode .item.active *{
   }
 }
 
+
+/* Opplevelser v64: mobil – søkeknapp oppe til høyre over feltet, og kompakt tilbake/rediger-rad */
+@media (max-width: 800px){
+  .toolbar.search-section{
+    grid-template-columns:1fr !important;
+  }
+
+  .toolbar.search-section .search-box-wrap{
+    position:relative !important;
+    width:100% !important;
+  }
+
+  .toolbar.search-section .search-title-row{
+    display:flex !important;
+    align-items:center !important;
+    justify-content:space-between !important;
+    gap:10px !important;
+    margin:0 0 10px !important;
+  }
+
+  .toolbar.search-section .search-title-row label{
+    margin:0 !important;
+    flex:1 1 auto !important;
+  }
+
+  .toolbar.search-section #refreshBtn.search-button{
+    position:static !important;
+    top:auto !important;
+    right:auto !important;
+    bottom:auto !important;
+    left:auto !important;
+    margin:0 !important;
+    align-self:center !important;
+    order:2 !important;
+    width:34px !important;
+    height:34px !important;
+    min-width:34px !important;
+    min-height:34px !important;
+    max-width:34px !important;
+    max-height:34px !important;
+    flex:0 0 34px !important;
+  }
+
+  .toolbar.search-section #searchBox{
+    padding-right:16px !important;
+    margin-top:0 !important;
+  }
+
+  .readonly-actions{
+    display:flex !important;
+    align-items:center !important;
+    justify-content:flex-start !important;
+    gap:10px !important;
+    width:100% !important;
+    flex-wrap:nowrap !important;
+  }
+
+  #backToListBtn.back-to-list-hard,
+  #backToListBtn.back-to-list-hard.mobile-only{
+    display:inline-flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    width:auto !important;
+    min-width:0 !important;
+    height:34px !important;
+    min-height:34px !important;
+    max-height:34px !important;
+    padding:0 14px !important;
+    border-radius:18px !important;
+    line-height:1 !important;
+    white-space:nowrap !important;
+    margin:0 !important;
+    flex:0 0 auto !important;
+  }
+
+  #backToListBtn.back-to-list-hard .back-to-list-label{
+    line-height:1 !important;
+    font-size:0.95rem !important;
+  }
+
+  .readonly-actions .icon-round-button.edit-round-button{
+    width:34px !important;
+    height:34px !important;
+    min-width:34px !important;
+    min-height:34px !important;
+    max-width:34px !important;
+    max-height:34px !important;
+    flex:0 0 34px !important;
+    margin:0 !important;
+  }
+}
+
 </style>
   <!-- version: LIST v52 hard-center-back-button-mobile 2026-06-17 -->
 </head>
