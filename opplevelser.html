@@ -4564,4 +4564,133 @@ body.dark-mode button.edit-delete-button:hover{
     white-space:normal !important;
   }
 }
+
+
+/* Opplevelser v57: mørkere og roligere blågrønn knappfarge
+   Gjelder aksjonsknapper, mikrofon, bibel-rediger og lagreknapper.
+   Slette-/tøm-/clear-knapper beholdes nøytrale grå. */
+:root{
+  --opp-important-button:#245f73;
+  --opp-important-button-hover:#2d7188;
+  --bible-important-button:#245f73;
+  --bible-important-button-hover:#2d7188;
+}
+body.dark-mode,
+body:not(.light-mode){
+  --opp-important-button:#2f5f6f;
+  --opp-important-button-hover:#376f82;
+  --bible-important-button:#2f5f6f;
+  --bible-important-button-hover:#376f82;
+}
+body.light-mode{
+  --opp-important-button:#245f73;
+  --opp-important-button-hover:#2d7188;
+  --bible-important-button:#245f73;
+  --bible-important-button-hover:#2d7188;
+}
+
+.action-button.primary,
+button.primary,
+.primary,
+.save-button,
+button.save-button,
+.search-button,
+button.search-button,
+.edit-save-button,
+button.edit-save-button,
+.mic-button.visible,
+button.mic-button.visible,
+.voice-mic-btn,
+button.voice-mic-btn,
+.bible-edit-button,
+button.bible-edit-button,
+.bible-inline-actions .bible-edit-button,
+html:not(.classic-design-root) .action-button.primary,
+html:not(.classic-design-root) button.primary,
+html:not(.classic-design-root) .primary,
+html:not(.classic-design-root) .save-button,
+html:not(.classic-design-root) .search-button,
+html:not(.classic-design-root) .edit-save-button,
+html:not(.classic-design-root) .mic-button.visible,
+html:not(.classic-design-root) .voice-mic-btn,
+html:not(.classic-design-root) .bible-edit-button{
+  background:var(--opp-important-button, #2f5f6f) !important;
+  border-color:var(--opp-important-button, #2f5f6f) !important;
+  color:#fff !important;
+}
+
+.action-button.primary:hover,
+button.primary:hover,
+.primary:hover,
+.save-button:hover,
+button.save-button:hover,
+.search-button:hover,
+button.search-button:hover,
+.edit-save-button:hover,
+button.edit-save-button:hover,
+.mic-button.visible:hover,
+button.mic-button.visible:hover,
+.voice-mic-btn:hover,
+button.voice-mic-btn:hover,
+.bible-edit-button:hover,
+button.bible-edit-button:hover,
+.bible-inline-actions .bible-edit-button:hover{
+  background:var(--opp-important-button-hover, #376f82) !important;
+  border-color:var(--opp-important-button-hover, #376f82) !important;
+  color:#fff !important;
+  filter:none !important;
+}
+
+/* Registrer/listesidene har eldre regel: button:not(.secondary) = blå.
+   Overstyr samme regel, men ekskluder nøytrale slette-/tøm-/clear-knapper og toppmeny. */
+button:not(.secondary):not(.clear-voice-button):not(.voice-clear-btn):not(.bible-clear-button):not(.top-button):not(.nav-button):not(.theme-toggle):not(.design-toggle-button),
+html:not(.classic-design-root) button:not(.secondary):not(.clear-voice-button):not(.voice-clear-btn):not(.bible-clear-button):not(.top-button):not(.nav-button):not(.theme-toggle):not(.design-toggle-button){
+  background:var(--opp-important-button, #2f5f6f) !important;
+  border-color:var(--opp-important-button, #2f5f6f) !important;
+  color:#fff !important;
+}
+
+button:not(.secondary):not(.clear-voice-button):not(.voice-clear-btn):not(.bible-clear-button):not(.top-button):not(.nav-button):not(.theme-toggle):not(.design-toggle-button):hover,
+html:not(.classic-design-root) button:not(.secondary):not(.clear-voice-button):not(.voice-clear-btn):not(.bible-clear-button):not(.top-button):not(.nav-button):not(.theme-toggle):not(.design-toggle-button):hover{
+  background:var(--opp-important-button-hover, #376f82) !important;
+  border-color:var(--opp-important-button-hover, #376f82) !important;
+  color:#fff !important;
+}
+
+/* Bibelsøk bruker egen variabel og egen primary-knapp. */
+.action-button.primary{
+  background:var(--bible-important-button, var(--opp-important-button, #2f5f6f)) !important;
+  border-color:var(--bible-important-button, var(--opp-important-button, #2f5f6f)) !important;
+  color:#fff !important;
+}
+.action-button.primary:hover{
+  background:var(--bible-important-button-hover, var(--opp-important-button-hover, #376f82)) !important;
+  border-color:var(--bible-important-button-hover, var(--opp-important-button-hover, #376f82)) !important;
+  color:#fff !important;
+}
+
+/* Behold nøytrale grå knapper for slett/tøm/fjern. */
+.clear-voice-button,
+button.clear-voice-button,
+.voice-clear-btn,
+button.voice-clear-btn,
+.bible-clear-button,
+button.bible-clear-button,
+.edit-delete-button,
+button.edit-delete-button{
+  background:rgba(255,255,255,.075) !important;
+  border-color:transparent !important;
+}
+body.light-mode .clear-voice-button,
+body.light-mode button.clear-voice-button,
+body.light-mode .voice-clear-btn,
+body.light-mode button.voice-clear-btn,
+body.light-mode .bible-clear-button,
+body.light-mode button.bible-clear-button,
+body.light-mode .edit-delete-button,
+body.light-mode button.edit-delete-button{
+  background:#e5e7eb !important;
+  color:#111827 !important;
+}
+
 </style>
