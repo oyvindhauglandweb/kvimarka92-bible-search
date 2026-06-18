@@ -2238,6 +2238,78 @@ body.light-mode .item.active *{
   }
 }
 
+
+/* Opplevelser v62: søkeknapp som ikon øverst til høyre over søkefeltet */
+.toolbar.search-section{
+  grid-template-columns:1fr !important;
+}
+.toolbar.search-section .search-box-wrap{
+  position:relative !important;
+  width:100% !important;
+}
+.toolbar.search-section .search-title-row{
+  display:flex !important;
+  align-items:center !important;
+  justify-content:space-between !important;
+  gap:10px !important;
+  margin:0 0 8px !important;
+}
+.toolbar.search-section .search-title-row label{
+  margin:0 !important;
+}
+.toolbar.search-section #searchBox{
+  padding-right:12px !important;
+}
+.toolbar.search-section #refreshBtn.search-button{
+  position:static !important;
+  right:auto !important;
+  bottom:auto !important;
+  margin:0 !important;
+  width:34px !important;
+  height:34px !important;
+  min-width:34px !important;
+  min-height:34px !important;
+  max-width:34px !important;
+  max-height:34px !important;
+  flex:0 0 34px !important;
+}
+
+/* Opplevelser v62: Rediger oppe til høyre i detaljvisning */
+.detail-head{
+  display:flex !important;
+  flex-direction:row !important;
+  align-items:flex-start !important;
+  justify-content:space-between !important;
+  gap:12px !important;
+}
+.detail-head > div:first-child{
+  min-width:0 !important;
+  flex:1 1 auto !important;
+}
+.readonly-actions{
+  flex:0 0 auto !important;
+  margin-left:auto !important;
+  align-self:flex-start !important;
+}
+#backToListBtn{
+  display:none !important;
+}
+@media(max-width:800px){
+  .detail-head{
+    flex-direction:row !important;
+    align-items:flex-start !important;
+  }
+  .readonly-actions{
+    width:auto !important;
+  }
+  .readonly-actions .icon-round-button.edit-round-button{
+    width:34px !important;
+    min-width:34px !important;
+    height:34px !important;
+    min-height:34px !important;
+  }
+}
+
 </style>
   <!-- version: LIST v52 hard-center-back-button-mobile 2026-06-17 -->
 </head>
@@ -2275,9 +2347,11 @@ body.light-mode .item.active *{
 
       <div class="toolbar search-section">
         <div class="search-box-wrap">
-          <label for="searchBox">Søk</label>
+          <div class="search-title-row">
+            <label for="searchBox">Søk</label>
+            <button type="button" id="refreshBtn" class="search-button" title="Søk" aria-label="Søk"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" style="width:18px;height:18px;display:block;"><path d="M10.5 4a6.5 6.5 0 1 0 4.06 11.58l4.43 4.43a1 1 0 0 0 1.42-1.42l-4.43-4.43A6.5 6.5 0 0 0 10.5 4Zm0 2a4.5 4.5 0 1 1 0 9 4.5 4.5 0 0 1 0-9Z" fill="currentColor"/></svg></button>
+          </div>
           <input id="searchBox" type="search" placeholder="Søk i overskrift, tekst, sted, miljø eller bibelsted" autocomplete="off">
-          <button type="button" id="refreshBtn" class="search-button" title="Søk" aria-label="Søk"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" style="width:18px;height:18px;display:block;"><path d="M10.5 4a6.5 6.5 0 1 0 4.06 11.58l4.43 4.43a1 1 0 0 0 1.42-1.42l-4.43-4.43A6.5 6.5 0 0 0 10.5 4Zm0 2a4.5 4.5 0 1 1 0 9 4.5 4.5 0 0 1 0-9Z" fill="currentColor"/></svg></button>
         </div>
       </div>
 
