@@ -2759,6 +2759,57 @@ body.light-mode html.classic-design-root .top-buttons button.top-button:hover{
   color:var(--opp-text) !important;
 }
 
+
+/* Opplevelser v80: enkel VexFlow-notelinje for registrerte toner */
+.melody-notation,
+.edit-melody-notation,
+.readonly-melody-notation{
+  margin-top:8px !important;
+  min-height:88px !important;
+  border-radius:10px !important;
+  background:rgba(0,0,0,.14) !important;
+  overflow:hidden !important;
+  padding:6px 8px !important;
+}
+
+.melody-notation.empty,
+.edit-melody-notation.empty,
+.readonly-melody-notation.empty{
+  display:none !important;
+}
+
+.melody-notation svg,
+.edit-melody-notation svg,
+.readonly-melody-notation svg{
+  width:100% !important;
+  height:auto !important;
+  display:block !important;
+}
+
+.melody-notation text,
+.edit-melody-notation text,
+.readonly-melody-notation text{
+  fill:var(--opp-text, #fff) !important;
+}
+
+.melody-notation path,
+.melody-notation line,
+.melody-notation rect,
+.edit-melody-notation path,
+.edit-melody-notation line,
+.edit-melody-notation rect,
+.readonly-melody-notation path,
+.readonly-melody-notation line,
+.readonly-melody-notation rect{
+  stroke:var(--opp-text, #fff) !important;
+}
+
+body.light-mode .melody-notation,
+body.light-mode .edit-melody-notation,
+body.light-mode .readonly-melody-notation{
+  background:rgba(0,0,0,.045) !important;
+}
+
 </style>
   <!-- version: LIST v52 hard-center-back-button-mobile 2026-06-17 -->
 </head>
@@ -2812,6 +2863,8 @@ body.light-mode html.classic-design-root .top-buttons button.top-button:hover{
 
     </section>
   </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/vexflow@4.2.2/build/cjs/vexflow.js"></script>
 
   <script>
     const API_BASE = window.OPPLEVELSER_API_BASE || (
@@ -3099,6 +3152,8 @@ body.light-mode html.classic-design-root .top-buttons button.top-button:hover{
     function resetEditMelodyPitch(number){
       editMelodyDetectedNotes.set(Number(number), []);
       setEditMelodyPitchText(number, "Toner: —", false);
+      const notation = el("editMelodyNotation" + Number(number));
+      if(notation){ notation.innerHTML = ""; notation.classList.add("empty"); }
     }
 
     function stopEditMelodyPitchDetection(){
@@ -3169,6 +3224,7 @@ body.light-mode html.classic-design-root .top-buttons button.top-button:hover{
 
           const displayNotes = notes.slice(-24).join(" ");
           setEditMelodyPitchText(number, "Toner: " + displayNotes, true);
+          renderNotesWithVexFlow(el("editMelodyNotation" + Number(number)), displayNotes);
         }
 
         activeEditMelodyPitch.animationId = requestAnimationFrame(tick);
@@ -3178,6 +3234,137 @@ body.light-mode html.classic-design-root .top-buttons button.top-button:hover{
       tick();
     }
 
+
+
+
+    function getVexFlowApi(){
+      if(window.VexFlow && window.VexFlow.Renderer){
+        return window.VexFlow;
+      }
+
+      if(window.Vex && window.Vex.Flow && window.Vex.Flow.Renderer){
+        return window.Vex.Flow;
+      }
+
+      return null;
+    }
+
+    function parseDetectedNotesForNotation(notesText){
+      const seen = String(notesText || "")
+        .replace(/^Toner:\s*/i, "")
+        .trim()
+        .split(/\s+/)
+        .map(token => token.trim())
+        .filter(Boolean);
+
+      return seen
+        .map(token => {
+          const match = token.match(/^([A-Ga-g])([#b]?)(-?\d)$/);
+
+          if(!match){
+            return null;
+          }
+
+          const letter = match[1].toLowerCase();
+          const accidental = match[2] || "";
+          const octave = match[3];
+
+          return {
+            key:`${letter}${accidental}/${octave}`,
+            accidental,
+            original:token
+          };
+        })
+        .filter(Boolean)
+        .slice(0, 24);
+    }
+
+    function renderNotesWithVexFlow(container, notesText){
+      if(!container){
+        return;
+      }
+
+      const parsed = parseDetectedNotesForNotation(notesText);
+      container.innerHTML = "";
+
+      if(!parsed.length){
+        container.classList.add("empty");
+        return;
+      }
+
+      container.classList.remove("empty");
+
+      const VF = getVexFlowApi();
+
+      if(!VF){
+        container.textContent = "Notelinje kunne ikke vises. VexFlow er ikke lastet.";
+        return;
+      }
+
+      try{
+        const width = Math.max(280, Math.min(container.clientWidth || 560, 760));
+        const height = 96;
+
+        const renderer = new VF.Renderer(container, VF.Renderer.Backends.SVG);
+        renderer.resize(width, height);
+
+        const context = renderer.getContext();
+        context.setFont("Arial", 10, "").setBackgroundFillStyle("transparent");
+
+        const stave = new VF.Stave(8, 8, width - 16);
+        stave.addClef("treble");
+        stave.setContext(context).draw();
+
+        const notes = parsed.map(item => {
+          const staveNote = new VF.StaveNote({
+            clef:"treble",
+            keys:[item.key],
+            duration:"q"
+          });
+
+          if(item.accidental){
+            if(typeof staveNote.addModifier === "function"){
+              staveNote.addModifier(new VF.Accidental(item.accidental), 0);
+            }else if(typeof staveNote.addAccidental === "function"){
+              staveNote.addAccidental(0, new VF.Accidental(item.accidental));
+            }
+          }
+
+          return staveNote;
+        });
+
+        const voice = new VF.Voice({
+          num_beats:Math.max(1, notes.length),
+          beat_value:4
+        });
+
+        if(typeof voice.setStrict === "function"){
+          voice.setStrict(false);
+        }
+
+        voice.addTickables(notes);
+
+        new VF.Formatter()
+          .joinVoices([voice])
+          .format([voice], Math.max(120, width - 70));
+
+        voice.draw(context, stave);
+      }catch(error){
+        container.innerHTML = "";
+        container.textContent = "Kunne ikke tegne notelinje: " + (error.message || error);
+      }
+    }
+
+    function renderEditMelodyNotation(number){
+      const text = getEditMelodyDetectedNotes(number);
+      renderNotesWithVexFlow(el("editMelodyNotation" + Number(number)), text);
+    }
+
+    function renderReadonlyMelodyNotations(){
+      document.querySelectorAll(".readonly-melody-notation").forEach(container => {
+        renderNotesWithVexFlow(container, container.dataset.notes || "");
+      });
+    }
 
 
     function getEditMelodyDetectedNotes(number){
@@ -3292,6 +3479,7 @@ body.light-mode html.classic-design-root .top-buttons button.top-button:hover{
         setEditMelodyState(n, detected.length ? "Nytt opptak klart. Toner registrert." : "Nytt opptak klart.");
         setEditMelodyCardEmptyState(n, false);
         setEditMelodyPitchText(n, detected.length ? "Toner: " + detected.join(" ") : "Toner: —", !!detected.length);
+        renderEditMelodyNotation(n);
         button.classList.remove("recording");
         button.title = "Start opptak";
         button.setAttribute("aria-label", "Start opptak");
@@ -3406,6 +3594,7 @@ body.light-mode html.classic-design-root .top-buttons button.top-button:hover{
           audio.style.display = "";
           setEditMelodyState(number, "Opptak lagret.");
           setEditMelodyPitchText(number, item.detectedNotes ? "Toner: " + item.detectedNotes : "Toner: —", !!item.detectedNotes);
+          renderEditMelodyNotation(number);
         }else{
           setEditMelodyState(number, item.note ? "Notat lagret uten opptak." : "Ikke spilt inn");
         }
@@ -3615,7 +3804,7 @@ body.light-mode html.classic-design-root .top-buttons button.top-button:hover{
             </div>
           </div>
           ${audioUrl ? `<audio controls src="${esc(audioUrl)}"></audio>` : `<div class="readonly-melody-empty">Ikke spilt inn</div>`}
-          ${detectedNotes ? `<div class="readonly-melody-notes">Toner: ${esc(detectedNotes)}</div>` : ""}
+          ${detectedNotes ? `<div class="readonly-melody-notes">Toner: ${esc(detectedNotes)}</div><div class="readonly-melody-notation" data-notes="${esc(detectedNotes)}" aria-label="Notelinje for ${esc(title)}"></div>` : ""}
           ${note ? `<p class="readonly-melody-note">${esc(note)}</p>` : ""}
         </div>
       `;
@@ -3675,6 +3864,8 @@ body.light-mode html.classic-design-root .top-buttons button.top-button:hover{
             </div>
           </div>
         `;
+
+        window.setTimeout(renderReadonlyMelodyNotations, 0);
       }catch(error){
         if(target.dataset.experienceId !== String(experienceId)){
           return;
@@ -3713,6 +3904,7 @@ body.light-mode html.classic-design-root .top-buttons button.top-button:hover{
                   <audio id="editMelodyAudio${number}" controls style="display:none;"></audio>
                   <div id="editMelodyState${number}" class="edit-melody-state">Ikke spilt inn</div>
                   <div id="editMelodyPitch${number}" class="edit-melody-pitch-live">Toner: —</div>
+                  <div id="editMelodyNotation${number}" class="edit-melody-notation empty" aria-label="Notelinje for melodi ${number}"></div>
                 </div>
               </div>
               <div class="voice-field-header edit-melody-note-header">

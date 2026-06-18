@@ -2035,6 +2035,57 @@ body.light-mode html.classic-design-root .top-buttons button.top-button:hover{
   color:var(--opp-text) !important;
 }
 
+
+/* Opplevelser v80: enkel VexFlow-notelinje for registrerte toner */
+.melody-notation,
+.edit-melody-notation,
+.readonly-melody-notation{
+  margin-top:8px !important;
+  min-height:88px !important;
+  border-radius:10px !important;
+  background:rgba(0,0,0,.14) !important;
+  overflow:hidden !important;
+  padding:6px 8px !important;
+}
+
+.melody-notation.empty,
+.edit-melody-notation.empty,
+.readonly-melody-notation.empty{
+  display:none !important;
+}
+
+.melody-notation svg,
+.edit-melody-notation svg,
+.readonly-melody-notation svg{
+  width:100% !important;
+  height:auto !important;
+  display:block !important;
+}
+
+.melody-notation text,
+.edit-melody-notation text,
+.readonly-melody-notation text{
+  fill:var(--opp-text, #fff) !important;
+}
+
+.melody-notation path,
+.melody-notation line,
+.melody-notation rect,
+.edit-melody-notation path,
+.edit-melody-notation line,
+.edit-melody-notation rect,
+.readonly-melody-notation path,
+.readonly-melody-notation line,
+.readonly-melody-notation rect{
+  stroke:var(--opp-text, #fff) !important;
+}
+
+body.light-mode .melody-notation,
+body.light-mode .edit-melody-notation,
+body.light-mode .readonly-melody-notation{
+  background:rgba(0,0,0,.045) !important;
+}
+
 </style>
 <!-- version: REGISTER v44e stable-ios-date-no-ddmmyyyy-after-selection 2026-06-17 -->
 </head>
@@ -2174,6 +2225,7 @@ body.light-mode html.classic-design-root .top-buttons button.top-button:hover{
                   <audio id="melodyAudio1" controls style="display:none;"></audio>
                   <div id="melodyState1" class="melody-state">Ikke spilt inn</div>
                   <div id="melodyPitch1" class="melody-pitch-live">Toner: —</div>
+                  <div id="melodyNotation1" class="melody-notation empty" aria-label="Notelinje for melodi 1"></div>
                 </div>
               </div>
               <div class="voice-field-header melody-note-header">
@@ -2204,6 +2256,7 @@ body.light-mode html.classic-design-root .top-buttons button.top-button:hover{
                   <audio id="melodyAudio2" controls style="display:none;"></audio>
                   <div id="melodyState2" class="melody-state">Ikke spilt inn</div>
                   <div id="melodyPitch2" class="melody-pitch-live">Toner: —</div>
+                  <div id="melodyNotation2" class="melody-notation empty" aria-label="Notelinje for melodi 2"></div>
                 </div>
               </div>
               <div class="voice-field-header melody-note-header">
@@ -2234,6 +2287,7 @@ body.light-mode html.classic-design-root .top-buttons button.top-button:hover{
                   <audio id="melodyAudio3" controls style="display:none;"></audio>
                   <div id="melodyState3" class="melody-state">Ikke spilt inn</div>
                   <div id="melodyPitch3" class="melody-pitch-live">Toner: —</div>
+                  <div id="melodyNotation3" class="melody-notation empty" aria-label="Notelinje for melodi 3"></div>
                 </div>
               </div>
               <div class="voice-field-header melody-note-header">
@@ -2264,6 +2318,7 @@ body.light-mode html.classic-design-root .top-buttons button.top-button:hover{
                   <audio id="melodyAudio4" controls style="display:none;"></audio>
                   <div id="melodyState4" class="melody-state">Ikke spilt inn</div>
                   <div id="melodyPitch4" class="melody-pitch-live">Toner: —</div>
+                  <div id="melodyNotation4" class="melody-notation empty" aria-label="Notelinje for melodi 4"></div>
                 </div>
               </div>
               <div class="voice-field-header melody-note-header">
@@ -2294,6 +2349,7 @@ body.light-mode html.classic-design-root .top-buttons button.top-button:hover{
                   <audio id="melodyAudio5" controls style="display:none;"></audio>
                   <div id="melodyState5" class="melody-state">Ikke spilt inn</div>
                   <div id="melodyPitch5" class="melody-pitch-live">Toner: —</div>
+                  <div id="melodyNotation5" class="melody-notation empty" aria-label="Notelinje for melodi 5"></div>
                 </div>
               </div>
               <div class="voice-field-header melody-note-header">
@@ -2316,6 +2372,8 @@ body.light-mode html.classic-design-root .top-buttons button.top-button:hover{
       <div id="status" class="status status-section">Klar.</div>
     </section>
   </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/vexflow@4.2.2/build/cjs/vexflow.js"></script>
 
   <script>
     const API_BASE = window.OPPLEVELSER_API_BASE || (
@@ -2478,6 +2536,8 @@ body.light-mode html.classic-design-root .top-buttons button.top-button:hover{
     function resetMelodyPitch(number){
       melodyDetectedNotes.set(Number(number), []);
       setMelodyPitchText(number, "Toner: —", false);
+      const notation = el("melodyNotation" + Number(number));
+      if(notation){ notation.innerHTML = ""; notation.classList.add("empty"); }
     }
 
     function stopMelodyPitchDetection(){
@@ -2548,6 +2608,7 @@ body.light-mode html.classic-design-root .top-buttons button.top-button:hover{
 
           const displayNotes = notes.slice(-24).join(" ");
           setMelodyPitchText(number, "Toner: " + displayNotes, true);
+          renderNotesWithVexFlow(el("melodyNotation" + Number(number)), displayNotes);
         }
 
         activeMelodyPitch.animationId = requestAnimationFrame(tick);
@@ -2557,6 +2618,131 @@ body.light-mode html.classic-design-root .top-buttons button.top-button:hover{
       tick();
     }
 
+
+
+
+    function getVexFlowApi(){
+      if(window.VexFlow && window.VexFlow.Renderer){
+        return window.VexFlow;
+      }
+
+      if(window.Vex && window.Vex.Flow && window.Vex.Flow.Renderer){
+        return window.Vex.Flow;
+      }
+
+      return null;
+    }
+
+    function parseDetectedNotesForNotation(notesText){
+      const seen = String(notesText || "")
+        .replace(/^Toner:\s*/i, "")
+        .trim()
+        .split(/\s+/)
+        .map(token => token.trim())
+        .filter(Boolean);
+
+      return seen
+        .map(token => {
+          const match = token.match(/^([A-Ga-g])([#b]?)(-?\d)$/);
+
+          if(!match){
+            return null;
+          }
+
+          const letter = match[1].toLowerCase();
+          const accidental = match[2] || "";
+          const octave = match[3];
+
+          return {
+            key:`${letter}${accidental}/${octave}`,
+            accidental,
+            original:token
+          };
+        })
+        .filter(Boolean)
+        .slice(0, 24);
+    }
+
+    function renderNotesWithVexFlow(container, notesText){
+      if(!container){
+        return;
+      }
+
+      const parsed = parseDetectedNotesForNotation(notesText);
+      container.innerHTML = "";
+
+      if(!parsed.length){
+        container.classList.add("empty");
+        return;
+      }
+
+      container.classList.remove("empty");
+
+      const VF = getVexFlowApi();
+
+      if(!VF){
+        container.textContent = "Notelinje kunne ikke vises. VexFlow er ikke lastet.";
+        return;
+      }
+
+      try{
+        const width = Math.max(280, Math.min(container.clientWidth || 560, 760));
+        const height = 96;
+
+        const renderer = new VF.Renderer(container, VF.Renderer.Backends.SVG);
+        renderer.resize(width, height);
+
+        const context = renderer.getContext();
+        context.setFont("Arial", 10, "").setBackgroundFillStyle("transparent");
+
+        const stave = new VF.Stave(8, 8, width - 16);
+        stave.addClef("treble");
+        stave.setContext(context).draw();
+
+        const notes = parsed.map(item => {
+          const staveNote = new VF.StaveNote({
+            clef:"treble",
+            keys:[item.key],
+            duration:"q"
+          });
+
+          if(item.accidental){
+            if(typeof staveNote.addModifier === "function"){
+              staveNote.addModifier(new VF.Accidental(item.accidental), 0);
+            }else if(typeof staveNote.addAccidental === "function"){
+              staveNote.addAccidental(0, new VF.Accidental(item.accidental));
+            }
+          }
+
+          return staveNote;
+        });
+
+        const voice = new VF.Voice({
+          num_beats:Math.max(1, notes.length),
+          beat_value:4
+        });
+
+        if(typeof voice.setStrict === "function"){
+          voice.setStrict(false);
+        }
+
+        voice.addTickables(notes);
+
+        new VF.Formatter()
+          .joinVoices([voice])
+          .format([voice], Math.max(120, width - 70));
+
+        voice.draw(context, stave);
+      }catch(error){
+        container.innerHTML = "";
+        container.textContent = "Kunne ikke tegne notelinje: " + (error.message || error);
+      }
+    }
+
+    function renderMelodyNotation(number){
+      const text = getMelodyDetectedNotes(number);
+      renderNotesWithVexFlow(el("melodyNotation" + Number(number)), text);
+    }
 
 
     function getMelodyDetectedNotes(number){
@@ -2703,6 +2889,7 @@ body.light-mode html.classic-design-root .top-buttons button.top-button:hover{
         const detected = melodyDetectedNotes.get(n) || [];
         setMelodyState(n, detected.length ? "Opptak klart. Tonehøyder registrert." : "Opptak klart.");
         setMelodyPitchText(n, detected.length ? "Toner: " + detected.join(" ") : "Toner: —", !!detected.length);
+        renderMelodyNotation(n);
 
         button.classList.remove("recording");
         button.title = "Start opptak";
