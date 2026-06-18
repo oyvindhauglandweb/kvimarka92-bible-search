@@ -2530,9 +2530,12 @@ body.light-mode .item.active *{
     });
 
     const el = id => document.getElementById(id);
-    const statusEl = el("status");
 
     function setStatus(text, kind){
+      const statusEl = el("status");
+      if(!statusEl){
+        return;
+      }
       statusEl.textContent = text;
       statusEl.className = "status" + (kind ? " " + kind : "");
     }
