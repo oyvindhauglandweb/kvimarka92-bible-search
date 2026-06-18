@@ -3135,6 +3135,18 @@ body.light-mode .readonly-melody-card.readonly-melody-empty-card{
     }
 
 
+
+    function getEditMelodyDetectedNotes(number){
+      const fromMap = editMelodyDetectedNotes.get(Number(number)) || [];
+      if(fromMap.length){
+        return fromMap.join(" ");
+      }
+
+      const target = el("editMelodyPitch" + Number(number));
+      const text = String(target && target.textContent || "").replace(/^Toner:\s*/i, "").trim();
+      return text && text !== "—" && !/^lytter/i.test(text) && !/^støttes/i.test(text) ? text : "";
+    }
+
     function bestMelodyMimeType(){
       const candidates = ["audio/webm;codecs=opus", "audio/webm", "audio/mp4", "audio/ogg;codecs=opus"];
       for(const candidate of candidates){
@@ -3221,7 +3233,9 @@ body.light-mode .readonly-melody-card.readonly-melody-empty-card{
         const url = URL.createObjectURL(blob);
         const audio = el("editMelodyAudio" + n);
 
+        const detectedBeforeClear = (editMelodyDetectedNotes.get(n) || []).slice();
         clearEditMelodyRecording(n, { keepExistingAudio:false });
+        editMelodyDetectedNotes.set(n, detectedBeforeClear);
         editMelodyRecordings.set(n, { blob, url, type });
 
         if(audio){
@@ -3380,7 +3394,7 @@ body.light-mode .readonly-melody-card.readonly-melody-empty-card{
         formData.append("melodyId", melodyId ? String(melodyId) : "");
         formData.append("recordingDate", el("editMelodyDate" + number)?.value || todayIsoDate());
         formData.append("note", note);
-        formData.append("detectedNotes", (editMelodyDetectedNotes.get(number) || []).join(" "));
+        formData.append("detectedNotes", getEditMelodyDetectedNotes(number));
 
         if(recording && recording.blob){
           formData.append("audio", recording.blob, `melodi-${number}.${extension}`);

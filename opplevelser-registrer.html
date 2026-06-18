@@ -2514,6 +2514,18 @@ body.light-mode .melody-pitch-live.active{
     }
 
 
+
+    function getMelodyDetectedNotes(number){
+      const fromMap = melodyDetectedNotes.get(Number(number)) || [];
+      if(fromMap.length){
+        return fromMap.join(" ");
+      }
+
+      const target = el("melodyPitch" + Number(number));
+      const text = String(target && target.textContent || "").replace(/^Toner:\s*/i, "").trim();
+      return text && text !== "—" && !/^lytter/i.test(text) && !/^støttes/i.test(text) ? text : "";
+    }
+
     function bestMelodyMimeType(){
       const candidates = [
         "audio/webm;codecs=opus",
@@ -2629,7 +2641,9 @@ body.light-mode .melody-pitch-live.active{
         const url = URL.createObjectURL(blob);
         const audio = el("melodyAudio" + n);
 
+        const detectedBeforeClear = (melodyDetectedNotes.get(n) || []).slice();
         clearMelodyRecording(n);
+        melodyDetectedNotes.set(n, detectedBeforeClear);
         melodyRecordings.set(n, {
           blob,
           url,
@@ -2709,7 +2723,7 @@ body.light-mode .melody-pitch-live.active{
         formData.append("melodyNumber", String(number));
         formData.append("recordingDate", el("melodyDate" + number)?.value || todayIsoDate());
         formData.append("note", el("melodyNote" + number)?.value || "");
-        formData.append("detectedNotes", (melodyDetectedNotes.get(number) || []).join(" "));
+        formData.append("detectedNotes", getMelodyDetectedNotes(number));
         formData.append("audio", recording.blob, `melodi-${number}.${extension}`);
 
         uploads.push(apiFetchFormData("/experience-melody-upload", formData));
