@@ -2310,6 +2310,108 @@ body.light-mode .item.active *{
   }
 }
 
+
+
+/* Opplevelser v63: mobiljustering av søkeknapp og kompakt tilbake/rediger-rad */
+.toolbar.search-section,
+.toolbar.search-section .search-box-wrap{
+  position:relative !important;
+}
+
+.toolbar.search-section .search-title-row{
+  display:flex !important;
+  align-items:center !important;
+  justify-content:space-between !important;
+  gap:10px !important;
+  margin:0 0 10px !important;
+}
+
+.toolbar.search-section .search-title-row label{
+  margin:0 !important;
+}
+
+.toolbar.search-section #refreshBtn.search-button{
+  position:static !important;
+  right:auto !important;
+  left:auto !important;
+  bottom:auto !important;
+  top:auto !important;
+  margin:0 !important;
+  width:40px !important;
+  height:40px !important;
+  min-width:40px !important;
+  min-height:40px !important;
+  max-width:40px !important;
+  max-height:40px !important;
+  flex:0 0 40px !important;
+  align-self:center !important;
+}
+
+.toolbar.search-section #searchBox{
+  padding-right:16px !important;
+}
+
+.readonly-actions{
+  display:flex !important;
+  align-items:center !important;
+  gap:10px !important;
+}
+
+#backToListBtn.back-to-list-hard{
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  width:auto !important;
+  min-width:0 !important;
+  max-width:none !important;
+  height:40px !important;
+  min-height:40px !important;
+  max-height:40px !important;
+  padding:0 18px !important;
+  border-radius:22px !important;
+  white-space:nowrap !important;
+}
+
+#backToListBtn.back-to-list-hard .back-to-list-label{
+  display:block !important;
+  line-height:1 !important;
+}
+
+.readonly-actions .icon-round-button.edit-round-button{
+  width:40px !important;
+  height:40px !important;
+  min-width:40px !important;
+  min-height:40px !important;
+  max-width:40px !important;
+  max-height:40px !important;
+  flex:0 0 40px !important;
+}
+
+@media (max-width: 800px){
+  .toolbar.search-section{
+    grid-template-columns:1fr !important;
+  }
+
+  .toolbar.search-section .search-box-wrap{
+    width:100% !important;
+  }
+
+  .readonly-actions{
+    width:100% !important;
+    justify-content:flex-start !important;
+    flex-wrap:nowrap !important;
+  }
+
+  .readonly-actions button{
+    width:auto !important;
+  }
+
+  #backToListBtn.back-to-list-hard.mobile-only{
+    display:inline-flex !important;
+    margin:0 !important;
+  }
+}
+
 </style>
   <!-- version: LIST v52 hard-center-back-button-mobile 2026-06-17 -->
 </head>
@@ -2623,7 +2725,7 @@ body.light-mode .item.active *{
             </div>
           </div>
           <div class="readonly-actions">
-            <button type="button" id="backToListBtn" class="secondary mobile-only back-to-list-hard" onclick="backToMobileList()"><span class="back-to-list-label">Tilbake til liste</span></button>
+            <button type="button" id="backToListBtn" class="secondary mobile-only back-to-list-hard" onclick="backToMobileList()"><span class="back-to-list-label">Tilbake</span></button>
             <button type="button" class="icon-round-button edit-round-button" onclick="startEdit()" title="Rediger" aria-label="Rediger"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 20h4l11-11a2.6 2.6 0 0 0-4-4L4 16v4z"></path><path d="M13.5 6.5l4 4"></path></svg></button>
           </div>
         </div>
