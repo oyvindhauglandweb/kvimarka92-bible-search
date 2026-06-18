@@ -2203,6 +2203,41 @@ body.light-mode .item.active *{
   }
 }
 
+
+/* Opplevelser v61: på mobil skal søkeknappen ligge inne ved enden av søkefeltet */
+.search-box-wrap{
+  position:relative !important;
+}
+
+@media(max-width:800px){
+  .toolbar.search-section{
+    grid-template-columns:1fr !important;
+  }
+
+  .toolbar.search-section .search-box-wrap{
+    position:relative !important;
+    width:100% !important;
+  }
+
+  .toolbar.search-section .search-box-wrap #searchBox{
+    padding-right:56px !important;
+  }
+
+  .toolbar.search-section .search-box-wrap #refreshBtn.search-button{
+    position:absolute !important;
+    right:12px !important;
+    bottom:11px !important;
+    margin:0 !important;
+    width:34px !important;
+    height:34px !important;
+    min-width:34px !important;
+    min-height:34px !important;
+    max-width:34px !important;
+    max-height:34px !important;
+    z-index:3 !important;
+  }
+}
+
 </style>
   <!-- version: LIST v52 hard-center-back-button-mobile 2026-06-17 -->
 </head>
@@ -2239,12 +2274,11 @@ body.light-mode .item.active *{
       <p class="sub" id="userLine" style="display:none;"></p>
 
       <div class="toolbar search-section">
-        <div>
+        <div class="search-box-wrap">
           <label for="searchBox">Søk</label>
           <input id="searchBox" type="search" placeholder="Søk i overskrift, tekst, sted, miljø eller bibelsted" autocomplete="off">
+          <button type="button" id="refreshBtn" class="search-button" title="Søk" aria-label="Søk"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" style="width:18px;height:18px;display:block;"><path d="M10.5 4a6.5 6.5 0 1 0 4.06 11.58l4.43 4.43a1 1 0 0 0 1.42-1.42l-4.43-4.43A6.5 6.5 0 0 0 10.5 4Zm0 2a4.5 4.5 0 1 1 0 9 4.5 4.5 0 0 1 0-9Z" fill="currentColor"/></svg></button>
         </div>
-        <button type="button" id="refreshBtn" class="search-button" title="Søk" aria-label="Søk"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" style="width:18px;height:18px;display:block;"><path d="M10.5 4a6.5 6.5 0 1 0 4.06 11.58l4.43 4.43a1 1 0 0 0 1.42-1.42l-4.43-4.43A6.5 6.5 0 0 0 10.5 4Zm0 2a4.5 4.5 0 1 1 0 9 4.5 4.5 0 0 1 0-9Z" fill="currentColor"/></svg></button>
-
       </div>
 
       <div class="list">
