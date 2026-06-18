@@ -2168,6 +2168,35 @@ body.light-mode .readonly-melody-notation{
   }
 }
 
+
+/* Opplevelser v84: mindre tomrom over notesystemet */
+.melody-notation,
+.edit-melody-notation,
+.readonly-melody-notation{
+  min-height:146px !important;
+  padding:8px 10px !important;
+}
+
+.melody-notation svg,
+.edit-melody-notation svg,
+.readonly-melody-notation svg{
+  min-height:134px !important;
+}
+
+@media(max-width:800px){
+  .melody-notation,
+  .edit-melody-notation,
+  .readonly-melody-notation{
+    min-height:148px !important;
+  }
+
+  .melody-notation svg,
+  .edit-melody-notation svg,
+  .readonly-melody-notation svg{
+    min-height:136px !important;
+  }
+}
+
 </style>
 <!-- version: REGISTER v44e stable-ios-date-no-ddmmyyyy-after-selection 2026-06-17 -->
 </head>
@@ -2831,7 +2860,7 @@ body.light-mode .readonly-melody-notation{
 
       try{
         const width = Math.max(280, Math.min(container.clientWidth || 560, 760));
-        const height = 180;
+        const height = 142;
 
         const renderer = new VF.Renderer(container, VF.Renderer.Backends.SVG);
         renderer.resize(width, height);
@@ -2839,7 +2868,7 @@ body.light-mode .readonly-melody-notation{
         const context = renderer.getContext();
         context.setFont("Arial", 10, "").setBackgroundFillStyle("transparent");
 
-        const stave = new VF.Stave(8, 58, width - 16);
+        const stave = new VF.Stave(8, 30, width - 16);
         stave.addClef("treble");
         stave.setContext(context).draw();
 
