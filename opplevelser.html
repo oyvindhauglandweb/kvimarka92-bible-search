@@ -2076,6 +2076,78 @@ button[aria-label="Tilbake til liste"]{
   }
 }
 
+
+/* Opplevelser v59: kun valgt opplevelse skal ha blågrønn markering */
+#items .item,
+.items .item,
+.item{
+  background:rgba(255,255,255,.045) !important;
+  color:var(--opp-text) !important;
+  border:0 !important;
+}
+#items .item:hover,
+.items .item:hover,
+.item:hover{
+  background:rgba(255,255,255,.070) !important;
+  color:var(--opp-text) !important;
+}
+#items .item:not(.active),
+.items .item:not(.active),
+.item:not(.active){
+  background:rgba(255,255,255,.045) !important;
+  color:var(--opp-text) !important;
+}
+#items .item.active,
+.items .item.active,
+.item.active{
+  background:var(--opp-important-button, #2f5f6f) !important;
+  color:#fff !important;
+  border-color:var(--opp-important-button, #2f5f6f) !important;
+}
+#items .item.active *,
+.items .item.active *,
+.item.active *{
+  color:#fff !important;
+}
+body.light-mode #items .item,
+body.light-mode .items .item,
+body.light-mode .item{
+  background:rgba(0,0,0,.04) !important;
+  color:#111827 !important;
+}
+body.light-mode #items .item:hover,
+body.light-mode .items .item:hover,
+body.light-mode .item:hover{
+  background:rgba(0,0,0,.075) !important;
+}
+body.light-mode #items .item.active,
+body.light-mode .items .item.active,
+body.light-mode .item.active{
+  background:var(--opp-important-button, #2f5f6f) !important;
+  color:#fff !important;
+  border-left:0 !important;
+}
+body.light-mode #items .item.active *,
+body.light-mode .items .item.active *,
+body.light-mode .item.active *{
+  color:#fff !important;
+}
+
+/* Opplevelser v59: søkeknapp som ikon */
+#refreshBtn.search-button{
+  min-width:56px !important;
+  width:56px !important;
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  gap:0 !important;
+  padding:0 !important;
+}
+#refreshBtn.search-button svg{
+  width:18px !important;
+  height:18px !important;
+}
+
 </style>
   <!-- version: LIST v52 hard-center-back-button-mobile 2026-06-17 -->
 </head>
@@ -2116,7 +2188,7 @@ button[aria-label="Tilbake til liste"]{
           <label for="searchBox">Søk</label>
           <input id="searchBox" type="search" placeholder="Søk i overskrift, tekst, sted, miljø eller bibelsted" autocomplete="off">
         </div>
-        <button type="button" id="refreshBtn">Søk</button>
+        <button type="button" id="refreshBtn" class="search-button" title="Søk" aria-label="Søk"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" style="width:18px;height:18px;display:block;"><path d="M10.5 4a6.5 6.5 0 1 0 4.06 11.58l4.43 4.43a1 1 0 0 0 1.42-1.42l-4.43-4.43A6.5 6.5 0 0 0 10.5 4Zm0 2a4.5 4.5 0 1 1 0 9 4.5 4.5 0 0 1 0-9Z" fill="currentColor"/></svg></button>
 
       </div>
 
@@ -4212,6 +4284,78 @@ html body.light-mode .items .item:not(.selected):not(.active):not(.is-selected):
 html body.light-mode .items .item:not(.selected):not(.active):not(.is-selected):not([data-selected="true"]):not([aria-selected="true"]):hover{
   background:#e5e7eb !important;
 }
+
+/* Opplevelser v59: kun valgt opplevelse skal ha blågrønn markering */
+#items .item,
+.items .item,
+.item{
+  background:rgba(255,255,255,.045) !important;
+  color:var(--opp-text) !important;
+  border:0 !important;
+}
+#items .item:hover,
+.items .item:hover,
+.item:hover{
+  background:rgba(255,255,255,.070) !important;
+  color:var(--opp-text) !important;
+}
+#items .item:not(.active),
+.items .item:not(.active),
+.item:not(.active){
+  background:rgba(255,255,255,.045) !important;
+  color:var(--opp-text) !important;
+}
+#items .item.active,
+.items .item.active,
+.item.active{
+  background:var(--opp-important-button, #2f5f6f) !important;
+  color:#fff !important;
+  border-color:var(--opp-important-button, #2f5f6f) !important;
+}
+#items .item.active *,
+.items .item.active *,
+.item.active *{
+  color:#fff !important;
+}
+body.light-mode #items .item,
+body.light-mode .items .item,
+body.light-mode .item{
+  background:rgba(0,0,0,.04) !important;
+  color:#111827 !important;
+}
+body.light-mode #items .item:hover,
+body.light-mode .items .item:hover,
+body.light-mode .item:hover{
+  background:rgba(0,0,0,.075) !important;
+}
+body.light-mode #items .item.active,
+body.light-mode .items .item.active,
+body.light-mode .item.active{
+  background:var(--opp-important-button, #2f5f6f) !important;
+  color:#fff !important;
+  border-left:0 !important;
+}
+body.light-mode #items .item.active *,
+body.light-mode .items .item.active *,
+body.light-mode .item.active *{
+  color:#fff !important;
+}
+
+/* Opplevelser v59: søkeknapp som ikon */
+#refreshBtn.search-button{
+  min-width:56px !important;
+  width:56px !important;
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  gap:0 !important;
+  padding:0 !important;
+}
+#refreshBtn.search-button svg{
+  width:18px !important;
+  height:18px !important;
+}
+
 </style>
 
 
@@ -4518,6 +4662,78 @@ body.dark-mode button.edit-delete-button:hover{
     width:100% !important;
   }
 }
+
+/* Opplevelser v59: kun valgt opplevelse skal ha blågrønn markering */
+#items .item,
+.items .item,
+.item{
+  background:rgba(255,255,255,.045) !important;
+  color:var(--opp-text) !important;
+  border:0 !important;
+}
+#items .item:hover,
+.items .item:hover,
+.item:hover{
+  background:rgba(255,255,255,.070) !important;
+  color:var(--opp-text) !important;
+}
+#items .item:not(.active),
+.items .item:not(.active),
+.item:not(.active){
+  background:rgba(255,255,255,.045) !important;
+  color:var(--opp-text) !important;
+}
+#items .item.active,
+.items .item.active,
+.item.active{
+  background:var(--opp-important-button, #2f5f6f) !important;
+  color:#fff !important;
+  border-color:var(--opp-important-button, #2f5f6f) !important;
+}
+#items .item.active *,
+.items .item.active *,
+.item.active *{
+  color:#fff !important;
+}
+body.light-mode #items .item,
+body.light-mode .items .item,
+body.light-mode .item{
+  background:rgba(0,0,0,.04) !important;
+  color:#111827 !important;
+}
+body.light-mode #items .item:hover,
+body.light-mode .items .item:hover,
+body.light-mode .item:hover{
+  background:rgba(0,0,0,.075) !important;
+}
+body.light-mode #items .item.active,
+body.light-mode .items .item.active,
+body.light-mode .item.active{
+  background:var(--opp-important-button, #2f5f6f) !important;
+  color:#fff !important;
+  border-left:0 !important;
+}
+body.light-mode #items .item.active *,
+body.light-mode .items .item.active *,
+body.light-mode .item.active *{
+  color:#fff !important;
+}
+
+/* Opplevelser v59: søkeknapp som ikon */
+#refreshBtn.search-button{
+  min-width:56px !important;
+  width:56px !important;
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  gap:0 !important;
+  padding:0 !important;
+}
+#refreshBtn.search-button svg{
+  width:18px !important;
+  height:18px !important;
+}
+
 </style>
 
 <!-- Opplevelser v53: saveEdit uses editExperienceDate and converts date to ISO before API update. -->
@@ -4715,6 +4931,78 @@ body.light-mode button.edit-delete-button{
 .items .item.active:hover,
 .item.active:hover{
   background:var(--opp-important-button-hover, #376f82) !important;
+}
+
+
+/* Opplevelser v59: kun valgt opplevelse skal ha blågrønn markering */
+#items .item,
+.items .item,
+.item{
+  background:rgba(255,255,255,.045) !important;
+  color:var(--opp-text) !important;
+  border:0 !important;
+}
+#items .item:hover,
+.items .item:hover,
+.item:hover{
+  background:rgba(255,255,255,.070) !important;
+  color:var(--opp-text) !important;
+}
+#items .item:not(.active),
+.items .item:not(.active),
+.item:not(.active){
+  background:rgba(255,255,255,.045) !important;
+  color:var(--opp-text) !important;
+}
+#items .item.active,
+.items .item.active,
+.item.active{
+  background:var(--opp-important-button, #2f5f6f) !important;
+  color:#fff !important;
+  border-color:var(--opp-important-button, #2f5f6f) !important;
+}
+#items .item.active *,
+.items .item.active *,
+.item.active *{
+  color:#fff !important;
+}
+body.light-mode #items .item,
+body.light-mode .items .item,
+body.light-mode .item{
+  background:rgba(0,0,0,.04) !important;
+  color:#111827 !important;
+}
+body.light-mode #items .item:hover,
+body.light-mode .items .item:hover,
+body.light-mode .item:hover{
+  background:rgba(0,0,0,.075) !important;
+}
+body.light-mode #items .item.active,
+body.light-mode .items .item.active,
+body.light-mode .item.active{
+  background:var(--opp-important-button, #2f5f6f) !important;
+  color:#fff !important;
+  border-left:0 !important;
+}
+body.light-mode #items .item.active *,
+body.light-mode .items .item.active *,
+body.light-mode .item.active *{
+  color:#fff !important;
+}
+
+/* Opplevelser v59: søkeknapp som ikon */
+#refreshBtn.search-button{
+  min-width:56px !important;
+  width:56px !important;
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  gap:0 !important;
+  padding:0 !important;
+}
+#refreshBtn.search-button svg{
+  width:18px !important;
+  height:18px !important;
 }
 
 </style>
