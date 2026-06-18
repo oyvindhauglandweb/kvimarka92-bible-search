@@ -2951,6 +2951,23 @@ body.light-mode .readonly-melody-notation{
   }
 }
 
+
+/* Opplevelser v85: notesystem med PNG-eksport og flere notelinjer ved behov */
+.melody-notation,
+.edit-melody-notation,
+.readonly-melody-notation{
+  min-height:var(--notation-height, 138px) !important;
+  height:var(--notation-height, auto) !important;
+  padding:8px 10px !important;
+}
+
+.melody-notation svg,
+.edit-melody-notation svg,
+.readonly-melody-notation svg{
+  min-height:0 !important;
+  height:auto !important;
+}
+
 </style>
   <!-- version: LIST v52 hard-center-back-button-mobile 2026-06-17 -->
 </head>
@@ -3492,6 +3509,7 @@ body.light-mode .readonly-melody-notation{
 
       if(!parsed.length){
         container.classList.add("empty");
+        container.style.removeProperty("--notation-height");
         return;
       }
 
@@ -3506,7 +3524,18 @@ body.light-mode .readonly-melody-notation{
 
       try{
         const width = Math.max(280, Math.min(container.clientWidth || 560, 760));
-        const height = 142;
+        const notesPerLine = width < 420 ? 10 : 14;
+        const rows = [];
+
+        for(let i = 0; i < parsed.length; i += notesPerLine){
+          rows.push(parsed.slice(i, i + notesPerLine));
+        }
+
+        const rowHeight = 112;
+        const topPadding = 14;
+        const height = topPadding + (rows.length * rowHeight) + 24;
+
+        container.style.setProperty("--notation-height", `${height + 4}px`);
 
         const renderer = new VF.Renderer(container, VF.Renderer.Backends.SVG);
         renderer.resize(width, height);
@@ -3514,44 +3543,51 @@ body.light-mode .readonly-melody-notation{
         const context = renderer.getContext();
         context.setFont("Arial", 10, "").setBackgroundFillStyle("transparent");
 
-        const stave = new VF.Stave(8, 30, width - 16);
-        stave.addClef("treble");
-        stave.setContext(context).draw();
+        rows.forEach((row, rowIndex) => {
+          const y = topPadding + (rowIndex * rowHeight) + 28;
+          const stave = new VF.Stave(8, y, width - 16);
 
-        const notes = parsed.map(item => {
-          const staveNote = new VF.StaveNote({
-            clef:"treble",
-            keys:[item.key],
-            duration:"q"
-          });
-
-          if(item.accidental){
-            if(typeof staveNote.addModifier === "function"){
-              staveNote.addModifier(new VF.Accidental(item.accidental), 0);
-            }else if(typeof staveNote.addAccidental === "function"){
-              staveNote.addAccidental(0, new VF.Accidental(item.accidental));
-            }
+          if(rowIndex === 0){
+            stave.addClef("treble");
           }
 
-          return staveNote;
+          stave.setContext(context).draw();
+
+          const notes = row.map(item => {
+            const staveNote = new VF.StaveNote({
+              clef:"treble",
+              keys:[item.key],
+              duration:"q"
+            });
+
+            if(item.accidental){
+              if(typeof staveNote.addModifier === "function"){
+                staveNote.addModifier(new VF.Accidental(item.accidental), 0);
+              }else if(typeof staveNote.addAccidental === "function"){
+                staveNote.addAccidental(0, new VF.Accidental(item.accidental));
+              }
+            }
+
+            return staveNote;
+          });
+
+          const voice = new VF.Voice({
+            num_beats:Math.max(1, notes.length),
+            beat_value:4
+          });
+
+          if(typeof voice.setStrict === "function"){
+            voice.setStrict(false);
+          }
+
+          voice.addTickables(notes);
+
+          new VF.Formatter()
+            .joinVoices([voice])
+            .format([voice], Math.max(120, width - 70));
+
+          voice.draw(context, stave);
         });
-
-        const voice = new VF.Voice({
-          num_beats:Math.max(1, notes.length),
-          beat_value:4
-        });
-
-        if(typeof voice.setStrict === "function"){
-          voice.setStrict(false);
-        }
-
-        voice.addTickables(notes);
-
-        new VF.Formatter()
-          .joinVoices([voice])
-          .format([voice], Math.max(120, width - 70));
-
-        voice.draw(context, stave);
       }catch(error){
         container.innerHTML = "";
         container.textContent = "Kunne ikke tegne notelinje: " + (error.message || error);
@@ -4116,6 +4152,82 @@ body.light-mode .readonly-melody-notation{
       return list;
     }
 
+
+    async function svgElementToPngDataUrl(svgElement){
+      if(!svgElement){
+        return "";
+      }
+
+      const clone = svgElement.cloneNode(true);
+      clone.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+
+      const width = Math.ceil(svgElement.getBoundingClientRect().width || svgElement.viewBox?.baseVal?.width || 760);
+      const height = Math.ceil(svgElement.getBoundingClientRect().height || svgElement.viewBox?.baseVal?.height || 160);
+
+      clone.setAttribute("width", String(width));
+      clone.setAttribute("height", String(height));
+
+      const svgText = new XMLSerializer().serializeToString(clone);
+      const blob = new Blob([svgText], { type:"image/svg+xml;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+
+      try{
+        const image = new Image();
+
+        await new Promise((resolve, reject) => {
+          image.onload = resolve;
+          image.onerror = reject;
+          image.src = url;
+        });
+
+        const canvas = document.createElement("canvas");
+        canvas.width = Math.max(1, width);
+        canvas.height = Math.max(1, height);
+
+        const context = canvas.getContext("2d");
+        context.fillStyle = "#ffffff";
+        context.fillRect(0, 0, canvas.width, canvas.height);
+        context.drawImage(image, 0, 0);
+
+        return canvas.toDataURL("image/png");
+      }finally{
+        URL.revokeObjectURL(url);
+      }
+    }
+
+    async function collectReadonlyNotationPngs(){
+      const list = [];
+
+      for(const container of document.querySelectorAll(".readonly-melody-notation")){
+        const svg = container.querySelector("svg");
+        const notes = String(container.dataset.notes || "").trim();
+
+        if(!svg || !notes){
+          continue;
+        }
+
+        const card = container.closest(".readonly-melody-card");
+        let melodyNumber = 0;
+
+        if(card){
+          const heading = card.querySelector("h3");
+          const match = String(heading && heading.textContent || "").match(/Melodi\s+(\d+)/i);
+          if(match){
+            melodyNumber = Number(match[1]);
+          }
+        }
+
+        const png = await svgElementToPngDataUrl(svg);
+
+        if(png){
+          list.push({ melodyNumber, png });
+        }
+      }
+
+      return list;
+    }
+
+
     window.sendSelectedExperienceEmail = async function(){
       const item = selectedItem();
 
@@ -4142,7 +4254,7 @@ body.light-mode .readonly-melody-notation{
           body:JSON.stringify({
             experienceId:item.id,
             includeAudio:true,
-            notationSvgs:collectReadonlyNotationSvgs()
+            notationPngs:await collectReadonlyNotationPngs()
           })
         });
 
