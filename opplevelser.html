@@ -2648,6 +2648,18 @@ body.light-mode .edit-melody-card.edit-melody-empty{
   }
 }
 
+
+/* Opplevelser v76: vanlig visning skal vise alle 5 melodiplasser */
+.readonly-melody-card.readonly-melody-empty-card{
+  border:1px dashed rgba(255,255,255,.10) !important;
+}
+body.light-mode .readonly-melody-card.readonly-melody-empty-card{
+  border:1px dashed rgba(0,0,0,.12) !important;
+}
+.readonly-melody-card.readonly-melody-empty-card .readonly-melody-empty{
+  opacity:.85 !important;
+}
+
 </style>
   <!-- version: LIST v52 hard-center-back-button-mobile 2026-06-17 -->
 </head>
@@ -3465,24 +3477,46 @@ body.light-mode .edit-melody-card.edit-melody-empty{
       return String(file.url || file.link || file.download_url || "");
     }
 
-    function renderReadonlyMelodyItem(item){
-      const number = Number(item.melodyNumber || 0);
+    function renderReadonlyMelodyItem(item, melodyNumber){
+      const number = Number(melodyNumber || item?.melodyNumber || 0);
       const title = number ? `Melodi ${number}` : "Melodi";
-      const audioUrl = melodyFileUrl(item);
-      const date = item.recordingDate ? formatOpplevelserDate(item.recordingDate) : "";
-      const note = String(item.note || "").trim();
+      const audioUrl = melodyFileUrl(item || {});
+      const date = item && item.recordingDate ? formatOpplevelserDate(item.recordingDate) : "";
+      const note = String(item && item.note || "").trim();
+      const detectedNotes = String(item && item.detectedNotes || "").trim();
+      const hasContent = !!(audioUrl || note || detectedNotes || date);
 
       return `
-        <div class="readonly-melody-card">
+        <div class="readonly-melody-card ${hasContent ? "readonly-melody-has-content" : "readonly-melody-empty-card"}">
           <div class="readonly-melody-head">
             <h3>${esc(title)}</h3>
             ${date ? `<span class="readonly-melody-date">${esc(date)}</span>` : ""}
           </div>
-          ${audioUrl ? `<audio controls src="${esc(audioUrl)}"></audio>` : `<div class="readonly-melody-empty">Ingen lydfil</div>`}
-          ${item.detectedNotes ? `<div class="readonly-melody-notes">Toner: ${esc(item.detectedNotes)}</div>` : ""}
+          ${audioUrl ? `<audio controls src="${esc(audioUrl)}"></audio>` : `<div class="readonly-melody-empty">Ikke spilt inn</div>`}
+          ${detectedNotes ? `<div class="readonly-melody-notes">Toner: ${esc(detectedNotes)}</div>` : ""}
           ${note ? `<p class="readonly-melody-note">${esc(note)}</p>` : ""}
         </div>
       `;
+    }
+
+    function renderReadonlyMelodySlots(items){
+      const byNumber = new Map();
+
+      (items || []).forEach(item => {
+        const number = Number(item && item.melodyNumber || 0);
+
+        if(number >= 1 && number <= 5){
+          byNumber.set(number, item);
+        }
+      });
+
+      const cards = [];
+
+      for(let number = 1; number <= 5; number += 1){
+        cards.push(renderReadonlyMelodyItem(byNumber.get(number) || null, number));
+      }
+
+      return cards.join("");
     }
 
     async function loadReadonlyMelodies(experienceId){
@@ -3511,21 +3545,11 @@ body.light-mode .edit-melody-card.edit-melody-empty{
 
         const items = data.items || [];
 
-        if(!items.length){
-          target.innerHTML = `
-            <div class="section readonly-melody-section">
-              <h3>Melodier</h3>
-              <div class="readonly-melody-empty">Ingen melodier registrert for denne opplevelsen.</div>
-            </div>
-          `;
-          return;
-        }
-
         target.innerHTML = `
           <div class="section readonly-melody-section">
             <h3>Melodier</h3>
             <div class="readonly-melody-list">
-              ${items.map(renderReadonlyMelodyItem).join("")}
+              ${renderReadonlyMelodySlots(items)}
             </div>
           </div>
         `;
