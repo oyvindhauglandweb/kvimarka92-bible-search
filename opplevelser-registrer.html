@@ -1787,6 +1787,31 @@ input#experienceDate{
   }
 }
 
+
+/* Opplevelser registrer v64: numerisk datovisning og avrundet felt */
+#experienceForm .date-picker-wrap{
+  border-radius:10px !important;
+  overflow:hidden !important;
+}
+
+#experienceForm input#experienceDate,
+input#experienceDate{
+  border-radius:10px !important;
+  text-align:left !important;
+  -webkit-text-align-last:left !important;
+  text-align-last:left !important;
+  appearance:none !important;
+  -webkit-appearance:none !important;
+}
+
+#experienceDatePicker{
+  position:absolute !important;
+  width:1px !important;
+  height:1px !important;
+  opacity:0 !important;
+  pointer-events:none !important;
+}
+
 </style>
 <!-- version: REGISTER v44e stable-ios-date-no-ddmmyyyy-after-selection 2026-06-17 -->
 </head>
@@ -3206,28 +3231,12 @@ input#experienceDate{
 
     const iso = norwegianDateToIso(value) || todayIso();
 
-    if(isMobileDateEnvironment()){
-      // iOS/Safari må beholde ekte type=date og ISO-verdi. Ikke skriv DD.MM.YYYY til dette feltet.
-      input.type = "date";
-      input.value = iso;
-      input.dataset.mobileIsoDate = iso;
-      input.removeAttribute("readonly");
-      input.removeAttribute("onclick");
-      input.onclick = null;
-      input.placeholder = "";
-      input.inputMode = "";
-      input.autocomplete = "off";
-
-      if(picker){
-        picker.value = iso;
-      }
-
-      return;
-    }
-
-    // PC: vis norsk dato i tekstfelt, men lagre/submit konverterer tilbake til ISO.
+    // v64: Det synlige feltet skal alltid vise norsk numerisk dato (dd.mm.åååå).
+    // Den ekte date-picker-inputen (#experienceDatePicker) holdes skjult og brukes bare
+    // til å åpne native datovelger.
     input.type = "text";
     input.value = isoToNorwegianDate(iso);
+    input.dataset.mobileIsoDate = iso;
     input.placeholder = "dd.mm.åååå";
     input.inputMode = "numeric";
     input.autocomplete = "off";
@@ -3273,20 +3282,10 @@ input#experienceDate{
       return;
     }
 
-    if(isMobileDateEnvironment()){
-      input.type = "date";
-      input.removeAttribute("readonly");
-      try{
-        input.showPicker();
-      }catch(error){
-        input.focus();
-      }
-      return;
-    }
-
     syncDatePickerFromText();
 
     if(!picker){
+      input.focus();
       return;
     }
 
@@ -3312,16 +3311,10 @@ input#experienceDate{
       input.dataset.datePickerReady = "1";
 
       input.addEventListener("change", function(){
-        const iso = norwegianDateToIso(input.value);
+        const iso = norwegianDateToIso(input.value) || input.dataset.mobileIsoDate;
 
-        if(isMobileDateEnvironment()){
-          if(/^\d{4}-\d{2}-\d{2}$/.test(iso)){
-            input.dataset.mobileIsoDate = iso;
-            input.value = iso;
-            if(picker){
-              picker.value = iso;
-            }
-          }
+        if(/^\d{4}-\d{2}-\d{2}$/.test(iso)){
+          setRegisterDateValue(iso);
           return;
         }
 
@@ -3329,10 +3322,6 @@ input#experienceDate{
       });
 
       input.addEventListener("input", function(){
-        if(!isMobileDateEnvironment()){
-          return;
-        }
-
         const iso = norwegianDateToIso(input.value);
         if(/^\d{4}-\d{2}-\d{2}$/.test(iso)){
           input.dataset.mobileIsoDate = iso;
@@ -3343,16 +3332,6 @@ input#experienceDate{
       });
 
       input.addEventListener("blur", function(){
-        if(isMobileDateEnvironment()){
-          // Kritisk: ikke konverter type=date til DD.MM.YYYY på iOS/Safari.
-          const iso = norwegianDateToIso(input.value) || input.dataset.mobileIsoDate;
-          if(/^\d{4}-\d{2}-\d{2}$/.test(iso)){
-            input.value = iso;
-            input.dataset.mobileIsoDate = iso;
-          }
-          return;
-        }
-
         setRegisterDateValue(getIsoFromInput(input) || todayIso());
       });
     }
