@@ -1665,6 +1665,89 @@ body.light-mode #saveButton{
   }
 }
 
+
+/* Opplevelser registrer v61: mobile toppfelt skal ha nøyaktig samme bredde og høyde */
+#experienceForm .grid{
+  grid-template-columns:repeat(2, minmax(0, 1fr)) !important;
+  column-gap:14px !important;
+  row-gap:14px !important;
+  align-items:start !important;
+}
+
+#experienceForm .grid > div:not(.full){
+  min-width:0 !important;
+  width:100% !important;
+  max-width:100% !important;
+}
+
+#experienceForm #heading,
+#experienceForm #experienceDate,
+#experienceForm #place,
+#experienceForm #environment,
+#experienceForm .date-picker-wrap{
+  width:100% !important;
+  min-width:0 !important;
+  max-width:100% !important;
+  box-sizing:border-box !important;
+}
+
+#experienceForm #heading,
+#experienceForm #experienceDate,
+#experienceForm #place,
+#experienceForm #environment{
+  height:56px !important;
+  min-height:56px !important;
+  max-height:56px !important;
+  padding:0 16px !important;
+  line-height:56px !important;
+  overflow:hidden !important;
+}
+
+#experienceForm #environment{
+  line-height:normal !important;
+}
+
+#experienceForm .date-picker-wrap{
+  height:56px !important;
+  min-height:56px !important;
+  max-height:56px !important;
+  display:block !important;
+  overflow:hidden !important;
+}
+
+#experienceForm .date-picker-wrap #experienceDate{
+  height:56px !important;
+  min-height:56px !important;
+  max-height:56px !important;
+  display:block !important;
+}
+
+@media(max-width:800px){
+  #experienceForm{
+    overflow:hidden !important;
+  }
+
+  #experienceForm .grid{
+    grid-template-columns:repeat(2, minmax(0, 1fr)) !important;
+    gap:14px !important;
+  }
+
+  #experienceForm label{
+    min-height:1.25em !important;
+    line-height:1.2 !important;
+  }
+
+  #experienceForm #heading,
+  #experienceForm #experienceDate,
+  #experienceForm #place,
+  #experienceForm #environment,
+  #experienceForm .date-picker-wrap{
+    height:56px !important;
+    min-height:56px !important;
+    max-height:56px !important;
+  }
+}
+
 </style>
 <!-- version: REGISTER v44e stable-ios-date-no-ddmmyyyy-after-selection 2026-06-17 -->
 </head>
@@ -3503,6 +3586,89 @@ html body.light-mode button[type="submit"] *{
   opacity:1 !important;
   filter:none !important;
 }
+
+/* Opplevelser registrer v61: mobile toppfelt skal ha nøyaktig samme bredde og høyde */
+#experienceForm .grid{
+  grid-template-columns:repeat(2, minmax(0, 1fr)) !important;
+  column-gap:14px !important;
+  row-gap:14px !important;
+  align-items:start !important;
+}
+
+#experienceForm .grid > div:not(.full){
+  min-width:0 !important;
+  width:100% !important;
+  max-width:100% !important;
+}
+
+#experienceForm #heading,
+#experienceForm #experienceDate,
+#experienceForm #place,
+#experienceForm #environment,
+#experienceForm .date-picker-wrap{
+  width:100% !important;
+  min-width:0 !important;
+  max-width:100% !important;
+  box-sizing:border-box !important;
+}
+
+#experienceForm #heading,
+#experienceForm #experienceDate,
+#experienceForm #place,
+#experienceForm #environment{
+  height:56px !important;
+  min-height:56px !important;
+  max-height:56px !important;
+  padding:0 16px !important;
+  line-height:56px !important;
+  overflow:hidden !important;
+}
+
+#experienceForm #environment{
+  line-height:normal !important;
+}
+
+#experienceForm .date-picker-wrap{
+  height:56px !important;
+  min-height:56px !important;
+  max-height:56px !important;
+  display:block !important;
+  overflow:hidden !important;
+}
+
+#experienceForm .date-picker-wrap #experienceDate{
+  height:56px !important;
+  min-height:56px !important;
+  max-height:56px !important;
+  display:block !important;
+}
+
+@media(max-width:800px){
+  #experienceForm{
+    overflow:hidden !important;
+  }
+
+  #experienceForm .grid{
+    grid-template-columns:repeat(2, minmax(0, 1fr)) !important;
+    gap:14px !important;
+  }
+
+  #experienceForm label{
+    min-height:1.25em !important;
+    line-height:1.2 !important;
+  }
+
+  #experienceForm #heading,
+  #experienceForm #experienceDate,
+  #experienceForm #place,
+  #experienceForm #environment,
+  #experienceForm .date-picker-wrap{
+    height:56px !important;
+    min-height:56px !important;
+    max-height:56px !important;
+  }
+}
+
 </style>
 
 
@@ -3945,6 +4111,89 @@ button.bible-edit-button:hover{
 button.bible-edit-button svg{
   width:16px !important;
   height:16px !important;
+}
+
+
+/* Opplevelser registrer v61: mobile toppfelt skal ha nøyaktig samme bredde og høyde */
+#experienceForm .grid{
+  grid-template-columns:repeat(2, minmax(0, 1fr)) !important;
+  column-gap:14px !important;
+  row-gap:14px !important;
+  align-items:start !important;
+}
+
+#experienceForm .grid > div:not(.full){
+  min-width:0 !important;
+  width:100% !important;
+  max-width:100% !important;
+}
+
+#experienceForm #heading,
+#experienceForm #experienceDate,
+#experienceForm #place,
+#experienceForm #environment,
+#experienceForm .date-picker-wrap{
+  width:100% !important;
+  min-width:0 !important;
+  max-width:100% !important;
+  box-sizing:border-box !important;
+}
+
+#experienceForm #heading,
+#experienceForm #experienceDate,
+#experienceForm #place,
+#experienceForm #environment{
+  height:56px !important;
+  min-height:56px !important;
+  max-height:56px !important;
+  padding:0 16px !important;
+  line-height:56px !important;
+  overflow:hidden !important;
+}
+
+#experienceForm #environment{
+  line-height:normal !important;
+}
+
+#experienceForm .date-picker-wrap{
+  height:56px !important;
+  min-height:56px !important;
+  max-height:56px !important;
+  display:block !important;
+  overflow:hidden !important;
+}
+
+#experienceForm .date-picker-wrap #experienceDate{
+  height:56px !important;
+  min-height:56px !important;
+  max-height:56px !important;
+  display:block !important;
+}
+
+@media(max-width:800px){
+  #experienceForm{
+    overflow:hidden !important;
+  }
+
+  #experienceForm .grid{
+    grid-template-columns:repeat(2, minmax(0, 1fr)) !important;
+    gap:14px !important;
+  }
+
+  #experienceForm label{
+    min-height:1.25em !important;
+    line-height:1.2 !important;
+  }
+
+  #experienceForm #heading,
+  #experienceForm #experienceDate,
+  #experienceForm #place,
+  #experienceForm #environment,
+  #experienceForm .date-picker-wrap{
+    height:56px !important;
+    min-height:56px !important;
+    max-height:56px !important;
+  }
 }
 
 </style>
