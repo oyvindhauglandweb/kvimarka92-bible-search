@@ -1963,8 +1963,9 @@ body.light-mode .melody-state{
 }
 
 
-/* Opplevelser registrer v67: live tonehøyder under melodiopptak */
+/* Opplevelser registrer v67: live toner under melodiopptak */
 .melody-pitch-live{
+  font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace !important;
   margin-top:6px !important;
   min-height:32px !important;
   display:flex !important;
@@ -1982,6 +1983,7 @@ body.light-mode .melody-state{
   background:rgba(47,95,111,.38) !important;
 }
 body.light-mode .melody-pitch-live{
+  font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace !important;
   background:rgba(0,0,0,.045) !important;
 }
 body.light-mode .melody-pitch-live.active{
@@ -2127,7 +2129,7 @@ body.light-mode .melody-pitch-live.active{
                   <label>Opptak</label>
                   <audio id="melodyAudio1" controls style="display:none;"></audio>
                   <div id="melodyState1" class="melody-state">Ikke spilt inn</div>
-                  <div id="melodyPitch1" class="melody-pitch-live">Tonehøyder: —</div>
+                  <div id="melodyPitch1" class="melody-pitch-live">Toner: —</div>
                 </div>
               </div>
               <div class="voice-field-header melody-note-header">
@@ -2157,7 +2159,7 @@ body.light-mode .melody-pitch-live.active{
                   <label>Opptak</label>
                   <audio id="melodyAudio2" controls style="display:none;"></audio>
                   <div id="melodyState2" class="melody-state">Ikke spilt inn</div>
-                  <div id="melodyPitch2" class="melody-pitch-live">Tonehøyder: —</div>
+                  <div id="melodyPitch2" class="melody-pitch-live">Toner: —</div>
                 </div>
               </div>
               <div class="voice-field-header melody-note-header">
@@ -2187,7 +2189,7 @@ body.light-mode .melody-pitch-live.active{
                   <label>Opptak</label>
                   <audio id="melodyAudio3" controls style="display:none;"></audio>
                   <div id="melodyState3" class="melody-state">Ikke spilt inn</div>
-                  <div id="melodyPitch3" class="melody-pitch-live">Tonehøyder: —</div>
+                  <div id="melodyPitch3" class="melody-pitch-live">Toner: —</div>
                 </div>
               </div>
               <div class="voice-field-header melody-note-header">
@@ -2217,7 +2219,7 @@ body.light-mode .melody-pitch-live.active{
                   <label>Opptak</label>
                   <audio id="melodyAudio4" controls style="display:none;"></audio>
                   <div id="melodyState4" class="melody-state">Ikke spilt inn</div>
-                  <div id="melodyPitch4" class="melody-pitch-live">Tonehøyder: —</div>
+                  <div id="melodyPitch4" class="melody-pitch-live">Toner: —</div>
                 </div>
               </div>
               <div class="voice-field-header melody-note-header">
@@ -2247,7 +2249,7 @@ body.light-mode .melody-pitch-live.active{
                   <label>Opptak</label>
                   <audio id="melodyAudio5" controls style="display:none;"></audio>
                   <div id="melodyState5" class="melody-state">Ikke spilt inn</div>
-                  <div id="melodyPitch5" class="melody-pitch-live">Tonehøyder: —</div>
+                  <div id="melodyPitch5" class="melody-pitch-live">Toner: —</div>
                 </div>
               </div>
               <div class="voice-field-header melody-note-header">
@@ -2425,13 +2427,13 @@ body.light-mode .melody-pitch-live.active{
         return;
       }
 
-      target.textContent = text || "Tonehøyder: —";
+      target.textContent = text || "Toner: —";
       target.classList.toggle("active", !!active);
     }
 
     function resetMelodyPitch(number){
       melodyDetectedNotes.set(Number(number), []);
-      setMelodyPitchText(number, "Tonehøyder: —", false);
+      setMelodyPitchText(number, "Toner: —", false);
     }
 
     function stopMelodyPitchDetection(){
@@ -2458,7 +2460,7 @@ body.light-mode .melody-pitch-live.active{
       const AudioContextClass = window.AudioContext || window.webkitAudioContext;
 
       if(!AudioContextClass){
-        setMelodyPitchText(number, "Tonehøyder: støttes ikke i denne nettleseren", false);
+        setMelodyPitchText(number, "Toner: støttes ikke i denne nettleseren", false);
         return;
       }
 
@@ -2501,13 +2503,13 @@ body.light-mode .melody-pitch-live.active{
           lastAcceptedAt = now;
 
           const displayNotes = notes.slice(-24).join(" ");
-          setMelodyPitchText(number, "Tonehøyder: " + displayNotes, true);
+          setMelodyPitchText(number, "Toner: " + displayNotes, true);
         }
 
         activeMelodyPitch.animationId = requestAnimationFrame(tick);
       }
 
-      setMelodyPitchText(number, "Tonehøyder: lytter ...", true);
+      setMelodyPitchText(number, "Toner: lytter ...", true);
       tick();
     }
 
@@ -2642,7 +2644,7 @@ body.light-mode .melody-pitch-live.active{
         stopMelodyPitchDetection();
         const detected = melodyDetectedNotes.get(n) || [];
         setMelodyState(n, detected.length ? "Opptak klart. Tonehøyder registrert." : "Opptak klart.");
-        setMelodyPitchText(n, detected.length ? "Tonehøyder: " + detected.join(" ") : "Tonehøyder: —", !!detected.length);
+        setMelodyPitchText(n, detected.length ? "Toner: " + detected.join(" ") : "Toner: —", !!detected.length);
 
         button.classList.remove("recording");
         button.title = "Start opptak";

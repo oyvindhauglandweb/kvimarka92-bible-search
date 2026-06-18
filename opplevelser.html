@@ -2551,8 +2551,9 @@ body.light-mode .readonly-melody-card{
 }
 
 
-/* Opplevelser v70: live tonehøyder under melodiopptak på redigering */
+/* Opplevelser v70: live toner under melodiopptak på redigering */
 .edit-melody-pitch-live{
+  font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace !important;
   margin-top:6px !important;
   min-height:32px !important;
   display:flex !important;
@@ -2570,6 +2571,7 @@ body.light-mode .readonly-melody-card{
   background:rgba(47,95,111,.38) !important;
 }
 body.light-mode .edit-melody-pitch-live{
+  font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace !important;
   background:rgba(0,0,0,.045) !important;
 }
 body.light-mode .edit-melody-pitch-live.active{
@@ -2581,6 +2583,27 @@ body.light-mode .edit-melody-pitch-live.active{
 /* Opplevelser v73: melodifelt skal alltid vise lastestatus/tom-status */
 .readonly-melody-empty.error{
   color:#ff8a8a !important;
+}
+
+
+/* Opplevelser v74: toner som tekststreng under avspilling */
+.readonly-melody-notes{
+  margin-top:8px !important;
+  min-height:32px !important;
+  display:flex !important;
+  align-items:center !important;
+  padding:0 12px !important;
+  border-radius:10px !important;
+  background:rgba(47,95,111,.30) !important;
+  color:#fff !important;
+  font-size:.92rem !important;
+  line-height:1.3 !important;
+  white-space:normal !important;
+  font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace !important;
+}
+body.light-mode .readonly-melody-notes{
+  background:rgba(36,95,115,.14) !important;
+  color:#111827 !important;
 }
 
 </style>
@@ -2916,13 +2939,13 @@ body.light-mode .edit-melody-pitch-live.active{
         return;
       }
 
-      target.textContent = text || "Tonehøyder: —";
+      target.textContent = text || "Toner: —";
       target.classList.toggle("active", !!active);
     }
 
     function resetEditMelodyPitch(number){
       editMelodyDetectedNotes.set(Number(number), []);
-      setEditMelodyPitchText(number, "Tonehøyder: —", false);
+      setEditMelodyPitchText(number, "Toner: —", false);
     }
 
     function stopEditMelodyPitchDetection(){
@@ -2949,7 +2972,7 @@ body.light-mode .edit-melody-pitch-live.active{
       const AudioContextClass = window.AudioContext || window.webkitAudioContext;
 
       if(!AudioContextClass){
-        setEditMelodyPitchText(number, "Tonehøyder: støttes ikke i denne nettleseren", false);
+        setEditMelodyPitchText(number, "Toner: støttes ikke i denne nettleseren", false);
         return;
       }
 
@@ -2992,13 +3015,13 @@ body.light-mode .edit-melody-pitch-live.active{
           lastAcceptedAt = now;
 
           const displayNotes = notes.slice(-24).join(" ");
-          setEditMelodyPitchText(number, "Tonehøyder: " + displayNotes, true);
+          setEditMelodyPitchText(number, "Toner: " + displayNotes, true);
         }
 
         activeEditMelodyPitch.animationId = requestAnimationFrame(tick);
       }
 
-      setEditMelodyPitchText(number, "Tonehøyder: lytter ...", true);
+      setEditMelodyPitchText(number, "Toner: lytter ...", true);
       tick();
     }
 
@@ -3100,7 +3123,7 @@ body.light-mode .edit-melody-pitch-live.active{
         stopEditMelodyPitchDetection();
         const detected = editMelodyDetectedNotes.get(n) || [];
         setEditMelodyState(n, detected.length ? "Nytt opptak klart. Tonehøyder registrert." : "Nytt opptak klart.");
-        setEditMelodyPitchText(n, detected.length ? "Tonehøyder: " + detected.join(" ") : "Tonehøyder: —", !!detected.length);
+        setEditMelodyPitchText(n, detected.length ? "Toner: " + detected.join(" ") : "Toner: —", !!detected.length);
         button.classList.remove("recording");
         button.title = "Start opptak";
         button.setAttribute("aria-label", "Start opptak");
@@ -3189,7 +3212,7 @@ body.light-mode .edit-melody-pitch-live.active{
           audio.src = item.audioUrl;
           audio.style.display = "";
           setEditMelodyState(number, "Opptak lagret.");
-          setEditMelodyPitchText(number, item.detectedNotes ? "Tonehøyder: " + item.detectedNotes : "Tonehøyder: —", !!item.detectedNotes);
+          setEditMelodyPitchText(number, item.detectedNotes ? "Tonehøyder: " + item.detectedNotes : "Toner: —", !!item.detectedNotes);
         }else{
           setEditMelodyState(number, item.note ? "Notat lagret uten opptak." : "Ikke spilt inn");
         }
@@ -3379,6 +3402,7 @@ body.light-mode .edit-melody-pitch-live.active{
             ${date ? `<span class="readonly-melody-date">${esc(date)}</span>` : ""}
           </div>
           ${audioUrl ? `<audio controls src="${esc(audioUrl)}"></audio>` : `<div class="readonly-melody-empty">Ingen lydfil</div>`}
+          ${item.detectedNotes ? `<div class="readonly-melody-notes">Toner: ${esc(item.detectedNotes)}</div>` : ""}
           ${note ? `<p class="readonly-melody-note">${esc(note)}</p>` : ""}
         </div>
       `;
@@ -3465,7 +3489,7 @@ body.light-mode .edit-melody-pitch-live.active{
                   <label>Opptak</label>
                   <audio id="editMelodyAudio${number}" controls style="display:none;"></audio>
                   <div id="editMelodyState${number}" class="edit-melody-state">Ikke spilt inn</div>
-                  <div id="editMelodyPitch${number}" class="edit-melody-pitch-live">Tonehøyder: —</div>
+                  <div id="editMelodyPitch${number}" class="edit-melody-pitch-live">Toner: —</div>
                 </div>
               </div>
               <div class="voice-field-header edit-melody-note-header">
