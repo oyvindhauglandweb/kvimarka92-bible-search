@@ -1812,6 +1812,40 @@ input#experienceDate{
   pointer-events:none !important;
 }
 
+
+/* Opplevelser registrer v65: lagre/tøm-knapper øverst til høyre */
+#experienceForm .register-top-buttons{
+  display:flex !important;
+  justify-content:flex-end !important;
+  align-items:center !important;
+  gap:10px !important;
+  margin:0 0 14px !important;
+  padding:0 !important;
+}
+
+#experienceForm .register-top-buttons #saveBtn{
+  order:2 !important;
+}
+
+#experienceForm .register-top-buttons #resetBtn{
+  order:1 !important;
+}
+
+@media(max-width:700px){
+  #experienceForm .register-top-buttons{
+    justify-content:flex-end !important;
+    flex-wrap:nowrap !important;
+    gap:8px !important;
+    margin-bottom:12px !important;
+  }
+
+  #experienceForm .register-top-buttons button{
+    width:auto !important;
+    min-width:0 !important;
+    white-space:nowrap !important;
+  }
+}
+
 </style>
 <!-- version: REGISTER v44e stable-ios-date-no-ddmmyyyy-after-selection 2026-06-17 -->
 </head>
@@ -1848,6 +1882,10 @@ input#experienceDate{
       <p class="sub" id="userLine" style="display:none;"></p>
 
       <form id="experienceForm" class="form-section">
+        <div class="buttons register-top-buttons">
+          <button type="button" class="secondary" id="resetBtn">Tøm skjema</button>
+          <button type="submit" id="saveBtn">Lagre opplevelse</button>
+        </div>
         <div class="grid">
           <div>
             <label for="heading">Overskrift</label>
@@ -1925,11 +1963,7 @@ input#experienceDate{
           </div>
         </div>
 
-        <div class="buttons">
-          <button type="submit" id="saveBtn">Lagre opplevelse</button>
-          <button type="button" class="secondary" id="resetBtn">Tøm skjema</button>
 
-        </div>
       </form>
 
       <div id="status" class="status status-section">Klar.</div>
