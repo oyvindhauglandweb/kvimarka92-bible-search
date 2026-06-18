@@ -2086,6 +2086,59 @@ body.light-mode .readonly-melody-notation{
   background:rgba(0,0,0,.045) !important;
 }
 
+
+/* Opplevelser v81: notelinje med hvit bakgrunn og sorte noter/linjer */
+.melody-notation,
+.edit-melody-notation,
+.readonly-melody-notation{
+  min-height:128px !important;
+  height:auto !important;
+  background:#fff !important;
+  color:#000 !important;
+  border:1px solid rgba(0,0,0,.18) !important;
+  border-radius:10px !important;
+  padding:8px 10px !important;
+  overflow:visible !important;
+}
+
+.melody-notation svg,
+.edit-melody-notation svg,
+.readonly-melody-notation svg{
+  width:100% !important;
+  min-height:116px !important;
+  display:block !important;
+  overflow:visible !important;
+  background:#fff !important;
+}
+
+.melody-notation svg *,
+.edit-melody-notation svg *,
+.readonly-melody-notation svg *{
+  color:#000 !important;
+  fill:#000 !important;
+  stroke:#000 !important;
+}
+
+.melody-notation text,
+.edit-melody-notation text,
+.readonly-melody-notation text{
+  fill:#000 !important;
+  stroke:none !important;
+}
+
+.melody-notation.empty,
+.edit-melody-notation.empty,
+.readonly-melody-notation.empty{
+  display:none !important;
+}
+
+body.light-mode .melody-notation,
+body.light-mode .edit-melody-notation,
+body.light-mode .readonly-melody-notation{
+  background:#fff !important;
+  color:#000 !important;
+}
+
 </style>
 <!-- version: REGISTER v44e stable-ios-date-no-ddmmyyyy-after-selection 2026-06-17 -->
 </head>
@@ -2660,7 +2713,7 @@ body.light-mode .readonly-melody-notation{
           };
         })
         .filter(Boolean)
-        .slice(0, 24);
+        .slice(0, 18);
     }
 
     function renderNotesWithVexFlow(container, notesText){
@@ -2687,7 +2740,7 @@ body.light-mode .readonly-melody-notation{
 
       try{
         const width = Math.max(280, Math.min(container.clientWidth || 560, 760));
-        const height = 96;
+        const height = 128;
 
         const renderer = new VF.Renderer(container, VF.Renderer.Backends.SVG);
         renderer.resize(width, height);
@@ -2695,7 +2748,7 @@ body.light-mode .readonly-melody-notation{
         const context = renderer.getContext();
         context.setFont("Arial", 10, "").setBackgroundFillStyle("transparent");
 
-        const stave = new VF.Stave(8, 8, width - 16);
+        const stave = new VF.Stave(8, 28, width - 16);
         stave.addClef("treble");
         stave.setContext(context).draw();
 
