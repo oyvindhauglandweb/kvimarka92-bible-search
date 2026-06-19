@@ -2968,6 +2968,44 @@ body.light-mode .readonly-melody-notation{
   height:auto !important;
 }
 
+
+/* Opplevelser v87: påloggingsikon skal alltid være synlig, også etter utlogging */
+.login-widget{
+  display:flex !important;
+  visibility:visible !important;
+  opacity:1 !important;
+  pointer-events:auto !important;
+}
+
+.login-status,
+.login-status.is-signin,
+.login-status.signed-in{
+  display:flex !important;
+  visibility:visible !important;
+  opacity:.92 !important;
+  pointer-events:auto !important;
+}
+
+.login-status.is-signin{
+  width:38px !important;
+  height:38px !important;
+  min-width:38px !important;
+  min-height:38px !important;
+  border:1px solid var(--opp-border, var(--border, #555)) !important;
+  border-radius:50% !important;
+  background-color:var(--opp-card, var(--card, #242424)) !important;
+  background-image:url("LogInDG.png") !important;
+  background-repeat:no-repeat !important;
+  background-position:center !important;
+  background-size:26px 26px !important;
+  text-indent:-9999px !important;
+  overflow:hidden !important;
+}
+
+.login-status.is-signin:hover{
+  opacity:1 !important;
+}
+
 </style>
   <!-- version: LIST v52 hard-center-back-button-mobile 2026-06-17 -->
 </head>
@@ -4977,7 +5015,12 @@ body.light-mode .readonly-melody-notation{
       loginStatus.classList.remove("signed-in");
       loginStatus.title = "Logg inn";
       loginStatus.setAttribute("aria-label", "Logg inn");
-      loginStatus.onclick = null;
+      loginStatus.onclick = function(event){
+        // Behold eksplisitt klikkhandling også etter utlogging.
+        // Dette hindrer at tidligere meny-/logout-state gjør ikonet passivt eller usynlig.
+        event.preventDefault();
+        window.location.href = loginStatus.href;
+      };
       loginMenu.style.display = "none";
     }
   };
