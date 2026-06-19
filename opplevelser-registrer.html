@@ -2252,6 +2252,38 @@ body.light-mode .readonly-melody-notation{
   opacity:1 !important;
 }
 
+
+/* Opplevelser v88: tegn påloggingsikon direkte i CSS når bruker er utlogget.
+   Da er ikonet ikke avhengig av at LogInDG.png finnes/lastes. */
+.login-status.is-signin{
+  background-image:none !important;
+  position:relative !important;
+  text-indent:-9999px !important;
+}
+
+.login-status.is-signin::before{
+  content:"" !important;
+  position:absolute !important;
+  left:50% !important;
+  top:50% !important;
+  width:22px !important;
+  height:22px !important;
+  transform:translate(-50%, -50%) !important;
+  background-color:var(--opp-muted, var(--muted, #bbb)) !important;
+  -webkit-mask-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="black" d="M12 12c2.2 0 4-1.8 4-4s-1.8-4-4-4-4 1.8-4 4 1.8 4 4 4Zm0 2c-3.3 0-7 1.7-7 5v1h14v-1c0-3.3-3.7-5-7-5Z"/></svg>') !important;
+  mask-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="black" d="M12 12c2.2 0 4-1.8 4-4s-1.8-4-4-4-4 1.8-4 4 1.8 4 4 4Zm0 2c-3.3 0-7 1.7-7 5v1h14v-1c0-3.3-3.7-5-7-5Z"/></svg>') !important;
+  -webkit-mask-repeat:no-repeat !important;
+  mask-repeat:no-repeat !important;
+  -webkit-mask-position:center !important;
+  mask-position:center !important;
+  -webkit-mask-size:22px 22px !important;
+  mask-size:22px 22px !important;
+}
+
+.login-status.is-signin:hover::before{
+  background-color:var(--opp-text, var(--text, #eee)) !important;
+}
+
 </style>
 <!-- version: REGISTER v44e stable-ios-date-no-ddmmyyyy-after-selection 2026-06-17 -->
 </head>
