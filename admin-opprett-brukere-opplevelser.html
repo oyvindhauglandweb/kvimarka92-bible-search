@@ -56,7 +56,8 @@ button.primary{background:var(--accent2)}button:disabled{opacity:.45;cursor:not-
       <div class="row">
         <div>
           <label for="phone">Mobilnummer</label>
-          <input id="phone" name="phone" type="tel" autocomplete="tel" required placeholder="+4799999999">
+          <input id="phone" name="phone" type="tel" autocomplete="tel" required placeholder="99999999">
+          <div class="small">Skriv norsk mobilnummer uten landskode. +47 legges til automatisk ved lagring.</div>
         </div>
         <div>
           <label for="opplevelserRole">Rolle i Opplevelser</label>
@@ -93,13 +94,36 @@ const messageEl = document.getElementById("message");
 
 function value(id){ return document.getElementById(id).value.trim(); }
 function validEmail(email){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email); }
-function validPhone(phone){
+function normalizeNorwegianPhone(phone){
   const text = String(phone || "").trim();
   const digits = text.replace(/\D/g, "");
-  if(!text || !/^\+?[0-9\s().-]+$/.test(text)) return false;
-  if(text.startsWith("+47")) return digits.length === 10;
-  if(text.startsWith("47") && digits.length === 10) return true;
-  return digits.length >= 8 && digits.length <= 15;
+
+  if(!digits) return "";
+
+  // Norsk nummer uten landskode, f.eks. 99999999 -> +4799999999
+  if(digits.length === 8){
+    return "+47" + digits;
+  }
+
+  // Norsk nummer skrevet med landskode uten +, f.eks. 4799999999 -> +4799999999
+  if(digits.length === 10 && digits.startsWith("47")){
+    return "+" + digits;
+  }
+
+  // Norsk nummer skrevet med +47
+  if(text.startsWith("+") && digits.length === 10 && digits.startsWith("47")){
+    return "+" + digits;
+  }
+
+  // Behold andre internasjonale numre dersom de er tydelig skrevet med +
+  if(text.startsWith("+") && digits.length >= 8 && digits.length <= 15){
+    return "+" + digits;
+  }
+
+  return "";
+}
+function validPhone(phone){
+  return !!normalizeNorwegianPhone(phone);
 }
 function isFormValid(){
   return !!(
@@ -131,7 +155,7 @@ form.addEventListener("submit", async event => {
   const payload = {
     name:value("name"),
     email:value("email"),
-    phone:value("phone"),
+    phone:normalizeNorwegianPhone(value("phone")),
     opplevelserRole:value("opplevelserRole")
   };
 
