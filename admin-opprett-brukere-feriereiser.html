@@ -66,15 +66,15 @@ button.primary{background:var(--accent2)}button:disabled{opacity:.45;cursor:not-
             <option value="User">Bruker</option>
             <option value="Administrator">Administrator</option>
           </select>
-          <div class="small warning">Administrator er global administratorrolle i Kvimarka 92 og gir også tilgang til admin-funksjoner.</div>
+          <div class="small warning">Administrator gir Feriereiser access = Admin og Feriereiser role = Administrator. Global Users / Role settes ikke til Administrator.</div>
         </div>
       </div>
 
       <div class="summary">
         <strong>Resultat:</strong><br>
         Users: Status = Approved.<br>
-        Vanlig bruker: Role = User. Kan se private Feriereiser-saker etter innlogging.<br>
-        Administrator: Role = Administrator. Kan også se/endre administrator-beskyttede Feriereiser-data og andre admin-funksjoner.<br>
+        Vanlig bruker: Feriereiser access = Personal, Feriereiser role = User.<br>
+        Administrator: Feriereiser access = Admin, Feriereiser role = Administrator.<br>
         Brukeren må logge inn med samme e-postadresse som lagres her.
       </div>
     </section>
@@ -181,7 +181,8 @@ form.addEventListener("submit", async event => {
       "Navn: " + data.user.name + "\n" +
       "E-post: " + data.user.email + "\n" +
       "Mobil: " + data.user.phone + "\n" +
-      "Rolle: " + data.user.role
+      "Tilgang: " + data.user.feriereiserAccess + "\n" +
+      "Rolle: " + data.user.feriereiserRole
     );
 
     form.reset();
